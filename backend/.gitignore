@@ -1,0 +1,10 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Maven build
+target/
+
+# VS Code local settings
+.vscode/
