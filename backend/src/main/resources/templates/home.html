@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="id">
+<head th:replace="~{fragments/layout :: head('GAKBISA · Gantian Ajari, Kita Bisa!')}"></head>
+<body>
+<th:block th:replace="~{fragments/layout :: skip}"></th:block>
+<header th:replace="~{fragments/layout :: topbar('beranda')}"></header>
+
+<main id="isi">
+
+  <!-- ===== pembuka ===== -->
+  <section class="shell hero">
+    <div>
+      <h1>Gantian ajari, kita bisa.</h1>
+      <p class="lede">
+        Kamu jago Java tapi malu ngomong Inggris; temanmu sebaliknya. GAKBISA mempertemukan
+        kalian berdua, memberi skor kecocokan, lalu menjadwalkan sesinya. Tidak ada biaya
+        kursus: yang kamu bayarkan adalah mengajarkan keahlianmu sendiri.
+      </p>
+      <p class="hero__start">
+        <a class="btn btn--leaf" th:href="@{/register}">Daftar gratis</a>
+        <span class="tiny muted">Cuma tiga isian: nama, email, kata sandi.
+          Sudah punya akun? <a th:href="@{/login}">Masuk ke dasbor</a>.</span>
+      </p>
+      <p class="hero__note">
+        Sesi belajar lewat tautan video Jitsi, dan setiap sesi bisa dinilai kedua pihak.
+      </p>
+    </div>
+
+    <aside aria-label="Contoh pertukaran keahlian">
+      <div class="swapcard">
+        <div class="swaprow">
+          <div>
+            <span class="tag tag--offer">Menawarkan</span>
+            <p class="skill">Java</p>
+            <span class="lvl">Level menengah · Yafet</span>
+          </div>
+          <span class="to" aria-hidden="true">⇄</span>
+          <div class="r">
+            <span class="tag tag--want">Ingin belajar</span>
+            <p class="skill">UI/UX</p>
+            <span class="lvl">Level pemula</span>
+          </div>
+        </div>
+        <div class="swaprow">
+          <div>
+            <span class="tag tag--want">Ingin belajar</span>
+            <p class="skill">Java</p>
+            <span class="lvl">Level pemula</span>
+          </div>
+          <span class="to" aria-hidden="true">⇄</span>
+          <div class="r">
+            <span class="tag tag--offer">Menawarkan</span>
+            <p class="skill">UI/UX</p>
+            <span class="lvl">Level mahir · Faiz</span>
+          </div>
+        </div>
+        <p class="swapcard__foot">Kecocokan 93 dari 100: Java dan UI/UX saling dibutuhkan,
+          levelnya berimbang, portofolio lengkap.</p>
+      </div>
+      <p class="tiny muted">Kartu di atas contoh dari data seed kelompok, bukan akun asli.</p>
+    </aside>
+  </section>
+
+  <!-- ===== cara kerja ===== -->
+  <section class="shell section--tight">
+    <hr class="rule">
+    <div class="two">
+      <div>
+        <h2>Cara kerjanya</h2>
+        <p class="muted">Empat langkah, dari daftar keahlian sampai ulasan. Tidak ada yang
+          bisa dilompati: partnermu harus menyetujui permintaanmu lebih dulu.</p>
+      </div>
+      <ol class="flow">
+        <li>
+          <span class="flow__n">1</span>
+          <div>
+            <h3>Isi dua daftar</h3>
+            <p>Tandai keahlian yang kamu ajarkan dan yang ingin kamu pelajari, lengkap dengan
+              levelmu. Dua daftar ini yang dibandingkan, jadi lebih baik jujur soal level.</p>
+          </div>
+        </li>
+        <li>
+          <span class="flow__n">2</span>
+          <div>
+            <h3>Sistem mencarikan partner</h3>
+            <p>Skor 0–100 dihitung dari kecocokan dua arah, level, reputasi, dan katalog karya.
+              Tiap skor datang bersama alasan yang bisa dibaca, jadi kamu tahu kenapa nama itu
+              muncul paling atas.</p>
+          </div>
+        </li>
+        <li>
+          <span class="flow__n">3</span>
+          <div>
+            <h3>Ajukan, terima, jadwalkan</h3>
+            <p>Permintaan barter masuk ke inbox temanmu. Setelah dia terima, sesi dijadwalkan
+              dan nama ruang videonya dibuat di server.</p>
+          </div>
+        </li>
+        <li>
+          <span class="flow__n">4</span>
+          <div>
+            <h3>Saling menilai</h3>
+            <p>Setelah sesi, kedua pihak memberi nilai 1–5 beserta komentar. Rata-ratanya tampil
+              di kartu profil dan ikut masuk hitungan skor.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ===== kategori ===== -->
+  <section class="shell section--tight" id="kategori-blok">
+    <hr class="rule">
+    <div class="split">
+      <h2>Keahlian yang beredar</h2>
+      <a class="tiny" th:href="@{/catalog}">Buka katalog →</a>
+    </div>
+    <div class="chips" id="kategori-strip" aria-live="polite">
+      <span class="tiny muted">Memuat kategori…</span>
+    </div>
+  </section>
+
+  <!-- ===== catatan ===== -->
+  <section class="shell section">
+    <h2>Yang perlu dicatat sebelum mulai</h2>
+    <dl class="spec">
+      <div class="spec__row">
+        <dt>Skor kecocokan</dt>
+        <dd>Bobotnya sama untuk semua akun: 50% kebutuhanmu terpenuhi, 30% timbal balik,
+          10% kesesuaian level, 5% reputasi, 5% kelengkapan portofolio. Di dasbor, tiap skor
+          ditemani daftar alasannya.</dd>
+      </div>
+      <div class="spec__row">
+        <dt>Ruang sesi</dt>
+        <dd>Nama ruang video dibuat acak di server ketika sesi dijadwalkan. Hanya pesertanya
+          yang melihat tautan itu, jadi orang luar tidak bisa ikut masuk.</dd>
+      </div>
+      <div class="spec__row">
+        <dt>Berkas portofolio</dt>
+        <dd>Unggahan berjalan lewat backend dan kunci penyimpanan hanya hidup di server.
+          Login memakai CSRF, kata sandi tersimpan sebagai hash BCrypt.</dd>
+      </div>
+      <div class="spec__row">
+        <dt>Katalog publik</dt>
+        <dd>Portofolio yang visibilitasnya publik bisa dibuka tanpa login, jadi kamu tahu dengan
+          siapa kamu akan belajar sebelum mengirim permintaan.</dd>
+      </div>
+    </dl>
+  </section>
+
+  <!-- ===== penutup ===== -->
+  <section class="shell section--tight section--end">
+    <hr class="rule">
+    <div class="start">
+      <h2>Mulai dari akun kampus</h2>
+      <p>Daftar pakai email kampusmu, isi dua daftar keahlian, lalu rekomendasi partner muncul di
+        dasbor. Kalau masih ingin lihat-lihat, katalog dan galeri karya bisa dibuka tanpa akun.</p>
+      <p class="start__aksi">
+        <a class="btn btn--leaf" th:href="@{/register}">Buat akun</a>
+        <span class="tiny muted">sudah punya akun? <a th:href="@{/login}">Masuk</a>, daftar akun
+          demo ada di halaman itu.</span>
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<footer th:replace="~{fragments/layout :: foot}"></footer>
+<script th:src="@{/js/app.js}"></script>
+<script th:src="@{/js/home.js}"></script>
+</body>
+</html>

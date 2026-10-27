@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="id">
+<head th:replace="~{fragments/layout :: head('Masuk · GAKBISA')}"></head>
+<body>
+<th:block th:replace="~{fragments/layout :: skip}"></th:block>
+<header th:replace="~{fragments/layout :: topbar('masuk')}"></header>
+
+<main id="isi" class="shell auth">
+
+  <aside class="auth__brand">
+    <h2>Setelah masuk, kamu bisa:</h2>
+    <ul>
+      <li>melihat rekomendasi partner belajar beserta alasannya;</li>
+      <li>menerima atau menolak permintaan barter;</li>
+      <li>menjadwalkan sesi dan membuka ruang videonya;</li>
+      <li>mengunggah portofolio dan memberi ulasan.</li>
+    </ul>
+    <div class="chips">
+      <span class="tag tag--offer">Menawarkan</span>
+      <span class="tag tag--want">Ingin belajar</span>
+      <span class="tag tag--sun">Skor kecocokan</span>
+    </div>
+  </aside>
+
+  <section class="auth__form">
+    <h1>Masuk</h1>
+    <p class="muted auth__intro">Pakai email yang kamu pakai saat mendaftar.</p>
+
+    <div class="alert alert--error" th:if="${param.error}" role="alert" id="pesan-error">
+      Email atau password tidak cocok. Periksa ejaan email, huruf besar/kecil, dan spasi di ujung kata sandi.
+    </div>
+    <div class="alert alert--ok" th:if="${param.registered}" role="status">
+      Registrasi berhasil. Silakan masuk dengan akun barumu.
+    </div>
+    <div class="alert alert--info" th:if="${param.logout}" role="status">
+      Kamu sudah keluar. Sesi yang sudah terjadwal tetap ada di dasbor saat masuk lagi.
+    </div>
+
+    <form th:action="@{/login}" method="post" novalidate>
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+      <div class="field">
+        <label for="username">Email</label>
+        <input id="username" type="email" name="username" required
+               autocomplete="username" placeholder="nama@gakbisa.test" autofocus>
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" name="password" required
+               autocomplete="current-password" placeholder="••••••••"
+               aria-describedby="pesan-error">
+      </div>
+
+      <button class="btn btn--leaf btn--block" type="submit">Masuk</button>
+    </form>
+
+    <p class="tiny auth__foot">
+      Belum punya akun? <a th:href="@{/register}">Daftar di sini</a>, isinya nama, email, dan password.
+    </p>
+
+    <div class="demokeys">
+      <span class="tag">Akun demo</span>
+      <table>
+        <tr><td>MAHASISWA</td><td><code>yafet@gakbisa.test</code></td></tr>
+        <tr><td>ADMIN</td><td><code>admin@gakbisa.test</code></td></tr>
+      </table>
+      <p>Kata sandi tiap akun demo ada di tabel “Akun seed awal” pada
+        <code>backend/README.md</code>.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer th:replace="~{fragments/layout :: foot}"></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

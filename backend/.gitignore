@@ -1,0 +1,15 @@
+target/
+.mvn/wrapper/maven-wrapper.jar
+*.class
+*.log
+
+# Rahasia — jangan pernah di-commit
+.env
+*.env.local
+application-local.yml
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.DS_Store

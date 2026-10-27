@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="id">
+<head th:replace="~{fragments/layout :: head('Dasbor · GAKBISA')}"></head>
+<body>
+<th:block th:replace="~{fragments/layout :: skip}"></th:block>
+<header th:replace="~{fragments/layout :: topbar('dasbor')}"></header>
+
+<main id="isi" class="shell section--tight">
+
+  <div class="worktop">
+    <div class="greeting">
+      <h1>Halo, <span th:text="${#authentication.principal.user.fullName}">Anda</span>.</h1>
+      <p class="lede" id="subteks">Menyiapkan rekomendasi partner belajar…</p>
+    </div>
+    <div class="grid grid--4" id="stat" aria-live="polite">
+      <div class="stat"><span>Reputasi</span><b>—</b></div>
+      <div class="stat"><span>Barter aktif</span><b>—</b></div>
+      <div class="stat"><span>Sesi terjadwal</span><b>—</b></div>
+      <div class="stat"><span>Belum dibaca</span><b>—</b></div>
+    </div>
+  </div>
+
+  <hr class="rule">
+
+  <p class="tiny muted flowline">
+    Alur pemakaian: <b>Keahlian saya</b> &rarr; <b>Partner</b> &rarr; ajukan <b>Barter</b> &rarr;
+    jadwalkan <b>Sesi</b> &rarr; isi <b>Ulasan</b>. Portofolio ada di <b>Karya</b>.
+  </p>
+
+  <div class="tabs" role="tablist" aria-label="Bagian dasbor">
+    <button role="tab" id="tab-partner" aria-controls="panel-partner" aria-selected="true" class="is-on" data-tab="partner" type="button">Partner</button>
+    <button role="tab" id="tab-keahlian" aria-controls="panel-keahlian" aria-selected="false" tabindex="-1" data-tab="keahlian" type="button">Keahlian saya</button>
+    <button role="tab" id="tab-barter" aria-controls="panel-barter" aria-selected="false" tabindex="-1" data-tab="barter" type="button">Barter<span class="count" id="badge-barter" hidden>0</span></button>
+    <button role="tab" id="tab-sesi" aria-controls="panel-sesi" aria-selected="false" tabindex="-1" data-tab="sesi" type="button">Sesi</button>
+    <button role="tab" id="tab-ulasan" aria-controls="panel-ulasan" aria-selected="false" tabindex="-1" data-tab="ulasan" type="button">Ulasan</button>
+    <button role="tab" id="tab-karya" aria-controls="panel-karya" aria-selected="false" tabindex="-1" data-tab="karya" type="button">Karya</button>
+    <button role="tab" id="tab-notifikasi" aria-controls="panel-notifikasi" aria-selected="false" tabindex="-1" data-tab="notifikasi" type="button">Notifikasi<span class="count" id="badge-notif" hidden>0</span></button>
+    <button role="tab" id="tab-admin" aria-controls="panel-admin" aria-selected="false" tabindex="-1" data-tab="admin" type="button" sec:authorize="hasRole('ADMIN')">Admin</button>
+  </div>
+
+  <!-- ===== partner ===== -->
+  <section class="panel" id="panel-partner" role="tabpanel" aria-labelledby="tab-partner">
+    <div class="split">
+      <div>
+        <h2>Rekomendasi partner</h2>
+        <p class="tiny">Skor 0–100 dari kecocokan dua arah, level, reputasi, dan portofolio. Alasannya ikut tampil di tiap kartu.</p>
+      </div>
+      <button class="btn btn--ghost btn--sm" type="button" data-muat="partner">Muat ulang</button>
+    </div>
+    <div class="rows" id="daftar-partner">
+      <div class="skeleton"></div><div class="skeleton"></div>
+    </div>
+  </section>
+
+  <!-- ===== keahlian ===== -->
+  <section class="panel" id="panel-keahlian" role="tabpanel" aria-labelledby="tab-keahlian" hidden>
+    <div class="split">
+      <h2>Keahlian saya</h2>
+      <span class="tiny">Yang kamu ajarkan menentukan Skor kecocokan partner berikutnya.</span>
+    </div>
+    <div class="grid grid--2">
+      <div class="card">
+        <h3>Saya ajarkan</h3>
+        <div class="rows" id="daftar-offer"></div>
+      </div>
+      <div class="card">
+        <h3>Saya pelajari</h3>
+        <div class="rows" id="daftar-want"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Tambah satu keahlian</h3>
+      <form id="form-skill" class="grid grid--4">
+        <div class="field">
+          <label for="skill-pilih">Keahlian</label>
+          <select id="skill-pilih" required></select>
+        </div>
+        <div class="field">
+          <label for="skill-type">Peran</label>
+          <select id="skill-type">
+            <option value="OFFER">Saya ajarkan</option>
+            <option value="WANT">Saya pelajari</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="skill-level">Level</label>
+          <select id="skill-level">
+            <option value="BEGINNER">Pemula</option>
+            <option value="INTERMEDIATE" selected>Menengah</option>
+            <option value="ADVANCED">Mahir</option>
+          </select>
+        </div>
+        <button class="btn btn--leaf" type="submit">Tambahkan</button>
+      </form>
+      <p class="tiny">Belum ada keahliannya? Minta admin menambahkannya di tab Admin.</p>
+    </div>
+  </section>
+
+  <!-- ===== barter ===== -->
+  <section class="panel" id="panel-barter" role="tabpanel" aria-labelledby="tab-barter" hidden>
+    <div class="split">
+      <h2>Permintaan barter</h2>
+      <span class="tiny">Status berubah otomatis menjadi "Selesai" saat seluruh sesinya tuntas.</span>
+    </div>
+    <div class="grid grid--2">
+      <div>
+        <h3>Masuk <span class="tiny muted">(kamu yang dimintai)</span></h3>
+        <div class="rows scroller" id="daftar-inbox"></div>
+      </div>
+      <div>
+        <h3>Kirim <span class="tiny muted">(permintaanmu)</span></h3>
+        <div class="rows scroller" id="daftar-outbox"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== sesi ===== -->
+  <section class="panel" id="panel-sesi" role="tabpanel" aria-labelledby="tab-sesi" hidden>
+    <div class="split">
+      <h2>Sesi belajar</h2>
+      <span class="tiny">Ruang video dibuat server dengan nama acak. Hanya peserta yang bisa membukanya.</span>
+    </div>
+    <div class="rows" id="daftar-sesi"></div>
+    <div id="ruangan" hidden>
+      <div class="split">
+        <h3 id="ruangan-judul">Ruang meeting</h3>
+        <button class="btn btn--ghost btn--sm" type="button" id="ruangan-tutup">Tutup sematan</button>
+      </div>
+      <div class="iframe-wrap"><iframe id="ruangan-frame" title="Ruang meeting Jitsi" allow="camera; microphone; display-capture; fullscreen"></iframe></div>
+    </div>
+  </section>
+
+  <!-- ===== ulasan ===== -->
+  <section class="panel" id="panel-ulasan" role="tabpanel" aria-labelledby="tab-ulasan" hidden>
+    <div class="split">
+      <h2>Ulasan</h2>
+      <span class="tiny">Satu ulasan per sesi per peserta, nilai 1–5.</span>
+    </div>
+    <div class="grid grid--2">
+      <div class="card">
+        <h3>Menunggu dinilaimu</h3>
+        <div class="rows" id="daftar-ulasan-pending"></div>
+      </div>
+      <div class="card">
+        <h3>Ulasan tentang kamu</h3>
+        <div class="rows" id="daftar-ulasan-masuk"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== karya ===== -->
+  <section class="panel" id="panel-karya" role="tabpanel" aria-labelledby="tab-karya" hidden>
+    <div class="split">
+      <h2>Portofolio</h2>
+      <span class="tiny">JPG/PNG/WEBP/PDF, maksimal 10 MB. Tipe file diperiksa dari isinya, bukan ekstensinya.</span>
+    </div>
+    <div class="grid grid--2">
+      <div class="card">
+        <h3>Unggah karya</h3>
+        <form id="form-karya">
+          <div class="field">
+            <label for="karya-file">Berkas</label>
+            <input id="karya-file" type="file" name="file" required
+                   accept="image/jpeg,image/png,image/webp,application/pdf">
+          </div>
+          <div class="field">
+            <label for="karya-judul">Judul</label>
+            <input id="karya-judul" type="text" name="title" required maxlength="120"
+                   placeholder="mis. Redesign UI kantin kampus">
+          </div>
+          <div class="field">
+            <label for="karya-deskripsi">Keterangan <span class="opt">(opsional)</span></label>
+            <textarea id="karya-deskripsi" name="description" maxlength="1000"
+                      placeholder="Ceritakan peranmu dan hasilnya."></textarea>
+          </div>
+          <div class="field">
+            <label for="karya-visibilitas">Visibilitas</label>
+            <select id="karya-visibilitas" name="visibility">
+              <option value="PUBLIC">Publik: tampil di katalog</option>
+              <option value="PRIVATE">Privat: hanya kamu &amp; admin</option>
+            </select>
+          </div>
+          <button class="btn btn--leaf btn--block" type="submit">Unggah</button>
+          <p class="tiny">Berkas karya disimpan di ruang penyimpanan terpisah.
+            Kalau ruang itu belum aktif di server, unggahan ditolak dan bagian dasbor lain tetap bisa
+            dipakai.</p>
+        </form>
+      </div>
+      <div>
+        <h3>Karyaku</h3>
+        <div class="rows" id="daftar-karya"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== notifikasi ===== -->
+  <section class="panel" id="panel-notifikasi" role="tabpanel" aria-labelledby="tab-notifikasi" hidden>
+    <div class="split">
+      <h2>Notifikasi</h2>
+      <button class="btn btn--ghost btn--sm" type="button" data-muat="notifikasi">Muat ulang</button>
+    </div>
+    <div class="rows scroller" id="daftar-notifikasi"></div>
+  </section>
+
+  <!-- ===== admin ===== -->
+  <section class="panel" id="panel-admin" role="tabpanel" aria-labelledby="tab-admin" hidden>
+    <div class="split">
+      <h2>Panel admin</h2>
+      <span class="tiny">Hanya peran ADMIN yang melihat tab ini.</span>
+    </div>
+    <div class="grid grid--4" id="admin-statistik"></div>
+    <div class="grid grid--2">
+      <div class="card">
+        <h3>Tambah kategori / keahlian</h3>
+        <form id="form-kategori" class="stack">
+          <div class="field">
+            <label for="kat-nama">Nama kategori</label>
+            <input id="kat-nama" type="text" required placeholder="mis. Multimedia">
+          </div>
+          <div class="field">
+            <label for="kat-desk">Keterangan</label>
+            <input id="kat-desk" type="text" placeholder="Video, audio, fotografi">
+          </div>
+          <button class="btn btn--sm" type="submit">Simpan kategori</button>
+        </form>
+        <hr class="rule">
+        <form id="form-ahli" class="stack">
+          <div class="field">
+            <label for="ahli-nama">Nama keahlian</label>
+            <input id="ahli-nama" type="text" required placeholder="mis. Figma">
+          </div>
+          <div class="field">
+            <label for="ahli-kategori">Masuk kategori</label>
+            <select id="ahli-kategori" required></select>
+          </div>
+          <button class="btn btn--sm" type="submit">Simpan keahlian</button>
+        </form>
+      </div>
+      <div>
+        <h3>Pengguna</h3>
+        <div class="rows scroller" id="daftar-pengguna"></div>
+        <h3>Laporan terbuka</h3>
+        <div class="rows scroller" id="daftar-laporan"></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ===== dialog ajukan barter ===== -->
+<dialog class="modal" id="dlg-barter">
+  <form method="dialog" class="modal__head modal__head--flat">
+    <h3 id="dlg-barter-judul">Ajukan barter</h3>
+  </form>
+  <div class="modal__body">
+    <form id="form-barter">
+      <input type="hidden" id="barter-target">
+      <p class="tiny">Kamu memberi satu keahlianmu dan meminta satu keahlian
+        yang ingin kamu pelajari. Partner harus benar-benar menawarkan keahlian yang kamu minta.</p>
+      <div class="field">
+        <label for="barter-offer">Yang kamu ajarkan</label>
+        <select id="barter-offer" required></select>
+      </div>
+      <div class="field">
+        <label for="barter-want">Yang kamu minta</label>
+        <select id="barter-want" required></select>
+      </div>
+      <div class="field">
+        <label for="barter-pesan">Pesan <span class="opt">(opsional)</span></label>
+        <textarea id="barter-pesan" maxlength="500"
+                  placeholder="Halo! Aku bisa bantu Java dasar, gantian kamu ajarin UI/UX dong."></textarea>
+      </div>
+    </form>
+  </div>
+  <div class="modal__foot">
+    <button class="btn btn--ghost btn--sm" type="button" data-batal>Batal</button>
+    <button class="btn btn--leaf btn--sm" type="button" id="kirim-barter">Kirim permintaan</button>
+  </div>
+</dialog>
+
+<!-- ===== dialog jadwalkan sesi ===== -->
+<dialog class="modal" id="dlg-sesi">
+  <div class="modal__head"><h3 id="dlg-sesi-judul">Jadwalkan sesi</h3></div>
+  <div class="modal__body">
+    <form id="form-sesi">
+      <input type="hidden" id="sesi-barter">
+      <p class="tiny" id="sesi-partner"></p>
+      <div class="field">
+        <label for="sesi-waktu">Waktu (lokal)</label>
+        <input id="sesi-waktu" type="datetime-local" required aria-describedby="hint-sesi-waktu">
+        <p class="hint" id="hint-sesi-waktu">Ruang video hanya bisa dibuka mendekati jadwal (±60 menit).</p>
+      </div>
+      <div class="field">
+        <label for="sesi-durasi">Durasi (menit)</label>
+        <input id="sesi-durasi" type="number" min="15" max="240" step="5" value="60" required>
+      </div>
+      <div class="field">
+        <label for="sesi-eksternal">Tautan meeting lain <span class="opt">(opsional)</span></label>
+        <input id="sesi-eksternal" type="text" placeholder="Kosongkan untuk memakai Jitsi bawaan">
+      </div>
+    </form>
+  </div>
+  <div class="modal__foot">
+    <button class="btn btn--ghost btn--sm" type="button" data-batal-sesi>Batal</button>
+    <button class="btn btn--leaf btn--sm" type="button" id="kirim-sesi">Simpan jadwal</button>
+  </div>
+</dialog>
+
+<footer th:replace="~{fragments/layout :: foot}"></footer>
+<script th:src="@{/js/app.js}"></script>
+<script th:src="@{/js/dashboard.js}"></script>
+</body>
+</html>

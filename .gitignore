@@ -1,0 +1,20 @@
+# Rahasia: koneksi database dan kunci storage tidak boleh naik ke repo
+.env
+.env.*
+!.env.example
+
+# Hasil build
+target/
+*.class
+
+# Log dan berkas kerja sementara
+*.log
+tmp-cek/
+.playwright-mcp/
+
+# IDE dan sistem operasi
+.vscode/
+.idea/
+*.iml
+.DS_Store
+Thumbs.db

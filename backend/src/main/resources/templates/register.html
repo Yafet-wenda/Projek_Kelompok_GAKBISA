@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="id">
+<head th:replace="~{fragments/layout :: head('Daftar · GAKBISA')}"></head>
+<body>
+<th:block th:replace="~{fragments/layout :: skip}"></th:block>
+<header th:replace="~{fragments/layout :: topbar('daftar')}"></header>
+
+<main id="isi" class="shell auth">
+
+  <aside class="auth__brand">
+    <h2>Mulai dari dua daftar kecil</h2>
+    <p>Setelah akun jadi, kamu isi keahlian yang bisa kamu ajarkan dan yang ingin kamu pelajari.
+      Sistem yang mencarikan partner, berikut alasannya.</p>
+    <ul>
+      <li>Tanpa biaya kursus.</li>
+      <li>Jadwal sesi dan ruang video ada di dasbor.</li>
+      <li>Portofolio publik bisa dilihat sebelum mengajak.</li>
+    </ul>
+    <p class="tiny muted" th:if="${error == null}">Isi nama, email, dan password; kampus/prodi boleh dikosongkan.</p>
+  </aside>
+
+  <section class="auth__form">
+    <h1>Daftar akun mahasiswa</h1>
+    <p class="muted auth__intro">Data hanya dipakai untuk pencocokan di dalam aplikasi ini.</p>
+
+    <div class="alert alert--error" th:if="${error}" role="alert" id="pesan-error" th:text="${error}"></div>
+
+    <form th:action="@{/register}" th:object="${registerForm}" method="post" novalidate>
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+      <div class="field">
+        <label for="fullName">Nama lengkap</label>
+        <input id="fullName" type="text" th:field="*{fullName}" required
+               autocomplete="name" placeholder="mis. Yafet Wenda"
+               aria-describedby="error-fullName">
+        <p class="hint hint--error" id="error-fullName"
+           th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></p>
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" th:field="*{email}" required
+               autocomplete="email" placeholder="nama@student.pens.ac.id"
+               aria-describedby="hint-email error-email">
+        <p class="hint" id="hint-email">Email ini yang dipakai untuk masuk.</p>
+        <p class="hint hint--error" id="error-email"
+           th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="pw">
+          <input id="password" type="password" th:field="*{password}" required
+                 minlength="8" autocomplete="new-password" placeholder="minimal 8 karakter"
+                 aria-describedby="hint-password error-password">
+          <button type="button" class="pw__toggle" aria-pressed="false">Lihat</button>
+        </div>
+        <p class="hint" id="hint-password">Minimal 8 karakter.</p>
+        <p class="hint hint--error" id="error-password"
+           th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
+      </div>
+
+      <div class="field">
+        <label for="campus">Kampus / prodi <span class="opt">(opsional)</span></label>
+        <input id="campus" type="text" th:field="*{campus}"
+               placeholder="mis. D4 Informatika · PENS">
+      </div>
+
+      <button class="btn btn--leaf btn--block" type="submit">Buat akun</button>
+
+      <!-- #fields hanya bisa dipakai di dalam form yang punya th:object -->
+      <div class="alert alert--error" th:if="${#fields.hasAnyErrors()}" role="alert">
+        Perbaiki bagian berikut:
+        <ul>
+          <li th:each="err : ${#fields.allErrors()}" th:text="${err}"></li>
+        </ul>
+      </div>
+    </form>
+
+    <p class="tiny auth__foot">
+      Sudah terdaftar? <a th:href="@{/login}">Masuk di sini</a>.
+    </p>
+  </section>
+
+</main>
+
+<footer th:replace="~{fragments/layout :: foot}"></footer>
+<script th:src="@{/js/app.js}"></script>
+<script th:src="@{/js/forms.js}"></script>
+</body>
+</html>

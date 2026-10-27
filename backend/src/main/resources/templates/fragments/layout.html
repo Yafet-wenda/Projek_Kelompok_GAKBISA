@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="id">
+<!--
+  Fragment bersama: <head>, bilah atas, dan kaki halaman.
+  Pemakaian: th:replace="~{fragments/layout :: head('Judul halaman')}"
+-->
+<head th:fragment="head(title)">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="${title}">GAKBISA</title>
+  <meta name="description" content="GAKBISA: Gantian Ajari, Kita Bisa! Pertukaran keahlian antarmahasiswa: tawarkan keahlianmu, pelajari keahlian temanmu.">
+  <meta name="_csrf" th:content="${_csrf?.token}">
+  <meta name="_csrf_header" th:content="${_csrf?.headerName}">
+  <link rel="icon" type="image/svg+xml" th:href="@{/images/gakbisa-mark.svg}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" th:href="@{/css/gakbisa.css}">
+</head>
+<body>
+
+<a th:fragment="skip" class="skip" href="#isi">Lewati ke isi halaman</a>
+
+<header th:fragment="topbar(active)" class="topbar">
+  <div class="shell topbar__in">
+    <a class="mark" th:href="@{/}">
+      <img th:src="@{/images/gakbisa-mark.svg}" alt="" width="34" height="34">
+      <span>
+        <span class="mark__name">GAKBISA</span>
+        <span class="mark__sub">Gantian Ajari</span>
+      </span>
+    </a>
+
+    <nav class="nav" aria-label="Navigasi utama">
+      <a th:href="@{/}"
+         th:classappend="${active == 'beranda'} ? 'is-active'">Beranda</a>
+      <a th:href="@{/catalog}"
+         th:classappend="${active == 'katalog'} ? 'is-active'">Katalog</a>
+      <a th:href="@{/dashboard}" sec:authorize="isAuthenticated()"
+         th:classappend="${active == 'dasbor'} ? 'is-active'">Dasbor</a>
+      <a th:href="@{/login}" sec:authorize="!isAuthenticated()"
+         th:classappend="${active == 'masuk'} ? 'is-active'">Masuk</a>
+      <a th:href="@{/register}" sec:authorize="!isAuthenticated()"
+         th:classappend="${active == 'daftar'} ? 'is-active'"
+         class="btn btn--leaf btn--sm">Daftar</a>
+
+      <span sec:authorize="isAuthenticated()" class="userchip">
+        <span class="avatar"
+              th:text="${#strings.toUpperCase(#strings.substring(#authentication.principal.user.fullName, 0, 1))}">G</span>
+        <span class="who" th:text="${#authentication.principal.user.fullName}">Nama Pengguna</span>
+        <form class="inline" th:action="@{/logout}" method="post">
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+          <button class="btn btn--ghost btn--sm" type="submit">Keluar</button>
+        </form>
+      </span>
+    </nav>
+  </div>
+</header>
+
+<!--
+  Kaki halaman: identitas kelompok dan lingkup proyek.
+  Diambil dari halaman judul proposal; sesuaikan kalau ada perubahan nama atau NIM.
+-->
+<footer th:fragment="foot" class="foot">
+  <div class="shell foot__in">
+    <div class="stack">
+      <p>GAKBISA dibangun untuk Praktikum Pemrograman Berorientasi Objek, 2026.
+        Program Studi D3 Teknik Informatika PSDKU Lamongan,
+        Politeknik Elektronika Negeri Surabaya.
+        Dosen pengampu: Yunia Ikawati S.ST, M.Tr.Kom.</p>
+      <p class="tiny">Katalog, partner, dan akun demo di server ini masih data seed
+        buatan kelompok untuk keperluan uji, bukan data pengguna sungguhan.</p>
+    </div>
+    <dl class="foot__tugas">
+      <div>
+        <dt>Yafet Wenda <span class="num">3125521058</span></dt>
+        <dd>Analisis, backend, keamanan</dd>
+      </div>
+      <div>
+        <dt>Moh. Faiz Khoiru Izzuddin <span class="num">3125521049</span></dt>
+        <dd>Antarmuka, sesi video</dd>
+      </div>
+      <div>
+        <dt>Muhammad Haudajun Nando Kusnanto <span class="num">3125521053</span></dt>
+        <dd>Basis data, penyimpanan, pengujian</dd>
+      </div>
+    </dl>
+  </div>
+</footer>
+
+</body>
+</html>
