@@ -5,7 +5,8 @@ target/
 
 # Rahasia — jangan pernah di-commit
 .env
-*.env.local
+.env.*
+!.env.example
 application-local.yml
 
 # IDE

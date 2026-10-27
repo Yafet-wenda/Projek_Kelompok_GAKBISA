@@ -3,7 +3,7 @@
 .env.*
 !.env.example
 
-# Hasil build
+# Hasil build Maven
 target/
 *.class
 
