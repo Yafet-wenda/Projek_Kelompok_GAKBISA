@@ -3,7 +3,6 @@ package com.gakbisa.backend.service;
 import com.gakbisa.backend.config.AppExceptions.NotFoundException;
 import com.gakbisa.backend.config.AppExceptions.ValidationException;
 import com.gakbisa.backend.domain.AccountStatus;
-import com.gakbisa.backend.domain.Portfolio;
 import com.gakbisa.backend.domain.Report;
 import com.gakbisa.backend.domain.ReportStatus;
 import com.gakbisa.backend.domain.ReportTargetType;

@@ -70,7 +70,7 @@ public class SeedDataRunner implements ApplicationRunner {
         skill("Inggris", cats.get("Bahasa"));
         skill("Excel", cats.get("Data"));
 
-        User admin = user("Admin GAKBISA", "admin@gakbisa.test", "admin123", UserRole.ADMIN);
+        user("Admin GAKBISA", "admin@gakbisa.test", "admin123", UserRole.ADMIN);
         User yafet = user("Yafet Wenda", "yafet@gakbisa.test", "yafet123", UserRole.STUDENT);
         User faiz = user("Moh. Faiz", "faiz@gakbisa.test", "faiz123", UserRole.STUDENT);
         User nando = user("Haudajun Nando", "haudajun@gakbisa.test", "haudajun123", UserRole.STUDENT);

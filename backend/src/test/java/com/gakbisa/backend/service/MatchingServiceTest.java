@@ -31,6 +31,7 @@ class MatchingServiceTest {
     private User stranger;
 
     @BeforeEach
+    @SuppressWarnings("unused")
     void setup() {
         users = mock(UserRepository.class);
         userSkills = mock(UserSkillRepository.class);

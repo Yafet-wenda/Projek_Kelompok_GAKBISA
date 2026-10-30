@@ -6,7 +6,6 @@ import com.gakbisa.backend.service.AuthService;
 import com.gakbisa.backend.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

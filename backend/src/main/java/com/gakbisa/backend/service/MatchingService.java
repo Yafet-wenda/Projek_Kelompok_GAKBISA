@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -36,6 +35,7 @@ public class MatchingService {
     static final int NEED_MATCH = 50;
     static final int MUTUAL_MATCH = 30;
     static final int LEVEL_MATCH = 10;
+    static final int PROFILE_BIO = 2;
     static final int PROFILE_COMPLETE = 5;
     static final int REPUTATION = 5;
 
@@ -56,7 +56,7 @@ public class MatchingService {
 
     @Transactional(readOnly = true)
     public List<Candidate> recommend(UUID userId, int limit) {
-        User me = users.findById(userId).orElseThrow(() -> new NotFoundException("Pengguna tidak ditemukan"));
+        users.findById(userId).orElseThrow(() -> new NotFoundException("Pengguna tidak ditemukan"));
 
         List<UserSkill> mySkills = userSkills.findByUserId(userId);
         Map<String, UserSkill> myOffer = indexBySkillName(filter(mySkills, SkillType.OFFER));
@@ -115,8 +115,8 @@ public class MatchingService {
             // 4) Kelengkapan profil/portofolio (5)
             long theirPortfolios = portfolios.countByUserId(other.getId());
             int profilePts = 0;
-            if (other.getBio() != null && !other.getBio().isBlank()) profilePts += 2;
-            if (theirPortfolios > 0) profilePts += 3;
+            if (other.getBio() != null && !other.getBio().isBlank()) profilePts += PROFILE_BIO;
+            if (theirPortfolios > 0) profilePts += PROFILE_COMPLETE - PROFILE_BIO;
             if (profilePts > 0) {
                 score += profilePts;
                 reasons.add("Profil " + (theirPortfolios > 0 ? "lengkap dengan portofolio" : "berisi deskripsi"));
@@ -140,7 +140,7 @@ public class MatchingService {
             }
         }
 
-        result.sort(Comparator.comparingInt(Candidate::score).reversed());
+        result.sort((left, right) -> Integer.compare(right.score(), left.score()));
         return result.size() > capped ? result.subList(0, capped) : result;
     }
 
