@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<aside th:fragment="sidebar" class="fb-sidebar-left">
+    <!-- User Mini Profile -->
+    <a th:href="@{/profile}" class="fb-user-mini" sec:authorize="isAuthenticated()">
+        <div class="fb-avatar-placeholder fb-avatar-sm" style="width:36px;height:36px;font-size:15px;">
+            <i class="bi bi-person-fill"></i>
+        </div>
+        <span sec:authentication="name">Saya</span>
+    </a>
+
+    <!-- Navigation Links -->
+    <a th:href="@{/dashboard}" class="fb-nav-link">
+        <span class="nav-icon blue"><i class="bi bi-house-fill"></i></span>
+        Dashboard
+    </a>
+    <a th:href="@{/profile}" class="fb-nav-link">
+        <span class="nav-icon purple"><i class="bi bi-person-fill"></i></span>
+        Profil Saya
+    </a>
+    <a th:href="@{/profile/skills}" class="fb-nav-link">
+        <span class="nav-icon orange"><i class="bi bi-stars"></i></span>
+        Keahlian Saya
+    </a>
+
+    <hr class="fb-sidebar-divider">
+
+    <a th:href="@{/matching}" class="fb-nav-link">
+        <span class="nav-icon blue"><i class="bi bi-people-fill"></i></span>
+        Cari Partner
+    </a>
+    <a th:href="@{/barter}" class="fb-nav-link">
+        <span class="nav-icon green"><i class="bi bi-arrow-left-right"></i></span>
+        Permintaan Barter
+    </a>
+    <a th:href="@{/sessions}" class="fb-nav-link">
+        <span class="nav-icon teal"><i class="bi bi-calendar-event-fill"></i></span>
+        Sesi Belajar
+    </a>
+    <a th:href="@{/portfolio}" class="fb-nav-link">
+        <span class="nav-icon orange"><i class="bi bi-collection-fill"></i></span>
+        Portofolio
+    </a>
+    <a th:href="@{/notifications}" class="fb-nav-link">
+        <span class="nav-icon red"><i class="bi bi-bell-fill"></i></span>
+        Notifikasi
+    </a>
+
+    <hr class="fb-sidebar-divider" sec:authorize="hasRole('ADMIN')">
+
+    <div class="fb-sidebar-section-title" sec:authorize="hasRole('ADMIN')">Admin</div>
+    <a th:href="@{/admin}" class="fb-nav-link" sec:authorize="hasRole('ADMIN')">
+        <span class="nav-icon gray"><i class="bi bi-speedometer2"></i></span>
+        Admin Dashboard
+    </a>
+    <a th:href="@{/admin/users}" class="fb-nav-link" sec:authorize="hasRole('ADMIN')">
+        <span class="nav-icon gray"><i class="bi bi-people"></i></span>
+        Kelola Pengguna
+    </a>
+    <a th:href="@{/admin/categories}" class="fb-nav-link" sec:authorize="hasRole('ADMIN')">
+        <span class="nav-icon gray"><i class="bi bi-tags"></i></span>
+        Kategori Keahlian
+    </a>
+    <a th:href="@{/admin/reports}" class="fb-nav-link" sec:authorize="hasRole('ADMIN')">
+        <span class="nav-icon gray"><i class="bi bi-flag"></i></span>
+        Laporan
+    </a>
+
+    <hr class="fb-sidebar-divider">
+    <p class="px-2" style="font-size:12px;color:#65676B;line-height:1.5;">
+        GAKBISA &copy; 2026<br>
+        Platform Pertukaran Keahlian Mahasiswa<br>
+        PENS - PSDKU Lamongan
+    </p>
+</aside>
+</body>
+</html>
+

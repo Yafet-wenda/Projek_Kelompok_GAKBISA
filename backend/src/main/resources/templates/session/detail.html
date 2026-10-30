@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Detail Sesi')}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<div class="fb-layout container-fluid">
+    <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
+
+    <main class="fb-main">
+
+        <div th:if="${success}" class="fb-alert fb-alert-success mt-2">
+            <i class="bi bi-check-circle-fill"></i> <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="fb-alert fb-alert-error mt-2">
+            <i class="bi bi-exclamation-circle-fill"></i> <span th:text="${error}"></span>
+        </div>
+
+        <!-- Session Header Card -->
+        <div class="session-card"
+             th:classappend="${session.status == 'COMPLETED'} ? 'status-completed' : (${session.status == 'CANCELLED'} ? 'status-cancelled' : (${session.status == 'ONGOING'} ? 'status-ongoing' : ''))">
+            <div class="session-header">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div style="font-size:13px;opacity:.8;text-transform:uppercase;letter-spacing:.5px;">Pertukaran Keahlian</div>
+                        <h4 style="font-size:22px;font-weight:700;margin:4px 0;">
+                            <span th:text="${session.barterRequest.offeredUserSkill?.skill?.name ?: '-'}">Skill A</span>
+                            <i class="bi bi-arrow-left-right mx-2" style="font-size:16px;"></i>
+                            <span th:text="${session.barterRequest.wantedUserSkill?.skill?.name ?: '-'}">Skill B</span>
+                        </h4>
+                    </div>
+                    <span class="fb-badge" style="font-size:14px;"
+                          th:classappend="${session.status == 'SCHEDULED'} ? 'fb-badge-scheduled' : (${session.status == 'ONGOING'} ? 'fb-badge-ongoing' : (${session.status == 'COMPLETED'} ? 'fb-badge-completed' : 'fb-badge-cancelled'))"
+                          th:text="${session.status}">STATUS</span>
+                </div>
+            </div>
+
+            <!-- Session details -->
+            <div class="p-4">
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="fb-card p-3">
+                            <div style="font-size:11px;font-weight:700;color:#65676B;text-transform:uppercase;margin-bottom:4px;">Pengirim Barter</div>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="fb-avatar-placeholder" style="width:36px;height:36px;font-size:15px;">
+                                    <span th:text="${#strings.substring(session.barterRequest.requester.fullName,0,1)}">A</span>
+                                </div>
+                                <div>
+                                    <div style="font-weight:700;" th:text="${session.barterRequest.requester.fullName}">Nama</div>
+                                    <div style="font-size:12px;color:#65676B;" th:text="${session.barterRequest.requester.campus ?: ''}"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="fb-card p-3">
+                            <div style="font-size:11px;font-weight:700;color:#65676B;text-transform:uppercase;margin-bottom:4px;">Penerima Barter</div>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="fb-avatar-placeholder" style="width:36px;height:36px;font-size:15px;">
+                                    <span th:text="${#strings.substring(session.barterRequest.targetUser.fullName,0,1)}">B</span>
+                                </div>
+                                <div>
+                                    <div style="font-weight:700;" th:text="${session.barterRequest.targetUser.fullName}">Nama</div>
+                                    <div style="font-size:12px;color:#65676B;" th:text="${session.barterRequest.targetUser.campus ?: ''}"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4" th:if="${session.scheduledAt}">
+                        <div style="font-size:11px;font-weight:700;color:#65676B;text-transform:uppercase;">Waktu</div>
+                        <div style="font-weight:700;font-size:16px;"
+                             th:text="${#temporals.format(session.scheduledAt, 'dd MMMM yyyy, HH:mm')}">Waktu</div>
+                    </div>
+                    <div class="col-md-4" th:if="${session.durationMinutes}">
+                        <div style="font-size:11px;font-weight:700;color:#65676B;text-transform:uppercase;">Durasi</div>
+                        <div style="font-weight:700;font-size:16px;" th:text="${session.durationMinutes} + ' menit'"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <div style="font-size:11px;font-weight:700;color:#65676B;text-transform:uppercase;">Platform</div>
+                        <div style="font-weight:700;font-size:16px;" th:text="${session.meetingProvider ?: 'JITSI'}"></div>
+                    </div>
+                </div>
+
+                <!-- Join Meeting Button -->
+                <div th:if="${session.status == 'SCHEDULED' or session.status == 'ONGOING'}"
+                     class="text-center p-4 mb-3"
+                     style="background:linear-gradient(135deg,#1877F2,#42b72a);border-radius:12px;">
+                    <i class="bi bi-camera-video-fill" style="font-size:48px;color:white;display:block;margin-bottom:12px;"></i>
+                    <h5 style="color:white;font-weight:700;margin-bottom:16px;">Bergabung ke Sesi Meeting</h5>
+                    <!-- Jitsi embedded or link -->
+                    <a th:if="${session.meetingProvider == 'JITSI'}"
+                       th:href="'https://meet.jit.si/' + ${session.meetingRoom}"
+                       class="btn btn-light fw-bold px-5 btn-lg" target="_blank">
+                        <i class="bi bi-camera-video-fill me-2"></i>Gabung Jitsi Meet
+                    </a>
+                    <a th:if="${session.meetingProvider == 'EXTERNAL_LINK' and session.meetingUrl != null}"
+                       th:href="${session.meetingUrl}"
+                       class="btn btn-light fw-bold px-5 btn-lg" target="_blank">
+                        <i class="bi bi-box-arrow-up-right me-2"></i>Buka Meeting
+                    </a>
+                    <div th:if="${session.meetingRoom}" class="mt-2" style="color:rgba(255,255,255,.8);font-size:12px;">
+                        Room: <code style="background:rgba(0,0,0,.2);padding:2px 6px;border-radius:4px;"
+                                    th:text="${session.meetingRoom}"></code>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="d-flex gap-2 flex-wrap">
+                    <th:block th:if="${session.status == 'SCHEDULED' or session.status == 'ONGOING'}">
+                        <form th:action="@{'/sessions/' + ${session.id} + '/complete'}" method="post" style="margin:0;">
+                            <button type="submit" class="btn btn-success fw-semibold"
+                                    data-confirm="Tandai sesi ini sebagai selesai?">
+                                <i class="bi bi-check-circle-fill me-1"></i>Tandai Selesai
+                            </button>
+                        </form>
+                        <form th:action="@{'/sessions/' + ${session.id} + '/cancel'}" method="post" style="margin:0;">
+                            <button type="submit" class="btn btn-fb-danger fw-semibold"
+                                    data-confirm="Batalkan sesi ini?">
+                                <i class="bi bi-x-circle me-1"></i>Batalkan Sesi
+                            </button>
+                        </form>
+                    </th:block>
+                    <a th:href="@{/sessions}" class="btn btn-fb-secondary fw-semibold">
+                        <i class="bi bi-arrow-left me-1"></i>Kembali
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Review Form (only if COMPLETED) -->
+        <div th:if="${session.status == 'COMPLETED'}" class="fb-card p-4">
+            <h5 style="font-size:20px;font-weight:700;margin-bottom:16px;">
+                <i class="bi bi-star-fill text-warning me-2"></i>Berikan Ulasan
+            </h5>
+            <form th:action="@{'/reviews/session/' + ${session.id}}" method="post">
+                <div class="mb-3">
+                    <label class="fb-form-label">Rating <span style="color:#c62828;">*</span></label>
+                    <div class="star-rating d-flex gap-2" style="font-size:36px;">
+                        <label title="5 - Sangat Bagus" style="cursor:pointer;color:#CED0D4;">
+                            <input type="radio" name="rating" value="5" style="display:none;">⭐
+                        </label>
+                        <label title="4 - Bagus" style="cursor:pointer;color:#CED0D4;">
+                            <input type="radio" name="rating" value="4" style="display:none;">⭐
+                        </label>
+                        <label title="3 - Cukup" style="cursor:pointer;color:#CED0D4;">
+                            <input type="radio" name="rating" value="3" style="display:none;">⭐
+                        </label>
+                        <label title="2 - Kurang" style="cursor:pointer;color:#CED0D4;">
+                            <input type="radio" name="rating" value="2" style="display:none;">⭐
+                        </label>
+                        <label title="1 - Sangat Kurang" style="cursor:pointer;color:#CED0D4;">
+                            <input type="radio" name="rating" value="1" style="display:none;">⭐
+                        </label>
+                    </div>
+                    <!-- Simple star radio -->
+                    <div class="d-flex gap-2 mt-2">
+                        <div th:each="i : ${#numbers.sequence(1,5)}" class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="rating" th:value="${i}" th:id="'star' + ${i}" required>
+                            <label class="form-check-label fw-semibold" th:for="'star' + ${i}" th:text="${i} + ' ⭐'"></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="fb-form-label">Komentar (Opsional)</label>
+                    <textarea name="comment" class="form-control" rows="3"
+                              placeholder="Bagaimana pengalaman belajarmu? Ceritakan!"></textarea>
+                </div>
+                <button type="submit" class="btn btn-warning fw-bold text-white">
+                    <i class="bi bi-send-fill me-1"></i>Kirim Ulasan
+                </button>
+            </form>
+        </div>
+
+    </main>
+
+    <aside class="fb-sidebar-right">
+        <div class="fb-card p-3">
+            <div style="font-size:16px;font-weight:700;margin-bottom:8px;">💡 Info Sesi</div>
+            <p style="font-size:13px;color:#65676B;line-height:1.6;">
+                Setelah sesi selesai, jangan lupa berikan ulasan untuk partner Anda!
+                Ulasan membantu membangun kepercayaan di komunitas GAKBISA.
+            </p>
+            <a th:href="@{'/barter/' + ${session.barterRequest.id}}"
+               class="btn btn-fb-secondary w-100 btn-sm">
+                <i class="bi bi-arrow-left-right me-1"></i>Lihat Detail Barter
+            </a>
+        </div>
+    </aside>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>
+

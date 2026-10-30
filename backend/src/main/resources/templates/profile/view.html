@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/head :: head('Profil')}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<div class="fb-layout container-fluid">
+    <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
+
+    <main class="fb-main" style="max-width:860px;">
+
+        <!-- Cover + profile info -->
+        <div class="fb-profile-cover mb-0" style="border-radius:12px 12px 0 0;"></div>
+        <div class="fb-profile-info-section" style="border-radius:0 0 12px 12px;">
+            <div class="d-flex align-items-flex-end gap-3 flex-wrap">
+                <div class="fb-profile-avatar-container">
+                    <img th:if="${user.avatarPath != null}" th:src="${user.avatarPath}" alt="Avatar"
+                         style="width:168px;height:168px;border-radius:50%;border:4px solid white;object-fit:cover;">
+                    <div th:if="${user.avatarPath == null}"
+                         class="fb-avatar-placeholder"
+                         style="width:168px;height:168px;font-size:72px;border:4px solid white;margin-top:-42px;">
+                        <span th:text="${#strings.substring(user.fullName,0,1)}">A</span>
+                    </div>
+                </div>
+                <div class="fb-profile-name-row flex-grow-1 align-items-center" style="margin-top:12px;">
+                    <div>
+                        <h1 class="fb-profile-name" th:text="${user.fullName}">Nama Pengguna</h1>
+                        <p class="fb-profile-bio" th:text="${user.bio ?: 'Mahasiswa GAKBISA'}"></p>
+                    </div>
+                    <!-- Actions (only show edit if viewing own profile) -->
+                    <div class="d-flex gap-2">
+                        <a th:href="@{/barter/request/{id}(id=${user.id})}"
+                           sec:authorize="isAuthenticated()"
+                           class="btn btn-primary fw-semibold">
+                            <i class="bi bi-arrow-left-right me-1"></i>Ajak Barter
+                        </a>
+                        <a th:href="@{/profile/edit}"
+                           class="btn btn-fb-secondary fw-semibold">
+                            <i class="bi bi-pencil-fill me-1"></i>Edit Profil
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Meta info -->
+            <div class="fb-profile-meta mt-3">
+                <div class="fb-profile-meta-item" th:if="${user.campus}">
+                    <i class="bi bi-building"></i>
+                    <span th:text="${user.campus}">Kampus</span>
+                </div>
+                <div class="fb-profile-meta-item">
+                    <i class="bi bi-envelope"></i>
+                    <span th:text="${user.email}">email@example.com</span>
+                </div>
+                <div class="fb-profile-meta-item">
+                    <i class="bi bi-calendar3"></i>
+                    <span>Bergabung <span th:text="${#temporals.format(user.createdAt, 'MMMM yyyy')}">2026</span></span>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="fb-profile-tabs">
+                <a href="#tentang" class="fb-profile-tab active">Tentang</a>
+                <a href="#offer" class="fb-profile-tab">Ditawarkan</a>
+                <a href="#want" class="fb-profile-tab">Dicari</a>
+                <a th:href="@{/portfolio/user/{id}(id=${user.id})}" class="fb-profile-tab">Portofolio</a>
+            </div>
+        </div>
+
+        <!-- Tentang section -->
+        <div id="tentang" class="fb-card p-4">
+            <h5 style="font-size:20px;font-weight:700;margin-bottom:12px;">Tentang</h5>
+            <p th:if="${user.bio}" th:text="${user.bio}" style="color:#050505;font-size:15px;"></p>
+            <p th:if="${user.bio == null}" style="color:#65676B;">Belum ada bio. <a th:href="@{/profile/edit}">Tambahkan bio</a></p>
+        </div>
+
+        <!-- Offer Skills -->
+        <div id="offer" class="fb-card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 style="font-size:20px;font-weight:700;margin:0;">
+                    <i class="bi bi-hand-thumbs-up-fill text-primary me-2"></i>Keahlian Ditawarkan
+                </h5>
+                <a th:href="@{/profile/skills}" class="btn btn-fb-secondary btn-sm">
+                    <i class="bi bi-pencil me-1"></i>Kelola
+                </a>
+            </div>
+            <div th:if="${#lists.isEmpty(offerSkills)}" style="color:#65676B;font-size:14px;">
+                Belum ada keahlian yang ditawarkan.
+                <a th:href="@{/profile/skills}">Tambahkan sekarang</a>
+            </div>
+            <div th:if="${!#lists.isEmpty(offerSkills)}">
+                <span class="skill-tag offer" th:each="us : ${offerSkills}">
+                    <span class="level-dot"
+                          th:classappend="${us.level == 'BEGINNER'} ? 'beginner' : (${us.level == 'INTERMEDIATE'} ? 'intermediate' : 'advanced')"></span>
+                    <i class="bi bi-stars" style="font-size:12px;"></i>
+                    <span th:text="${us.skill.name}">Skill</span>
+                    <span th:if="${us.level}" style="font-size:11px;opacity:0.7;" th:text="'· ' + ${us.level}"></span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Want Skills -->
+        <div id="want" class="fb-card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 style="font-size:20px;font-weight:700;margin:0;">
+                    <i class="bi bi-book-fill text-danger me-2"></i>Keahlian Dicari
+                </h5>
+                <a th:href="@{/profile/skills}" class="btn btn-fb-secondary btn-sm">
+                    <i class="bi bi-pencil me-1"></i>Kelola
+                </a>
+            </div>
+            <div th:if="${#lists.isEmpty(wantSkills)}" style="color:#65676B;font-size:14px;">
+                Belum ada keahlian yang dicari.
+                <a th:href="@{/profile/skills}">Tambahkan sekarang</a>
+            </div>
+            <div th:if="${!#lists.isEmpty(wantSkills)}">
+                <span class="skill-tag want" th:each="us : ${wantSkills}">
+                    <i class="bi bi-book" style="font-size:12px;"></i>
+                    <span th:text="${us.skill.name}">Skill</span>
+                    <span th:if="${us.level}" style="font-size:11px;opacity:0.7;" th:text="'· ' + ${us.level}"></span>
+                </span>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Right sidebar -->
+    <aside class="fb-sidebar-right">
+        <div class="fb-card p-3">
+            <div style="font-size:16px;font-weight:700;margin-bottom:12px;">Info Akun</div>
+            <div class="d-flex justify-content-between mb-2">
+                <span style="color:#65676B;font-size:14px;">Keahlian Ditawarkan</span>
+                <strong th:text="${offerSkills.size()}">0</strong>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+                <span style="color:#65676B;font-size:14px;">Keahlian Dicari</span>
+                <strong th:text="${wantSkills.size()}">0</strong>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+                <span style="color:#65676B;font-size:14px;">Status</span>
+                <span class="fb-badge"
+                      th:classappend="${user.status == 'ACTIVE'} ? 'fb-badge-accepted' : 'fb-badge-rejected'"
+                      th:text="${user.status}">ACTIVE</span>
+            </div>
+            <hr style="border-color:#CED0D4;">
+            <a th:href="@{/portfolio/user/{id}(id=${user.id})}" class="btn btn-fb-secondary w-100 btn-sm mb-2">
+                <i class="bi bi-collection me-1"></i>Lihat Portofolio
+            </a>
+            <a th:href="@{/barter/request/{id}(id=${user.id})}"
+               class="btn btn-primary w-100 btn-sm">
+                <i class="bi bi-arrow-left-right me-1"></i>Ajak Barter
+            </a>
+        </div>
+    </aside>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>
+

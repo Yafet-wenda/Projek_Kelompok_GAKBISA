@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Cari Partner')}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<div class="fb-layout container-fluid">
+    <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
+
+    <main class="fb-main" style="max-width:860px;">
+
+        <!-- Search bar -->
+        <div class="fb-card p-3 mb-3">
+            <form th:action="@{/matching}" method="get" class="d-flex gap-2 align-items-center">
+                <div class="d-flex align-items-center gap-2 flex-grow-1"
+                     style="background:#F0F2F5;border-radius:50px;padding:10px 16px;">
+                    <i class="bi bi-search text-secondary"></i>
+                    <input type="text" name="keyword" th:value="${keyword}"
+                           placeholder="Cari berdasarkan nama atau keahlian..."
+                           class="border-0 bg-transparent flex-grow-1"
+                           style="outline:none;font-size:15px;">
+                </div>
+                <button type="submit" class="btn btn-primary fw-semibold px-4">
+                    <i class="bi bi-search me-1"></i>Cari
+                </button>
+            </form>
+        </div>
+
+        <!-- Results header -->
+        <div class="d-flex align-items-center justify-content-between mb-2 px-1">
+            <h5 style="font-size:20px;font-weight:700;margin:0;">
+                Partner Rekomendasi
+                <span th:if="${keyword}" style="font-size:14px;font-weight:400;color:#65676B;"
+                      th:text="'· Hasil untuk &quot;' + ${keyword} + '&quot;'"></span>
+            </h5>
+            <span style="font-size:14px;color:#65676B;" th:text="${matches.size()} + ' partner ditemukan'">0 partner</span>
+        </div>
+
+        <!-- Empty state -->
+        <div th:if="${#lists.isEmpty(matches)}" class="fb-card">
+            <div class="fb-empty">
+                <i class="bi bi-people"></i>
+                <h5>Tidak Ada Partner Ditemukan</h5>
+                <p>Coba tambahkan lebih banyak keahlian OFFER dan WANT di profil Anda,
+                   atau gunakan kata kunci berbeda.</p>
+                <a th:href="@{/profile/skills}" class="btn btn-primary btn-sm">
+                    <i class="bi bi-plus-lg me-1"></i>Tambah Keahlian
+                </a>
+            </div>
+        </div>
+
+        <!-- Match cards grid -->
+        <div th:if="${!#lists.isEmpty(matches)}" class="row g-3">
+            <div class="col-sm-6" th:each="match : ${matches}">
+                <div class="fb-match-card h-100">
+                    <!-- Cover with gradient based on score -->
+                    <div class="match-cover" style="height:80px;"></div>
+                    <div class="match-avatar-wrap">
+                        <img th:if="${match.candidate.avatarPath != null}"
+                             th:src="${match.candidate.avatarPath}"
+                             class="match-avatar" alt="Avatar">
+                        <div th:if="${match.candidate.avatarPath == null}"
+                             class="fb-avatar-placeholder"
+                             style="width:56px;height:56px;font-size:22px;border:3px solid white;font-weight:700;">
+                            <span th:text="${#strings.substring(match.candidate.fullName,0,1)}">A</span>
+                        </div>
+                    </div>
+                    <div class="match-body">
+                        <div class="match-name">
+                            <a th:href="@{'/profile/' + ${match.candidate.id}}"
+                               style="color:inherit;text-decoration:none;"
+                               th:text="${match.candidate.fullName}">Nama</a>
+                        </div>
+                        <div class="match-campus"
+                             th:text="${match.candidate.campus ?: 'Mahasiswa GAKBISA'}">Kampus</div>
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <div class="match-score-bar flex-grow-1">
+                                <div class="match-score-fill" th:style="'width:' + ${match.score} + '%'"></div>
+                            </div>
+                            <small style="font-weight:700;color:#1877F2;white-space:nowrap;"
+                                   th:text="${match.score} + ' poin'">0 poin</small>
+                        </div>
+                        <!-- Bio preview -->
+                        <p th:if="${match.candidate.bio}" style="font-size:12px;color:#65676B;margin-bottom:6px;line-height:1.4;"
+                           th:text="${#strings.abbreviate(match.candidate.bio, 80)}"></p>
+                        <!-- Match reasons -->
+                        <div class="match-reasons" th:if="${!#lists.isEmpty(match.reasons)}">
+                            <span class="reason-tag" th:each="reason : ${match.reasons}"
+                                  th:text="${reason}"></span>
+                        </div>
+                        <div class="d-flex gap-2 mt-2">
+                            <a th:href="@{'/barter/request/' + ${match.candidate.id}}"
+                               class="btn btn-primary btn-sm flex-grow-1 fw-semibold">
+                                <i class="bi bi-arrow-left-right me-1"></i>Ajak Barter
+                            </a>
+                            <a th:href="@{'/profile/' + ${match.candidate.id}}"
+                               class="btn btn-fb-secondary btn-sm">
+                                Profil
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <aside class="fb-sidebar-right">
+        <div class="fb-card p-3 mb-3">
+            <div style="font-size:16px;font-weight:700;margin-bottom:8px;">📊 Cara Kerja Matching</div>
+            <div style="font-size:13px;color:#65676B;line-height:1.8;">
+                <div class="d-flex justify-content-between">
+                    <span>Kecocokan kebutuhan</span><strong style="color:#050505;">50 poin</strong>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span>Kecocokan dua arah</span><strong style="color:#050505;">30 poin</strong>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span>Kesesuaian level</span><strong style="color:#050505;">10 poin</strong>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span>Profil & portofolio</span><strong style="color:#050505;">5 poin</strong>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span>Reputasi</span><strong style="color:#050505;">5 poin</strong>
+                </div>
+            </div>
+        </div>
+        <div class="fb-card p-3">
+            <a th:href="@{/profile/skills}" class="btn btn-primary w-100 fw-semibold mb-2">
+                <i class="bi bi-plus-lg me-1"></i>Tambah Keahlian
+            </a>
+            <a th:href="@{/profile/edit}" class="btn btn-fb-secondary w-100 fw-semibold">
+                <i class="bi bi-pencil me-1"></i>Lengkapi Profil
+            </a>
+        </div>
+    </aside>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>
+

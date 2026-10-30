@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Edit Profil')}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<div class="fb-layout container-fluid">
+    <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
+
+    <main class="fb-main">
+        <div class="fb-card p-4">
+            <h4 style="font-size:24px;font-weight:700;margin-bottom:20px;">
+                <i class="bi bi-person-fill text-primary me-2"></i>Edit Profil
+            </h4>
+
+            <div th:if="${success}" class="fb-alert fb-alert-success mb-3">
+                <i class="bi bi-check-circle-fill"></i> <span th:text="${success}"></span>
+            </div>
+
+            <form th:action="@{/profile/edit}" method="post" th:object="${profileUpdateDto}"
+                  enctype="multipart/form-data">
+
+                <!-- Avatar upload -->
+                <div class="text-center mb-4">
+                    <div class="fb-avatar-placeholder" style="width:100px;height:100px;font-size:40px;margin:0 auto 12px;">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                    <label class="fb-form-label">Foto Profil</label>
+                    <input type="file" name="avatarFile" class="form-control form-control-sm" accept="image/*">
+                    <small style="color:#65676B;font-size:12px;">Format: JPG, PNG, WEBP. Maks 5MB.</small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="fb-form-label">Nama Lengkap <span style="color:#c62828;">*</span></label>
+                    <input type="text" th:field="*{fullName}" class="form-control form-control-lg"
+                           placeholder="Nama lengkap Anda" required>
+                    <div th:if="${#fields.hasErrors('fullName')}" class="text-danger small mt-1"
+                         th:errors="*{fullName}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="fb-form-label">Bio / Deskripsi Singkat</label>
+                    <textarea th:field="*{bio}" class="form-control" rows="4"
+                              placeholder="Ceritakan sedikit tentang dirimu, keahlian, dan minatmu..."></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label class="fb-form-label">Kampus / Program Studi</label>
+                    <input type="text" th:field="*{campus}" class="form-control"
+                           placeholder="Contoh: D3 Teknik Informatika, PENS">
+                </div>
+
+                <div class="d-flex gap-3">
+                    <button type="submit" class="btn btn-primary fw-bold px-4">
+                        <i class="bi bi-check-lg me-1"></i>Simpan Perubahan
+                    </button>
+                    <a th:href="@{/profile}" class="btn btn-fb-secondary fw-bold px-4">
+                        Batal
+                    </a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <aside class="fb-sidebar-right">
+        <div class="fb-card p-3">
+            <p style="font-size:14px;color:#65676B;">
+                <i class="bi bi-info-circle text-primary me-1"></i>
+                Profil yang lengkap meningkatkan peluang menemukan partner barter yang sesuai.
+            </p>
+            <ul style="font-size:13px;color:#65676B;padding-left:16px;">
+                <li>Tambahkan bio yang menarik</li>
+                <li>Isi nama kampus Anda</li>
+                <li>Upload foto profil</li>
+            </ul>
+        </div>
+    </aside>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>
+

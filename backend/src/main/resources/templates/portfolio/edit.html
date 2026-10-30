@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Edit Portofolio')}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<div class="fb-layout container-fluid">
+    <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
+
+    <main class="fb-main">
+        <div class="fb-card p-4">
+            <h4 style="font-size:24px;font-weight:700;margin-bottom:20px;">
+                <i class="bi bi-pencil-fill text-primary me-2"></i>Edit Portofolio
+            </h4>
+
+            <form th:action="@{'/portfolio/' + ${portfolio.id} + '/edit'}" method="post">
+                <div class="mb-3">
+                    <label class="fb-form-label">Judul Karya <span style="color:#c62828;">*</span></label>
+                    <input type="text" name="title" class="form-control"
+                           th:value="${portfolio.title}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="fb-form-label">Deskripsi</label>
+                    <textarea name="description" class="form-control" rows="4"
+                              th:text="${portfolio.description}"></textarea>
+                </div>
+                <div class="mb-4">
+                    <label class="fb-form-label">Visibilitas</label>
+                    <div class="d-flex gap-4 mt-1">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="visibility" value="PUBLIC"
+                                   id="visPublic" th:checked="${portfolio.visibility == 'PUBLIC'}">
+                            <label class="form-check-label fw-semibold" for="visPublic">
+                                <i class="bi bi-globe2 text-success me-1"></i>Publik
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="visibility" value="PRIVATE"
+                                   id="visPrivate" th:checked="${portfolio.visibility == 'PRIVATE'}">
+                            <label class="form-check-label fw-semibold" for="visPrivate">
+                                <i class="bi bi-lock-fill text-secondary me-1"></i>Privat
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Current file info -->
+                <div class="fb-alert fb-alert-info mb-4">
+                    <i class="bi bi-info-circle-fill"></i>
+                    File: <strong th:text="${portfolio.fileName}">filename.jpg</strong>
+                    (<span th:text="${portfolio.mimeType}">image/jpeg</span>).
+                    Edit ini tidak mengganti file.
+                </div>
+
+                <div class="d-flex gap-3">
+                    <button type="submit" class="btn btn-primary fw-bold px-4">
+                        <i class="bi bi-check-lg me-1"></i>Simpan
+                    </button>
+                    <a th:href="@{/portfolio}" class="btn btn-fb-secondary fw-bold px-4">Batal</a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <aside class="fb-sidebar-right"></aside>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>
+

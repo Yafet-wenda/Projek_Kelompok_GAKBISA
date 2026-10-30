@@ -1,0 +1,885 @@
+
+===== PAGE 1 =====
+GAKBISA  |  PROPOSAL PROJECT UAS 
+Halaman 1 
+PROPOSAL PROJECT GAKBISA 
+Mata Kuliah Praktikum Pemrograman Berorientasi Objek 
+Rancang Bangun Aplikasi Pertukaran Keahlian Mahasiswa Berbasis Web 
+Menggunakan Java dan Spring Boot 
+ 
+ 
+Dosen Pengampu: 
+Yunia Ikawati S.ST, M.Tr.Kom. 
+Disusun Oleh: 
+Yafet Wenda (3125521058) 
+Moh. Faiz Khoiru Izzuddin (3125521049) 
+Muhammad Haudajun Nando Kusnanto (3125521053) 
+ 
+ 
+ 
+PROGRAM STUDI D3 TEKNIK INFORMATIKA 
+PSDKU LAMONGAN 
+DEPARTEMEN TEKNIK INFORMATIKA DAN KOMPUTER 
+POLITEKNIK ELEKTRONIKA NEGERI SURABAYA 
+2026 
+
+===== PAGE 2 =====
+GAKBISA  |  PROPOSAL PROJECT UAS 
+Halaman 2 
+DAFTAR ISI 
+1. Judul Project ...................................................................................................................... 3 
+2. Latar Belakang .................................................................................................................. 5 
+3. Tujuan ................................................................................................................................ 8 
+4. Fitur Utama ...................................................................................................................... 10 
+5. Diagram Use Case ........................................................................................................... 13 
+6. Rancangan Database ........................................................................................................ 15 
+7. Teknologi yang Digunakan ............................................................................................. 20 
+8. Pembagian Tugas Anggota .............................................................................................. 22 
+9. Penutup ............................................................................................................................ 24 
+Daftar Pustaka ..................................................................................................................... 25 
+===== PAGE 3 =====
+GAKBISA  |  PROPOSAL PROJECT UAS 
+Halaman 3 
+1. JUDUL PROJECT 
+ 
+ 
+1.1 Nama dan Judul Project 
+GAKBISA (Gantian Ajari, Kita Bisa!): Rancang Bangun Aplikasi Pertukaran Keahlian Mahasiswa 
+Berbasis Web Menggunakan Java dan Spring Boot. 
+1.2 Ringkasan Project 
+GAKBISA merupakan aplikasi web yang menjadi wadah bagi mahasiswa untuk saling bertukar 
+pengetahuan dan keterampilan melalui skema barter keahlian. Pengguna dapat mencantumkan 
+keahlian yang dikuasai, keahlian yang ingin dipelajari, serta mengunggah portofolio sebagai bukti 
+hasil karya. Sistem akan membantu menemukan calon partner berdasarkan kecocokan kebutuhan 
+belajar dan keahlian yang ditawarkan. Setelah kedua pihak menyetujui pertukaran, mereka dapat 
+menjadwalkan sesi belajar dan melakukan pertemuan video melalui integrasi Jitsi Meet. 
+Sistem dikembangkan dengan Java sebagai bahasa utama backend melalui Spring Boot, antarmuka 
+web menggunakan HTML, CSS, JavaScript, dan Thymeleaf, sedangkan data terstruktur dan file 
+portofolio dikelola melalui layanan Supabase PostgreSQL dan Supabase Storage. Aplikasi juga 
+menyediakan penilaian dan reputasi untuk membantu pengguna memilih partner dengan lebih 
+percaya diri. 
+1.3 Gambaran Singkat 
+Aspek Keterangan 
+Nama aplikasi GAKBISA - Gantian Ajari, Kita Bisa! 
+Jenis aplikasi Aplikasi web pertukaran keahlian dan pembelajaran peer-to-peer 
+Target pengguna Mahasiswa yang ingin mengembangkan atau membagikan keahlian 
+Model pertukaran Pertukaran pengetahuan tanpa pembayaran uang; kedua pihak menyepakati 
+bentuk dan durasi belajar 
+Inovasi utama Pencocokan barter dua arah, portofolio karya, serta sesi belajar dengan video 
+meeting terintegrasi 
+Platform Website responsif untuk desktop dan perangkat mobile 
+Bahasa backend Java 25 LTS 
+Database dan file Supabase PostgreSQL dan Supabase Storage 
+ 
+ 
+ 
+ 
+===== PAGE 4 =====
+GAKBISA  |  PROPOSAL PROJECT UAS 
+Halaman 4 
+ 
+2. TAR BELAKANG 
+ 
+ 
+2.1 Latar Belakang 
+Mahasiswa perlu terus mengembangkan keterampilan teknis maupun nonteknis agar dapat 
+menghadapi kebutuhan akademik, organisasi, dan dunia kerja. Namun, kesempatan belajar 
+tambahan tidak selalu mudah diperoleh. Kursus berbayar dapat menjadi kendala bagi sebagian 
+mahasiswa, sementara kelas formal terkadang tidak cukup untuk memenuhi kebutuhan belajar yang 
+sangat spesifik. Pada saat yang sama, mahasiswa mempunyai kemampuan yang beragam. Sebagian 
+mahir dalam pemrograman, sebagian lain menguasai desain, bahasa asing, pengolahan data, public 
+speaking, atau keterampilan lain. 
+Keberagaman tersebut berpotensi menjadi sumber belajar bersama apabila tersedia sarana yang 
+mempertemukan mahasiswa secara tepat. Sayangnya, pencarian teman belajar masih sering 
+dilakukan secara informal melalui grup percakapan atau jaringan pertemanan. Cara tersebut belum 
+tentu memperlihatkan seluruh pilihan partner, bukti kemampuan, kesesuaian kebutuhan, dan jadwal 
+belajar secara terstruktur. 
+GAKBISA dikembangkan sebagai solusi yang memungkinkan mahasiswa menawarkan 
+keterampilan sekaligus menyebutkan keterampilan yang ingin dipelajari. Portofolio menjadi salah 
+satu cara untuk menunjukkan hasil karya, sedangkan algoritma pencocokan membantu 
+merekomendasikan partner. Ketika pertukaran disepakati, pengguna dapat mengatur jadwal dan 
+belajar melalui video meeting yang terintegrasi. Dengan mekanisme tersebut, proses menemukan 
+partner, menyepakati pertukaran, dan menjalankan sesi belajar berada dalam satu sistem. 
+ 
+2.2 Identifikasi Masalah 
+• Sulit menemukan partner belajar yang tepat berdasarkan keahlian yang dibutuhkan dan 
+keahlian yang dapat ditawarkan sebagai balasan. 
+• Bukti kemampuan atau hasil karya calon partner tersebar di banyak platform dan tidak selalu 
+mudah ditemukan. 
+• Belum ada alur terstruktur untuk mengirim, menerima, menolak, atau melacak permintaan 
+pertukaran keahlian. 
+• Penjadwalan belajar dan akses ke ruang pertemuan daring sering dilakukan terpisah dari proses 
+pencarian partner. 
+• Pengguna memerlukan cara untuk menilai pengalaman belajar dan membangun kepercayaan 
+melalui ulasan setelah sesi. 
+ 
+===== PAGE 5 =====
+GAKBISA  |  PROPOSAL PROJECT UAS 
+Halaman 5 
+2.3 Rumusan Masalah 
+1. Bagaimana membangun aplikasi web yang memfasilitasi pertukaran keahlian antar mahasiswa? 
+2. Bagaimana menyimpan data profil, keahlian, dan portofolio dengan terstruktur dan aman? 
+3. Bagaimana menerapkan algoritma pencocokan sederhana untuk merekomendasikan partner 
+barter yang relevan? 
+4. Bagaimana mengelola permintaan barter, penjadwalan sesi, dan video meeting dalam satu alur 
+aplikasi? 
+5. Bagaimana menyediakan penilaian dan moderasi dasar untuk meningkatkan kepercayaan antar 
+pengguna? 
+2.4 Batasan Masalah 
+• Aplikasi difokuskan untuk mahasiswa dan dikembangkan sebagai website responsif, bukan 
+aplikasi native Android/iOS. 
+• Pertukaran keahlian dilakukan berdasarkan kesepakatan kedua pihak. Sistem tidak memproses 
+pembayaran uang atau transaksi keuangan. 
+• Pencocokan partner menggunakan algoritma berbasis aturan dan bobot, bukan model AI atau 
+machine learning eksternal. 
+• Portofolio tahap awal mendukung gambar dan PDF. Video demonstrasi berukuran besar dapat 
+ditampilkan melalui tautan eksternal agar penggunaan penyimpanan tetap terkendali. 
+• Video meeting menggunakan integrasi Jitsi Meet melalui IFrame API. Ketersediaan dan 
+konfigurasi layanan pihak ketiga mengikuti ketentuan layanan yang digunakan. 
+• Admin memiliki fungsi pengelolaan kategori, moderasi portofolio, peninjauan laporan, dan 
+pengawasan pengguna dasar. 
+• Fitur real-time lanjutan seperti chat instan kompleks, perekaman meeting, transkripsi otomatis, 
+dan aplikasi mobile native berada di luar ruang lingkup versi UAS. 
+2.5 Manfaat yang Diharapkan 
+Bagi mahasiswa 
+Memberikan wadah untuk menemukan partner belajar, mengembangkan keterampilan baru, 
+memamerkan karya, serta membangun jaringan akademik melalui pertukaran ilmu tanpa biaya 
+kursus. 
+Bagi lingkungan kampus 
+Mendorong budaya kolaborasi antarmahasiswa, pembelajaran sebaya, serta berbagi pengalaman 
+lintas minat dan program studi. 
+Bagi tim pengembang 
+Menjadi sarana penerapan konsep pemrograman berorientasi objek, pengembangan web dengan 
+Java, desain basis data relasional, autentikasi, penyimpanan berkas, integrasi API, dan pengujian 
+perangkat lunak. 
+===== PAGE 6 =====
+GAKBISA  |  PROPOSAL PROJECT UAS 
+Halaman 6 
+3. TUJUAN 
+ 
+ 
+3.1 Tujuan Umum 
+Membangun aplikasi web GAKBISA sebagai wadah pertukaran keahlian mahasiswa yang 
+terstruktur, mudah digunakan, dan mendukung proses belajar bersama dari pencarian partner 
+hingga pelaksanaan sesi belajar. 
+3.2 Tujuan Khusus 
+1. Menyediakan registrasi, login, dan profil yang memungkinkan mahasiswa mencantumkan 
+keahlian yang dikuasai serta keahlian yang ingin dipelajari. 
+2. Menyediakan fitur unggah dan penampilan portofolio untuk membantu pengguna menunjukkan 
+hasil karya. 
+3. Mengembangkan algoritma rekomendasi partner berdasarkan kecocokan keahlian dan 
+kemungkinan pertukaran dua arah. 
+4. Mengelola permintaan barter dengan status yang jelas, seperti menunggu, diterima, ditolak, 
+dibatalkan, dan selesai. 
+5. Menyediakan penjadwalan sesi belajar serta akses video meeting melalui Jitsi Meet. 
+6. Menyediakan ulasan dan poin reputasi berdasarkan sesi belajar yang telah diselesaikan. 
+7. Menyediakan panel admin untuk pengelolaan kategori keahlian dan moderasi konten atau 
+laporan pengguna. 
+8. Menerapkan penyimpanan data dan file dengan kontrol akses serta validasi dasar. 
+3.3 Indikator Keberhasilan 
+No. Indikator Kriteria keberhasilan yang ditargetkan 
+1 Akun Pengguna dapat mendaftar, login, logout, dan mengubah profil. 
+2 Keahlian Pengguna dapat menambah, mengubah, dan menghapus keahlian yang 
+ditawarkan atau dicari. 
+3 Portofolio Pengguna dapat mengunggah file yang diizinkan, melihat portofolio, dan 
+menghapus karya miliknya. 
+4 Matching Sistem menampilkan daftar kandidat dan alasan kecocokan berdasarkan keahlian.  
+5 Barter Pengguna dapat mengirim, menerima, menolak, dan membatalkan permintaan 
+sesuai statusnya. 
+6 Sesi belajar Permintaan yang disepakati dapat dijadwalkan dan diubah statusnya. 
+7 Meeting Pengguna yang berhak dapat membuka ruang video meeting dari halaman sesi.  
+8 Ulasan Pengguna dapat memberi satu ulasan untuk partner pada sesi yang sudah selesai.  
+===== PAGE 7 =====
+GAKBISA  |  PROPOSAL PROJECT UAS 
+Halaman 7 
+No. Indikator Kriteria keberhasilan yang ditargetkan 
+9 Admin Admin dapat mengelola kategori dan meninjau portofolio atau laporan. 
+10 Keamanan Password disimpan dalam bentuk hash; file diperiksa jenis dan ukurannya; akses 
+fitur diverifikasi. 
+ 
+4. FITUR UTAMA 
+ 
+ 
+4.1 Fitur untuk Mahasiswa 
+Fitur Deskripsi 
+Registrasi dan login Mahasiswa membuat akun menggunakan nama, email, password, dan informasi 
+dasar. Login memverifikasi kredensial. Password disimpan sebagai hash dengan 
+BCrypt; tidak disimpan sebagai teks biasa. 
+Profil mahasiswa Pengguna melengkapi foto profil opsional, bio, kampus/program studi opsional, 
+minat, dan informasi singkat. Pengguna dapat melihat ringkasan keahlian serta 
+reputasinya. 
+Pengelolaan keahlian Pengguna mengisi daftar keahlian yang DITAWARKAN (OFFER) dan yang 
+INGIN DIPELAJARI (WANT). Setiap keahlian dapat disertai tingkat 
+kemampuan dan catatan belajar. 
+Portofolio hasil keahlian Pengguna mengunggah gambar atau PDF, mengisi judul dan deskripsi, lalu 
+memilih apakah karya boleh dilihat publik atau hanya oleh pengguna yang 
+berhak. Sistem menampilkan galeri portofolio di profil. 
+Pencarian dan Skill 
+Matching 
+Pengguna mencari berdasarkan kata kunci/kategori atau melihat rekomendasi 
+partner. Sistem menghitung skor kecocokan dan menjelaskan alasan rekomendasi, 
+misalnya “kamu menawarkan Java dan kandidat mencari Java”. 
+Permintaan barter Pengguna mengirim permintaan dengan menyebutkan keahlian yang ditawarkan, 
+keahlian yang ingin dipelajari, dan pesan singkat. Penerima dapat menerima atau 
+menolak permintaan. 
+Penjadwalan sesi belajar Setelah permintaan diterima, kedua pihak menyepakati tanggal, jam, dan durasi. 
+Sesi memiliki status terjadwal, berlangsung, selesai, atau dibatalkan. 
+Video meeting Halaman sesi menampilkan tombol “Gabung Meeting”. Ruang video ditanamkan 
+menggunakan Jitsi Meet IFrame API atau dibuka melalui tautan meeting yang 
+tersimpan. Izin bergabung hanya diberikan kepada pihak yang terkait dengan sesi.  
+Ulasan dan reputasi Sesudah sesi ditandai selesai, setiap peserta dapat memberikan rating 1 –5 dan 
+komentar. Sistem menampilkan ringkasan reputasi, jumlah sesi selesai, serta 
+ulasan pengguna. 
+===== PAGE 8 =====
+GAKBISA  |  PROPOSAL PROJECT UAS 
+Halaman 8 
+Fitur Deskripsi 
+Notifikasi Pengguna melihat pemberitahuan terkait permintaan barter, perubahan status, 
+jadwal sesi, dan ulasan. Implementasi awal dapat menggunakan notifikasi dalam 
+aplikasi; email/push bersifat opsional. 
+Laporan 
+pengguna/konten 
+Pengguna dapat melaporkan portofolio atau perilaku yang tidak sesuai. Laporan 
+disimpan dan dapat ditinjau admin. 
+ 
+4.2 Fitur untuk Admin 
+• Mengelola kategori dan daftar keahlian agar istilah tidak terlalu banyak duplikasi. 
+• Melihat daftar pengguna dan status akun; tindakan pembatasan akun hanya dilakukan 
+berdasarkan aturan yang disepakati tim. 
+• Meninjau laporan konten atau akun, mencatat keputusan moderasi, dan menyembunyikan karya 
+yang melanggar aturan. 
+• Melihat ringkasan jumlah pengguna, portofolio, permintaan barter, sesi selesai, serta laporan 
+masuk. 
+• Mengelola status laporan sehingga pelapor dan tim dapat menelusuri proses penanganan. 
+4.3 Algoritma Skill Matching 
+Sistem menggunakan algoritma berbasis aturan (rule-based matching). Algoritma ini lebih mudah 
+dijelaskan, diuji, dan diimplementasikan dalam Java dibandingkan menambahkan layanan AI 
+eksternal. Sistem membandingkan daftar OFFER (keahlian yang dikuasai) dengan daftar WANT 
+(keahlian yang dicari) dari dua pengguna. 
+Komponen skor Bobot usulan Penjelasan 
+Kecocokan kebutuhan 
+utama 
+50 poin Keahlian yang dicari pengguna A tersedia sebagai keahlian 
+yang ditawarkan pengguna B. 
+Kecocokan barter dua 
+arah 
+30 poin Keahlian yang dicari B tersedia sebagai keahlian yang 
+ditawarkan A. 
+Kesesuaian level 10 poin Level keahlian kandidat sesuai dengan kebutuhan belajar, 
+misalnya dasar atau menengah. 
+Kelengkapan 
+profil/portofolio 
+5 poin Profil memiliki deskripsi dan/atau portofolio yang relevan. 
+Reputasi 5 poin Skor berdasarkan ulasan dari sesi yang selesai, dengan 
+perlakuan khusus untuk pengguna baru. 
+Total maksimum 100 poin Bobot dapat disesuaikan setelah pengujian dan evaluasi 
+pengguna. 
+===== PAGE 9 =====
+GAKBISA  |  PROPOSAL PROJECT UAS 
+Halaman 9 
+ 
+4.4 Alur Utama Penggunaan Aplikasi 
+1. Mahasiswa mendaftar dan login ke GAKBISA. 
+2. Mahasiswa melengkapi profil, memasukkan keahlian OFFER dan WANT, serta mengunggah 
+portofolio bila tersedia. 
+3. Sistem menyusun rekomendasi partner berdasarkan kesesuaian keahlian. 
+4. Pengguna memilih kandidat dan mengirim permintaan barter. 
+5. Penerima menerima atau menolak. Jika diterima, kedua pihak menyepakati waktu belajar. 
+6. Sistem membuat sesi dan menampilkan tombol menuju ruang Jitsi Meet. 
+7. Kedua pihak mengikuti sesi, kemudian menandainya selesai. 
+8. Masing-masing peserta memberikan ulasan; reputasi diperbarui dan proses tercatat di riwayat. 
+4.5 Kebutuhan Fungsional 
+• Sistem harus dapat membuat akun, memverifikasi login, mengakhiri sesi, dan membatasi 
+halaman berdasarkan status autentikasi serta peran. 
+• Sistem harus dapat menyimpan dan mengelola profil, kategori keahlian, keahlian 
+OFFER/WANT, dan portofolio. 
+• Sistem harus dapat melakukan pencarian dan mengurutkan rekomendasi partner berdasarkan 
+skor matching. 
+• Sistem harus dapat menjaga transisi status permintaan barter agar hanya status yang valid yang 
+dapat dilakukan. 
+• Sistem harus dapat membuat, menampilkan, mengubah, dan membatalkan jadwal sesi sesuai 
+hak akses. 
+• Sistem harus dapat memverifikasi peserta sesi sebelum menampilkan akses meeting. 
+• Sistem harus dapat menyimpan ulasan dan menghitung ringkasan reputasi dari sesi yang 
+selesai. 
+• Sistem harus menyediakan moderasi kategori, karya, pengguna, dan laporan oleh admin. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+===== PAGE 10 =====
+GAKBISA  |  PROPOSAL PROJECT UAS 
+Halaman 10 
+4.6 Kebutuhan Nonfungsional 
+Aspek Kebutuhan 
+Keamanan Password di-hash menggunakan BCrypt; validasi server-side; otorisasi pada setiap 
+endpoint; secret key tidak diletakkan di frontend; file divalidasi berdasarkan MIME/type 
+dan ukuran. 
+Privasi Pengguna dapat memilih visibilitas portofolio. File privat diakses melalui pemeriksaan 
+hak akses atau signed URL berumur terbatas. 
+Usability Navigasi sederhana, responsif, pesan error jelas, dan alur utama dapat dipahami tanpa 
+panduan panjang. 
+Kinerja Pencarian diberi batas jumlah hasil dan pagination; file tidak disimpan sebagai blob di 
+tabel metadata. 
+Reliabilitas Kegagalan layanan meeting/storage ditampilkan sebagai pesan yang dapat dipahami dan 
+tidak menghapus data permintaan barter. 
+Maintainability Kode dibagi ke controller, service, repository, entity, DTO/schema, konfigurasi, serta 
+pengujian. 
+Kompatibilitas Website diuji pada peramban desktop modern dan tampilan mobile. Fitur 
+kamera/mikrofon memerlukan izin peramban dan koneksi HTTPS pada lingkungan 
+publik. 
+ 
+===== PAGE 11 =====
+GAKBISA  |  PROPOSAL PROJECT UAS 
+Halaman 11 
+5. DIAGRAM USE CASE 
+ 
+ 
+Diagram use case berikut menggambarkan aktor yang berinteraksi dengan sistem GAKBISA. Mahasiswa 
+merupakan aktor utama; tamu dapat melihat katalog publik, admin menangani pengelolaan dan moderasi, 
+sedangkan Supabase Storage dan Jitsi Meet menjadi layanan eksternal yang mendukung penyimpanan file dan 
+video meeting. 
+ 
+Gambar 1. Use case diagram GAKBISA (rancangan tingkat tinggi). 
+5.1 Deskripsi Aktor dan Layanan Pendukung 
+Aktor/layanan 
+pendukung Tanggung jawab 
+Tamu Melihat halaman informasi aplikasi dan katalog keahlian/portofolio yang memang 
+ditandai publik. 
+Mahasiswa Mendaftar/login, mengelola profil, menawarkan/mencari keahlian, mengunggah 
+portofolio, melakukan barter, menjadwalkan sesi, mengikuti meeting, memberikan 
+ulasan, dan mengelola notifikasi. 
+Admin Mengelola kategori keahlian, meninjau laporan, melakukan moderasi dasar, dan melihat 
+ringkasan sistem. 
+Supabase Storage Menyimpan dan melayani file portofolio berdasarkan konfigurasi bucket serta izin 
+akses. 
+Jitsi Meet Menyediakan sarana komunikasi video/audio yang diakses dari halaman sesi belajar.  
+ 
+ 
+
+===== PAGE 12 =====
+GAKBISA  |  PROPOSAL PROJECT UAS 
+Halaman 12 
+5.2 Skenario Use Case Utama 
+A. Mengirim Permintaan Barter 
+Elemen Deskripsi 
+Aktor utama Mahasiswa pengirim dan mahasiswa penerima 
+Prasyarat Pengirim sudah login dan memiliki profil serta data keahlian. 
+Alur utama Pengirim memilih kandidat; sistem menampilkan kecocokan; pengirim memilih keahlian 
+yang akan ditawarkan dan dipelajari; pengirim mengirim pesan; sistem menyimpan 
+permintaan berstatus MENUNGGU dan membuat notifikasi. 
+Alur alternatif Jika kandidat tidak ditemukan atau data keahlian tidak valid, sistem menampilkan pesan 
+dan meminta pengguna memperbaiki input. 
+Hasil Permintaan tersimpan dan penerima dapat menerima atau menolak. 
+ 
+B. Menjadwalkan dan Mengikuti Sesi Belajar 
+Elemen Deskripsi 
+Aktor utama Dua mahasiswa yang permintaan barternya telah diterima 
+Prasyarat Permintaan barter berstatus DITERIMA. 
+Alur utama Salah satu pihak mengusulkan jadwal; kedua pihak menyepakati waktu; sistem 
+menyimpan sesi dan identitas ruang meeting; saat waktunya tiba peserta membuka sesi 
+dan menekan tombol Gabung Meeting. 
+Alur alternatif Jika waktu berubah, pihak terkait mengajukan perubahan. Jika layanan Jitsi tidak 
+tersedia, sistem menampilkan tautan alternatif atau pesan kendala. 
+Hasil Sesi tercatat; setelah selesai peserta dapat memberikan ulasan. 
+ 
+C. Mengunggah Portofolio 
+Elemen Deskripsi 
+Aktor utama Mahasiswa 
+Prasyarat Pengguna telah login. 
+Alur utama Pengguna mengisi judul dan deskripsi, memilih gambar/PDF, sistem memvalidasi jenis 
+dan ukuran, mengunggah file ke bucket Supabase Storage, lalu menyimpan metadata dan 
+path file ke tabel portfolios. 
+Alur alternatif Jika ekstensi, MIME type, ukuran, atau upload tidak valid, sistem menolak proses dan 
+menampilkan alasannya. Jika penyimpanan berhasil tetapi penyimpanan metadata gagal, 
+sistem menangani kegagalan agar file yatim dapat dibersihkan. 
+Hasil Portofolio tampil berdasarkan pengaturan visibilitas dan hak akses. 
+===== PAGE 13 =====
+GAKBISA  |  PROPOSAL PROJECT UAS 
+Halaman 13 
+6. RANCANGAN DATABASE 
+ 
+ 
+6.1 Pendekatan Database dan File Storage 
+GAKBISA menggunakan Supabase PostgreSQL sebagai database relasional yang dikelola melalui 
+layanan Supabase. Supabase Storage digunakan untuk menyimpan file portofolio sebenarnya. 
+Dengan demikian, tabel database menyimpan metadata dan path file, bukan isi file gambar atau 
+PDF. Pendekatan ini memisahkan data relasional dari objek file dan memudahkan pemberian 
+aturan akses. [3] 
+Backend Spring Boot terhubung ke PostgreSQL menggunakan driver JDBC PostgreSQL dan 
+Spring Data JPA/Hibernate [6]. Proses file dikirim melalui backend Java ke Supabase Storage API. 
+Kunci rahasia layanan disimpan sebagai environment variable di backend dan tidak dikirim ke 
+browser. Tabel aplikasi dikelola melalui migration/DDL yang dikendalikan tim; operasi file 
+dilakukan lewat API Storage, bukan dengan memanipulasi tabel internal storage secara langsung. 
+6.2 Diagram Relasi Entitas (ERD) 
+ 
+Gambar 2. ERD tingkat tinggi untuk tabel inti GAKBISA. 
+
+===== PAGE 14 =====
+GAKBISA  |  PROPOSAL PROJECT UAS 
+Halaman 14 
+6.3 Rancangan Tabel 
+Rancangan awal terdiri dari sepuluh tabel aplikasi. Nama kolom dan tipe dapat disesuaikan saat 
+implementasi, tetapi relasi dan batasan unik perlu dipertahankan agar data konsisten. 
+Tabel 1. users 
+Kolom Tipe PostgreSQL Aturan / fungsi 
+id UUID Primary key; ID pengguna. 
+full_name VARCHAR(120) Nama yang ditampilkan; wajib. 
+email VARCHAR(254) Wajib dan unique; dinormalisasi huruf kecil. 
+password_hash VARCHAR(255) Hash BCrypt; jangan menyimpan password asli. 
+role VARCHAR(20) Nilai: STUDENT atau ADMIN. 
+bio TEXT Deskripsi singkat; opsional. 
+campus VARCHAR(150) Kampus/program studi; opsional. 
+avatar_path TEXT Path foto profil di Storage; opsional. 
+status VARCHAR(20) Misalnya ACTIVE, SUSPENDED. 
+created_at TIMESTAMPTZ Waktu pembuatan akun. 
+ 
+Tabel 2. skill_categories dan skills 
+Tabel / kolom utama Tipe / kunci Fungsi 
+skill_categories.id UUID, PK ID kategori keahlian. 
+skill_categories.name VARCHAR(80), 
+UNIQUE 
+Contoh: Pemrograman, Desain, Bahasa, Data. 
+skill_categories.descripti
+on 
+TEXT Deskripsi kategori. 
+skills.id UUID, PK ID keahlian. 
+skills.category_id UUID, FK Mengacu ke skill_categories.id. 
+skills.name VARCHAR(100) Nama keahlian; misalnya Java, UI/UX, public 
+speaking. 
+skills.description TEXT Deskripsi singkat. 
+ 
+ 
+ 
+===== PAGE 15 =====
+GAKBISA  |  PROPOSAL PROJECT UAS 
+Halaman 15 
+Tabel 3. user_skills 
+Kolom Tipe / kunci Fungsi 
+id UUID, PK ID relasi keahlian pengguna. 
+user_id UUID, FK Mengacu ke users.id. 
+skill_id UUID, FK Mengacu ke skills.id. 
+type VARCHAR(10) OFFER untuk keahlian yang ditawarkan; WANT untuk 
+keahlian yang dicari. 
+level VARCHAR(20) BEGINNER, INTERMEDIATE, atau ADVANCED sesuai 
+definisi aplikasi. 
+notes TEXT Catatan tujuan belajar atau pengalaman. 
+created_at TIMESTAMPTZ Waktu penambahan. 
+Tabel 4. portfolios 
+Kolom Tipe / kunci Fungsi 
+id UUID, PK ID portofolio. 
+user_id UUID, FK Pemilik karya; mengacu ke users.id. 
+title VARCHAR(150) Judul karya. 
+description TEXT Deskripsi karya dan keterampilan yang ditunjukkan. 
+file_path TEXT Path objek di bucket Supabase Storage, bukan isi file. 
+file_name VARCHAR(255) Nama file asli yang aman ditampilkan. 
+mime_type VARCHAR(100) Tipe media tervalidasi. 
+file_size BIGINT Ukuran dalam byte. 
+visibility VARCHAR(20) PUBLIC atau PRIVATE. 
+created_at TIMESTAMPTZ Waktu unggah. 
+ 
+Tabel 5. barter_requests 
+Kolom Tipe / kunci Fungsi 
+id UUID, PK ID permintaan barter. 
+requester_id UUID, FK Pengguna yang mengajukan; mengacu ke users.id. 
+target_user_id UUID, FK Pengguna penerima; mengacu ke users.id. 
+offered_user_skill_id UUID, FK Keahlian OFFER dari pengirim yang diajukan untuk 
+ditukar. 
+===== PAGE 16 =====
+GAKBISA  |  PROPOSAL PROJECT UAS 
+Halaman 16 
+Kolom Tipe / kunci Fungsi 
+wanted_user_skill_id UUID, FK Keahlian WANT dari pengirim yang ingin dipelajari. 
+message TEXT Pesan dan gambaran barter. 
+status VARCHAR(20) PENDING, ACCEPTED, REJECTED, CANCELLED, 
+COMPLETED. 
+created_at / updated_at TIMESTAMPTZ Waktu pembuatan dan perubahan terakhir. 
+Tabel 6. learning_sessions 
+Kolom Tipe / kunci Fungsi 
+id UUID, PK ID sesi belajar. 
+barter_request_id UUID, FK Mengacu ke barter_requests.id. 
+scheduled_at TIMESTAMPTZ Tanggal dan waktu sesi, termasuk zona waktu. 
+duration_minutes INTEGER Durasi yang disepakati. 
+meeting_provider VARCHAR(20) JITSI atau EXTERNAL_LINK. 
+meeting_room VARCHAR(255) Nama ruang unik; hindari nama yang mudah ditebak. 
+meeting_url TEXT URL meeting bila diperlukan. 
+status VARCHAR(20) SCHEDULED, ONGOING, COMPLETED, 
+CANCELLED. 
+completed_at TIMESTAMPTZ Waktu penyelesaian; opsional. 
+ 
+Tabel 7. reviews 
+Kolom Tipe / kunci Fungsi 
+id UUID, PK ID ulasan. 
+learning_session_id UUID, FK Sesi yang dinilai. 
+reviewer_id UUID, FK Pengguna yang memberikan ulasan. 
+reviewee_id UUID, FK Pengguna yang menerima ulasan. 
+rating SMALLINT Nilai 1 sampai 5; diberi CHECK constraint. 
+comment TEXT Komentar opsional. 
+created_at TIMESTAMPTZ Waktu ulasan. 
+ 
+===== PAGE 17 =====
+GAKBISA  |  PROPOSAL PROJECT UAS 
+Halaman 17 
+Tabel 8. notifications 
+Kolom Tipe / kunci Fungsi 
+id UUID, PK ID notifikasi. 
+user_id UUID, FK Penerima notifikasi; mengacu ke users.id. 
+title VARCHAR(120) Judul singkat. 
+body TEXT Isi notifikasi. 
+type VARCHAR(40) Jenis: barter, session, review, moderation, dan sebagainya. 
+is_read BOOLEAN Status sudah dibaca. 
+created_at TIMESTAMPTZ Waktu notifikasi dibuat. 
+ 
+Tabel 9. reports 
+Kolom Tipe / kunci Fungsi 
+id UUID, PK ID laporan. 
+reporter_id UUID, FK Pengguna pelapor; mengacu ke users.id. 
+target_type VARCHAR(20) Jenis sasaran, misalnya PORTFOLIO atau USER. 
+target_id UUID ID sasaran yang dilaporkan; validasi dilakukan di aplikasi. 
+reason TEXT Alasan laporan. 
+status VARCHAR(20) OPEN, REVIEWING, RESOLVED, atau DISMISSED. 
+created_at TIMESTAMPTZ Waktu laporan dibuat. 
+ 
+6.4 Relasi Antar Tabel 
+• Satu kategori keahlian dapat memiliki banyak data skills; setiap skills terhubung ke satu 
+kategori. 
+• Satu pengguna dapat memiliki banyak user_skills, portofolio, notifikasi, dan laporan. 
+• Tabel user_skills menghubungkan users dengan skills serta menyimpan apakah keahlian itu 
+OFFER atau WANT. 
+• Tabel barter_requests menghubungkan pengirim dengan penerima dan merekam status 
+pertukaran. 
+• Satu permintaan barter yang diterima dapat memiliki beberapa learning_sessions. 
+• Satu sesi belajar dapat memiliki ulasan dari masing-masing peserta, dengan batasan satu ulasan 
+dari pengguna per sesi. 
+• Data video meeting berupa identitas ruang/URL disimpan pada learning_sessions; audio/video 
+langsung tidak disimpan ke database GAKBISA. 
+===== PAGE 18 =====
+GAKBISA  |  PROPOSAL PROJECT UAS 
+Halaman 18 
+• Tabel portfolios menyimpan metadata dan path file. Isi gambar/PDF berada di Supabase 
+Storage. 
+6.5 Bucket dan Aturan Penyimpanan File 
+Pengaturan Rancangan awal 
+Nama bucket portfolio-files 
+Jenis bucket Private secara default; akses publik hanya jika kebutuhan dan kebijakan privasi 
+mengizinkan. 
+Struktur path {user_uuid}/{portfolio_uuid}/{nama_file_aman} 
+Tipe yang diizinkan JPG, JPEG, PNG, WEBP, dan PDF untuk versi awal; daftar dapat diperluas 
+setelah pengujian. 
+Batas ukuran awal Maksimum 10 MB per file untuk tahap UAS, dapat disesuaikan dengan batas 
+bucket dan kebutuhan presentasi. 
+Validasi Periksa ekstensi, MIME type, ukuran file, nama file, kepemilikan, dan hak akses. 
+Jangan mempercayai ekstensi saja. 
+Akses file privat Backend memeriksa hak akses, kemudian mengalirkan file atau memberikan 
+signed URL dengan masa berlaku terbatas. 
+Penghapusan karya Hapus objek di Storage melalui API dan metadata portfolios; tangani kegagalan 
+agar tidak meninggalkan file yang tidak direferensikan. 
+ 
+ 
+===== PAGE 19 =====
+GAKBISA  |  PROPOSAL PROJECT UAS 
+Halaman 19 
+7. TEKNOLOGI YANG DIGUNAKAN 
+ 
+ 
+Teknologi berikut dipilih untuk mempertahankan Java sebagai bahasa utama, mengurangi 
+kompleksitas integrasi, dan memungkinkan seluruh fungsi inti ditampilkan dalam satu website. 
+Versi final harus dikunci saat implementasi dan diuji bersama; versi pada proposal merupakan 
+baseline yang direncanakan. 
+Teknologi Versi / pendekatan Peran dalam GAKBISA 
+Java Java 25 LTS Bahasa utama untuk logika bisnis backend. Java 25 
+termasuk rilis LTS menurut roadmap Oracle. [1] 
+Spring Boot 4.1.x stabil, misalnya 4.1.1 
+setelah dikonfirmasi saat 
+membuat proyek 
+Kerangka backend untuk controller, service, konfigurasi, 
+validasi, dan menjalankan server. Dokumentasi resmi 
+Spring Boot 4.1.1 menyatakan kompatibel dengan Java 
+sampai versi 26. [2] 
+Spring Web MVC Dependensi Spring Boot Menangani HTTP request dan halaman web/controller. 
+Thymeleaf Starter Thymeleaf yang 
+kompatibel 
+Template HTML untuk menampilkan data yang dikirim 
+backend Java. 
+HTML5, CSS3, 
+JavaScript 
+Standar web modern Membangun formulir, galeri karya, dashboard, validasi 
+ringan, dan integrasi Jitsi IFrame API. 
+Bootstrap Versi 5.x stabil Mempercepat pembuatan layout responsif dan komponen 
+UI. 
+Supabase 
+PostgreSQL 
+Layanan database terkelola Menyimpan data relasional aplikasi. 
+PostgreSQL 
+JDBC Driver 
+Versi kompatibel dengan 
+PostgreSQL/Spring Boot 
+Menghubungkan aplikasi Java ke database PostgreSQL. 
+Spring Data JPA 
++ Hibernate 
+Starter JPA yang 
+kompatibel 
+Memetakan entity Java ke tabel database dan menjalankan 
+query terstruktur. 
+Spring Security Starter Security yang 
+kompatibel 
+Autentikasi, otorisasi halaman/endpoint, dan konfigurasi 
+keamanan. 
+BCrypt password 
+encoder 
+Melalui Spring Security Meng-hash password sebelum disimpan [5]. 
+Supabase Storage Storage API / REST API Menyimpan file portofolio. Dokumentasi Supabase 
+menyarankan menyimpan file sebagai objek di Storage, 
+bukan mengisi tabel database dengan konten file besar. [3] 
+Jitsi Meet IFrame 
+API 
+API JavaScript resmi Menanamkan ruang video meeting di halaman sesi. [4] 
+Maven 3.6.3 atau lebih baru sesuai 
+kebutuhan Spring Boot 
+Mengelola dependensi dan build project. [2] 
+===== PAGE 20 =====
+GAKBISA  |  PROPOSAL PROJECT UAS 
+Halaman 20 
+Teknologi Versi / pendekatan Peran dalam GAKBISA 
+Git dan GitHub Layanan version control Kolaborasi, pencatatan perubahan, dan backup kode 
+sumber. 
+Postman Versi desktop/web yang 
+tersedia 
+Pengujian endpoint API dan skenario respons backend. 
+IntelliJ IDEA atau 
+VS Code 
+Versi stabil yang tersedia IDE/editor pengembangan Java dan frontend. 
+ 
+ 
+ 
+7.1 Arsitektur Sistem 
+• Presentation layer: halaman Thymeleaf dan aset HTML/CSS/JavaScript untuk interaksi 
+pengguna. 
+• Controller layer: menerima request HTTP, memeriksa input, dan mengembalikan halaman atau 
+respons. 
+• Service layer: menangani aturan bisnis, termasuk validasi kepemilikan, perubahan status barter, 
+matching, penjadwalan, dan reputasi. 
+• Repository layer: berinteraksi dengan PostgreSQL melalui Spring Data JPA/Hibernate. 
+• Storage integration: service backend mengirim atau mengambil file dari Supabase Storage 
+melalui API, sambil memvalidasi akses. 
+• Meeting integration: halaman sesi menggunakan Jitsi IFrame API untuk menyediakan 
+audio/video; metadata jadwal dan ruang tetap dikelola backend. 
+7.2 Alasan Pemilihan 
+Java dan Spring Boot memenuhi persyaratan bahasa utama dan mendukung pemisahan lapisan aplikasi yang 
+jelas. Thymeleaf memungkinkan frontend terintegrasi dengan backend tanpa menambah aplikasi React yang 
+harus dijalankan secara terpisah. Supabase dipilih untuk menyediakan PostgreSQL terkelola dan storage file 
+dalam satu layanan, sementara Jitsi menghindarkan tim dari kebutuhan membangun infrastruktur video call 
+sendiri. Kombinasi ini tetap memberikan ruang bagi algoritma matching buatan tim sebagai fitur inti yang dapat 
+dijelaskan saat presentasi. 
+7.3 Rencana Deployment dan Konfigurasi 
+• Konfigurasi koneksi database, kredensial Storage, dan secret aplikasi disimpan sebagai environment 
+variables; file .env lokal tidak diunggah ke repository publik. 
+• Backend Java ditempatkan pada layanan yang mendukung aplikasi Java/Spring Boot; PostgreSQL dan 
+Storage diakses melalui koneksi internet. 
+• Jika website dipublikasikan, gunakan HTTPS agar akses kamera dan mikrofon dapat berfungsi sesuai 
+kebijakan browser dan agar data transit dilindungi. 
+• Sebelum demo, lakukan uji koneksi database, uji upload/download Storage, uji dua pengguna yang 
+bergabung ke meeting, serta siapkan alternatif tautan eksternal jika layanan video terganggu. 
+ 
+===== PAGE 21 =====
+GAKBISA  |  PROPOSAL PROJECT UAS 
+Halaman 21 
+8. PEMBAGIAN TUGAS ANGGOTA 
+ 
+ 
+Kelompok terdiri atas tiga anggota. Peran analisis dan koordinasi digabung dengan lingkup backend, sedangkan 
+frontend serta database, storage, dan QA masing-masing dipegang satu anggota. Pembagian ini dapat disesuaikan 
+dengan kesepakatan kelompok tanpa menghapus tanggung jawab salah satu peran. 
+Anggota & Peran Tanggung jawab Hasil kerja 
+Yafet Wenda (3125521058) - 
+Analisis, Backend & Security 
+Mengumpulkan kebutuhan, mengelola 
+backlog, dan menyusun dokumentasi; 
+membuat struktur Spring Boot, entity, 
+repository, service, controller, 
+registrasi/login, role, validasi, dan 
+algoritma matching. 
+Proposal, use case, backend 
+berjalan, autentikasi serta 
+endpoint/fungsi bisnis teruji. 
+Moh. Faiz Khoiru Izzuddin 
+(3125521049) - Frontend & 
+Meeting 
+Mendesain halaman responsif, template 
+Thymeleaf, form, katalog, dashboard, 
+galeri portofolio, halaman jadwal, serta 
+integrasi Jitsi IFrame API. 
+Antarmuka utama dan halaman 
+sesi video meeting. 
+Muhammad Haudajun Nando 
+Kusnanto (3125521053) - 
+Database, Storage & QA 
+Merancang database, menyiapkan 
+Supabase PostgreSQL/Storage, 
+membuat migration/constraint, integrasi 
+upload file, skenario uji, pengujian 
+integrasi dan pencatatan bug. 
+ERD, tabel, bucket/storage 
+teruji, test case dan hasil uji. 
+ 
+8.1 Tahapan Pengerjaan 
+Mingg
+u Kegiatan Target keluaran 
+1 Analisis kebutuhan, ruang lingkup, use case, ERD, 
+rancangan tampilan, pembuatan repository dan proyek 
+Spring Boot. 
+Spesifikasi disepakati, rancangan awal, 
+project dapat dijalankan. 
+2 Registrasi/login, profil pengguna, konfigurasi 
+PostgreSQL, entity dan repository dasar. 
+Pengguna dapat login dan mengelola 
+profil. 
+3 Keahlian OFFER/WANT, katalog, algoritma matching, 
+dan galeri portofolio. 
+Rekomendasi partner tampil dan data 
+portofolio dapat dikelola. 
+4 Permintaan barter, perubahan status, penjadwalan sesi, 
+dan notifikasi dalam aplikasi. 
+Alur barter sampai sesi terjadwal 
+berjalan. 
+5 Integrasi Supabase Storage, Jitsi Meet, ulasan, reputasi, 
+panel admin dan moderasi. 
+Fitur utama terintegrasi. 
+6 Pengujian fungsional, perbaikan bug, pengujian dua akun 
+untuk meeting, dokumentasi, dan persiapan presentasi. 
+Build stabil, laporan pengujian dan 
+demo UAS siap. 
+ 
+===== PAGE 22 =====
+GAKBISA  |  PROPOSAL PROJECT UAS 
+Halaman 22 
+ 
+ 
+ 
+ 
+8.2 Rencana Pengujian 
+No. Skenario uji Hasil yang diharapkan 
+1 Registrasi menggunakan email baru dan email 
+yang sudah terdaftar. 
+Email baru diterima; email duplikat ditolak dengan 
+pesan yang jelas. 
+2 Login menggunakan password benar/salah. Password benar berhasil; password salah ditolak 
+tanpa membocorkan detail sensitif. 
+3 Upload file yang sesuai dan file tidak 
+diizinkan. 
+File sesuai tersimpan; file dengan format/ukuran yang 
+ditolak tidak tersimpan. 
+4 Melihat portfolio PUBLIC dan PRIVATE dari 
+akun berbeda. 
+Karya publik dapat diakses sesuai aturan; karya privat 
+terlindungi. 
+5 Pencocokan OFFER/WANT satu arah dan dua 
+arah. 
+Kandidat yang sesuai muncul dengan skor dan alasan 
+yang konsisten. 
+6 Mengirim dan merespons barter. Status berubah secara valid; hanya pihak terkait dapat 
+merespons. 
+7 Mencoba membuat sesi sebelum barter 
+diterima. 
+Sistem menolak pembuatan sesi untuk permintaan 
+yang belum diterima. 
+8 Peserta bergabung ke meeting melalui 
+halaman sesi. 
+Peserta terkait dapat membuka meeting; pengguna 
+lain tidak mendapatkan akses internal sesi. 
+9 Mengirim ulasan sebelum dan sesudah sesi 
+selesai. 
+Ulasan sebelum selesai ditolak; satu peserta tidak 
+dapat memberi ulasan berulang untuk sesi yang sama. 
+10 Pengguna biasa membuka fungsi admin. Akses ditolak dan tidak terjadi perubahan data admin. 
+ 
+8.3 Risiko dan Mitigasi 
+Risiko Dampak Mitigasi 
+Integrasi Java ke 
+Supabase gagal 
+Fitur data/file tidak 
+berfungsi. 
+Uji koneksi lebih awal, gunakan environment 
+variable, logging aman, dan validasi respons API. 
+Kuota storage atau batas 
+ukuran file 
+Portofolio gagal 
+diunggah. 
+Batasi ukuran/jenis file, optimalkan gambar, gunakan 
+link video eksternal, dan cek kuota sebelum demo. 
+Room meeting dapat 
+diakses pihak yang tidak 
+diundang 
+Gangguan privasi sesi. Gunakan room ID acak, validasi akses sesi di 
+backend, gunakan fitur lobby/password bila tersedia, 
+dan hindari informasi personal pada nama room. 
+===== PAGE 23 =====
+GAKBISA  |  PROPOSAL PROJECT UAS 
+Halaman 23 
+Risiko Dampak Mitigasi 
+Pengguna tidak memiliki 
+partner dengan 
+kecocokan timbal balik 
+Matching kosong atau 
+skor rendah. 
+Tampilkan kandidat yang cocok sebagian, jelaskan 
+alasan, serta berikan opsi pencarian manual 
+berdasarkan kategori. 
+Waktu implementasi 
+terbatas 
+Fitur tambahan tidak 
+selesai. 
+Kunci MVP, bagi pekerjaan per modul, lakukan 
+integrasi rutin dan prioritaskan skenario inti. 
+Layanan eksternal 
+mengalami gangguan 
+Meeting atau Storage 
+sementara tidak tersedia. 
+Tampilkan pesan kendala, pertahankan data jadwal, 
+dan siapkan opsi tautan video eksternal. 
+ 
+ 
+===== PAGE 24 =====
+GAKBISA  |  PROPOSAL PROJECT UAS 
+Halaman 24 
+9. PENUTUP 
+ 
+ 
+GAKBISA dirancang sebagai aplikasi pertukaran keahlian yang menghubungkan mahasiswa 
+berdasarkan kemampuan yang dapat dibagikan dan kebutuhan belajar. Kombinasi profil keahlian, 
+portofolio, rekomendasi partner, permintaan barter, sesi belajar, video meeting, serta sistem ulasan 
+diharapkan menghasilkan pengalaman belajar sebaya yang lebih terstruktur daripada pencarian 
+partner secara informal. 
+Dari sisi implementasi, proyek menerapkan Java 25 LTS dan Spring Boot sebagai teknologi 
+backend utama, Thymeleaf dan JavaScript untuk antarmuka, Supabase PostgreSQL untuk data 
+relasional, Supabase Storage untuk file karya, serta Jitsi Meet untuk komunikasi video. Ruang 
+lingkup versi UAS dibatasi agar fitur inti dapat diimplementasikan, diuji, dan dipresentasikan. 
+Pengembangan lanjutan dapat mencakup chat real-time, kalender yang lebih lengkap, sertifikat 
+partisipasi, aplikasi mobile, dan rekomendasi yang lebih cerdas setelah versi dasar stabil. 
+ 
+ 
+ 
+===== PAGE 25 =====
+GAKBISA  |  PROPOSAL PROJECT UAS 
+Halaman 25 
+DAFTAR PUSTAKA 
+ 
+[1] Oracle. “Java SE Support Roadmap.” Diakses 12 Oktober 2026. 
+https://www.oracle.com/java/technologies/java-se-support-roadmap.html 
+[2] Spring. “Spring Boot 4.1.1 - System Requirements.” Diakses 12 Oktober 2026. 
+https://docs.spring.io/spring-boot/system-requirements.html 
+[3] Supabase. “Storage Documentation” dan “Storage Quickstart.” Diakses 12 Oktober 2026. 
+https://supabase.com/docs/guides/storage dan 
+https://supabase.com/docs/guides/storage/quickstart 
+[4] Jitsi Handbook. “IFrame API.” Diakses 12 Oktober 2026. 
+https://jitsi.github.io/handbook/docs/dev-guide/iframe/ 
+[5] Spring. “Spring Security Reference Documentation.” Diakses 12 Oktober 2026. 
+https://docs.spring.io/spring-security/reference/ 
+[6] PostgreSQL Global Development Group. “PostgreSQL Documentation.” Diakses 12 Oktober 
+2026. https://www.postgresql.org/docs/ 

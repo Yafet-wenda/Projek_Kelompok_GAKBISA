@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="id">
+<head th:replace="~{fragments/layout :: head('Katalog · GAKBISA')}"></head>
+<body>
+<th:block th:replace="~{fragments/layout :: skip}"></th:block>
+<header th:replace="~{fragments/layout :: topbar('katalog')}"></header>
+
+<main id="isi">
+
+  <section class="shell section--tight">
+    <p class="tiny muted" sec:authorize="!isAuthenticated()">Halaman ini bisa dibuka tanpa login (aktor Tamu).</p>
+    <p class="tiny muted" sec:authorize="isAuthenticated()">Katalog publik: kamu bisa langsung mengajak barter.</p>
+    <div class="split split--end">
+      <h1 class="narrow">Keahlian &amp; karya yang beredar di kampus</h1>
+      <p class="tiny measure">Cari dulu partner yang kamu butuhkan, baru daftar
+        untuk mengajak barter.</p>
+    </div>
+
+    <form class="search" id="form-cari" role="search">
+      <input type="search" id="cari" placeholder="Cari keahlian… mis. Excel, UI/UX, Inggris"
+             aria-label="Kata kunci keahlian">
+      <button class="btn btn--sm" type="submit">Cari</button>
+    </form>
+
+    <div class="chips" id="kategori-chips">
+      <button class="chip is-on" data-id="" type="button">Semua kategori</button>
+    </div>
+  </section>
+
+  <!-- ===== keahlian ===== -->
+  <section class="shell section--tight">
+    <div class="split">
+      <h2 class="section-title">Daftar keahlian</h2>
+      <span class="tiny" id="hitung-keahlian">Memuat…</span>
+    </div>
+    <ul class="index" id="grid-keahlian">
+      <li class="skeleton"></li><li class="skeleton"></li><li class="skeleton"></li>
+    </ul>
+    <div class="pager">
+      <button class="btn btn--ghost btn--sm" id="muat-lagi" hidden type="button">Muat lebih banyak</button>
+    </div>
+  </section>
+
+  <div class="shell"><hr class="rule"></div>
+
+  <!-- ===== portofolio ===== -->
+  <section class="shell section--tight">
+    <div class="split">
+      <h2 class="section-title">Karya publik</h2>
+      <span class="tiny" id="hitung-karya">Memuat…</span>
+    </div>
+    <div class="grid grid--4" id="grid-karya">
+      <div class="skeleton"></div><div class="skeleton"></div>
+    </div>
+    <div class="empty" id="kosong-karya" hidden>
+      <h3>Belum ada karya publik</h3>
+      <p class="tiny">Portofolio muncul di sini setelah ada yang mengunggah karyanya.
+        Unggahan baru masuk kalau ruang penyimpanan di server sudah aktif.</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- dialog detail karya -->
+<dialog class="modal" id="detail-karya">
+  <div class="modal__head">
+    <h3 id="dlg-judul">Detail karya</h3>
+  </div>
+  <div class="modal__body" id="dlg-isi"></div>
+  <div class="modal__foot">
+    <button class="btn btn--ghost btn--sm" type="button" data-tutup>Tutup</button>
+  </div>
+</dialog>
+
+<footer th:replace="~{fragments/layout :: foot}"></footer>
+<script th:src="@{/js/app.js}"></script>
+<script th:src="@{/js/catalog.js}"></script>
+</body>
+</html>

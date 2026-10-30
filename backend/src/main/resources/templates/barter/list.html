@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Permintaan Barter')}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<div class="fb-layout container-fluid">
+    <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
+
+    <main class="fb-main">
+
+        <div th:if="${success}" class="fb-alert fb-alert-success mt-2">
+            <i class="bi bi-check-circle-fill"></i> <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="fb-alert fb-alert-error mt-2">
+            <i class="bi bi-exclamation-circle-fill"></i> <span th:text="${error}"></span>
+        </div>
+
+        <!-- Tabs -->
+        <div class="fb-tabs">
+            <button class="fb-tab-btn active" onclick="showTab('received', this)">
+                <i class="bi bi-inbox-fill"></i>
+                Diterima
+                <span th:if="${!#lists.isEmpty(receivedBarters)}"
+                      class="badge bg-danger"
+                      th:text="${receivedBarters.size()}"></span>
+            </button>
+            <button class="fb-tab-btn" onclick="showTab('sent', this)">
+                <i class="bi bi-send-fill"></i>
+                Dikirim
+                <span th:if="${!#lists.isEmpty(sentBarters)}"
+                      class="badge bg-primary"
+                      th:text="${sentBarters.size()}"></span>
+            </button>
+        </div>
+
+        <!-- RECEIVED Barters -->
+        <div id="tab-received">
+            <div th:if="${#lists.isEmpty(receivedBarters)}" class="fb-card">
+                <div class="fb-empty">
+                    <i class="bi bi-inbox"></i>
+                    <h5>Belum Ada Permintaan Masuk</h5>
+                    <p>Lengkapi profil Anda agar mudah ditemukan orang lain.</p>
+                </div>
+            </div>
+            <div class="barter-card" th:each="barter : ${receivedBarters}">
+                <div class="d-flex align-items-start gap-3">
+                    <!-- Requester avatar -->
+                    <div class="fb-avatar-placeholder fb-avatar-lg" style="font-size:24px;flex-shrink:0;">
+                        <span th:text="${#strings.substring(barter.requester.fullName,0,1)}">A</span>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                            <div>
+                                <a th:href="@{'/profile/' + ${barter.requester.id}}"
+                                   style="font-size:15px;font-weight:700;color:#050505;text-decoration:none;"
+                                   th:text="${barter.requester.fullName}">Nama</a>
+                                <span style="font-size:13px;color:#65676B;"
+                                      th:text="' · ' + ${barter.requester.campus ?: ''}"></span>
+                            </div>
+                            <span class="fb-badge"
+                                  th:classappend="${barter.status == 'PENDING'} ? 'fb-badge-pending' : (${barter.status == 'ACCEPTED'} ? 'fb-badge-accepted' : (${barter.status == 'REJECTED'} ? 'fb-badge-rejected' : (${barter.status == 'CANCELLED'} ? 'fb-badge-cancelled' : 'fb-badge-completed')))"
+                                  th:text="${barter.status}">STATUS</span>
+                        </div>
+
+                        <!-- Exchange info -->
+                        <div class="barter-exchange">
+                            <div style="flex:1;">
+                                <div style="font-size:11px;font-weight:700;color:#65676B;text-transform:uppercase;">Dia Tawarkan</div>
+                                <div style="font-weight:600;color:#1565c0;"
+                                     th:text="${barter.offeredUserSkill?.skill?.name ?: '-'}">Skill</div>
+                            </div>
+                            <i class="bi bi-arrow-left-right exchange-arrow"></i>
+                            <div style="flex:1;text-align:right;">
+                                <div style="font-size:11px;font-weight:700;color:#65676B;text-transform:uppercase;">Dia Ingin Pelajari</div>
+                                <div style="font-weight:600;color:#880e4f;"
+                                     th:text="${barter.wantedUserSkill?.skill?.name ?: '-'}">Skill</div>
+                            </div>
+                        </div>
+
+                        <p th:if="${barter.message}" style="font-size:14px;color:#65676B;margin:6px 0;"
+                           th:text="${barter.message}"></p>
+                        <div style="font-size:12px;color:#65676B;margin-bottom:10px;"
+                             th:text="${#temporals.format(barter.createdAt, 'dd MMM yyyy HH:mm')}"></div>
+
+                        <!-- Actions -->
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a th:href="@{'/barter/' + ${barter.id}}"
+                               class="btn btn-fb-secondary btn-sm fw-semibold">
+                                <i class="bi bi-eye me-1"></i>Detail
+                            </a>
+                            <th:block th:if="${barter.status == 'PENDING'}">
+                                <form th:action="@{'/barter/' + ${barter.id} + '/accept'}" method="post" style="margin:0;">
+                                    <button type="submit" class="btn btn-success btn-sm fw-semibold">
+                                        <i class="bi bi-check-lg me-1"></i>Terima
+                                    </button>
+                                </form>
+                                <form th:action="@{'/barter/' + ${barter.id} + '/reject'}" method="post" style="margin:0;">
+                                    <button type="submit" class="btn btn-fb-danger btn-sm fw-semibold"
+                                            data-confirm="Tolak permintaan barter ini?">
+                                        <i class="bi bi-x-lg me-1"></i>Tolak
+                                    </button>
+                                </form>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SENT Barters -->
+        <div id="tab-sent" style="display:none;">
+            <div th:if="${#lists.isEmpty(sentBarters)}" class="fb-card">
+                <div class="fb-empty">
+                    <i class="bi bi-send"></i>
+                    <h5>Belum Ada Permintaan Terkirim</h5>
+                    <p>Temukan partner dan kirim permintaan barter pertamamu!</p>
+                    <a th:href="@{/matching}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-search me-1"></i>Cari Partner
+                    </a>
+                </div>
+            </div>
+            <div class="barter-card" th:each="barter : ${sentBarters}">
+                <div class="d-flex align-items-start gap-3">
+                    <div class="fb-avatar-placeholder fb-avatar-lg" style="font-size:24px;flex-shrink:0;">
+                        <span th:text="${#strings.substring(barter.targetUser.fullName,0,1)}">A</span>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                            <div>
+                                <a th:href="@{'/profile/' + ${barter.targetUser.id}}"
+                                   style="font-size:15px;font-weight:700;color:#050505;text-decoration:none;"
+                                   th:text="${barter.targetUser.fullName}">Nama</a>
+                                <span style="font-size:13px;color:#65676B;"
+                                      th:text="' · ' + ${barter.targetUser.campus ?: ''}"></span>
+                            </div>
+                            <span class="fb-badge"
+                                  th:classappend="${barter.status == 'PENDING'} ? 'fb-badge-pending' : (${barter.status == 'ACCEPTED'} ? 'fb-badge-accepted' : (${barter.status == 'REJECTED'} ? 'fb-badge-rejected' : (${barter.status == 'CANCELLED'} ? 'fb-badge-cancelled' : 'fb-badge-completed')))"
+                                  th:text="${barter.status}">STATUS</span>
+                        </div>
+
+                        <div class="barter-exchange">
+                            <div style="flex:1;">
+                                <div style="font-size:11px;font-weight:700;color:#65676B;text-transform:uppercase;">Kamu Tawarkan</div>
+                                <div style="font-weight:600;color:#1565c0;"
+                                     th:text="${barter.offeredUserSkill?.skill?.name ?: '-'}">Skill</div>
+                            </div>
+                            <i class="bi bi-arrow-left-right exchange-arrow"></i>
+                            <div style="flex:1;text-align:right;">
+                                <div style="font-size:11px;font-weight:700;color:#65676B;text-transform:uppercase;">Ingin Kamu Pelajari</div>
+                                <div style="font-weight:600;color:#880e4f;"
+                                     th:text="${barter.wantedUserSkill?.skill?.name ?: '-'}">Skill</div>
+                            </div>
+                        </div>
+
+                        <div style="font-size:12px;color:#65676B;margin-bottom:10px;"
+                             th:text="${#temporals.format(barter.createdAt, 'dd MMM yyyy HH:mm')}"></div>
+
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a th:href="@{'/barter/' + ${barter.id}}"
+                               class="btn btn-fb-secondary btn-sm fw-semibold">
+                                <i class="bi bi-eye me-1"></i>Detail
+                            </a>
+                            <th:block th:if="${barter.status == 'PENDING'}">
+                                <form th:action="@{'/barter/' + ${barter.id} + '/cancel'}" method="post" style="margin:0;">
+                                    <button type="submit" class="btn btn-fb-danger btn-sm fw-semibold"
+                                            data-confirm="Batalkan permintaan barter ini?">
+                                        <i class="bi bi-x-circle me-1"></i>Batalkan
+                                    </button>
+                                </form>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <aside class="fb-sidebar-right">
+        <div class="fb-card p-3">
+            <div style="font-size:16px;font-weight:700;margin-bottom:8px;">💡 Alur Barter</div>
+            <div style="font-size:13px;color:#65676B;line-height:2;">
+                <div><span class="fb-badge fb-badge-pending me-1">PENDING</span> Menunggu respons</div>
+                <div><span class="fb-badge fb-badge-accepted me-1">ACCEPTED</span> Barter disetujui</div>
+                <div><span class="fb-badge fb-badge-rejected me-1">REJECTED</span> Barter ditolak</div>
+                <div><span class="fb-badge fb-badge-cancelled me-1">CANCELLED</span> Dibatalkan</div>
+                <div><span class="fb-badge fb-badge-completed me-1">COMPLETED</span> Sesi selesai</div>
+            </div>
+        </div>
+        <div class="mt-2">
+            <a th:href="@{/matching}" class="btn btn-primary w-100 fw-semibold">
+                <i class="bi bi-people-fill me-1"></i>Cari Partner Baru
+            </a>
+        </div>
+    </aside>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/app.js}"></script>
+<script>
+function showTab(tabName, btn) {
+    document.getElementById('tab-received').style.display = tabName === 'received' ? 'block' : 'none';
+    document.getElementById('tab-sent').style.display = tabName === 'sent' ? 'block' : 'none';
+    document.querySelectorAll('.fb-tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+}
+</script>
+</body>
+</html>
+

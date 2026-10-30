@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Upload Portofolio')}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<div class="fb-layout container-fluid">
+    <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
+
+    <main class="fb-main">
+        <div class="fb-card p-4">
+            <h4 style="font-size:24px;font-weight:700;margin-bottom:20px;">
+                <i class="bi bi-upload text-primary me-2"></i>Upload Portofolio
+            </h4>
+
+            <form th:action="@{/portfolio/upload}" method="post" enctype="multipart/form-data"
+                  th:object="${portfolioDto}">
+
+                <!-- Upload zone -->
+                <div class="upload-zone mb-4" onclick="document.getElementById('portfolioFile').click();">
+                    <i class="bi bi-cloud-upload"></i>
+                    <h6 style="font-weight:700;margin-bottom:4px;">Klik atau drag & drop file di sini</h6>
+                    <p style="font-size:13px;color:#65676B;margin:0;">
+                        Format: JPG, PNG, WEBP, PDF &nbsp;·&nbsp; Maks. 10 MB
+                    </p>
+                    <input type="file" id="portfolioFile" name="file"
+                           accept=".jpg,.jpeg,.png,.webp,.pdf"
+                           style="display:none;" required onchange="previewFile(this)">
+                </div>
+
+                <!-- File preview -->
+                <div id="filePreview" class="mb-3"></div>
+
+                <div class="mb-3">
+                    <label class="fb-form-label">Judul Karya <span style="color:#c62828;">*</span></label>
+                    <input type="text" th:field="*{title}" class="form-control"
+                           placeholder="Berikan judul yang menarik untuk karyamu" required>
+                    <div th:if="${#fields.hasErrors('title')}" class="text-danger small mt-1"
+                         th:errors="*{title}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="fb-form-label">Deskripsi</label>
+                    <textarea th:field="*{description}" class="form-control" rows="4"
+                              placeholder="Ceritakan tentang karya ini: apa yang dibuat, teknologi yang digunakan, dan skill yang ditunjukkan..."></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label class="fb-form-label">Visibilitas</label>
+                    <div class="d-flex gap-4 mt-1">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" th:field="*{visibility}"
+                                   value="PUBLIC" id="visPublic" checked>
+                            <label class="form-check-label fw-semibold" for="visPublic">
+                                <i class="bi bi-globe2 text-success me-1"></i>
+                                Publik — Bisa dilihat semua orang
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" th:field="*{visibility}"
+                                   value="PRIVATE" id="visPrivate">
+                            <label class="form-check-label fw-semibold" for="visPrivate">
+                                <i class="bi bi-lock-fill text-secondary me-1"></i>
+                                Privat — Hanya kamu yang bisa lihat
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3">
+                    <button type="submit" class="btn btn-primary fw-bold px-4">
+                        <i class="bi bi-cloud-upload me-1"></i>Upload Sekarang
+                    </button>
+                    <a th:href="@{/portfolio}" class="btn btn-fb-secondary fw-bold px-4">Batal</a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <aside class="fb-sidebar-right">
+        <div class="fb-card p-3">
+            <div style="font-size:16px;font-weight:700;margin-bottom:8px;">📋 Ketentuan Upload</div>
+            <ul style="font-size:13px;color:#65676B;padding-left:16px;line-height:1.8;">
+                <li>Format: JPG, PNG, WEBP, PDF</li>
+                <li>Ukuran maksimal: <strong>10 MB</strong></li>
+                <li>Gunakan gambar resolusi tinggi</li>
+                <li>Satu portofolio per upload</li>
+                <li>Jangan upload konten yang melanggar aturan</li>
+            </ul>
+        </div>
+    </aside>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/app.js}"></script>
+<script>
+function previewFile(input) {
+    var file = input.files[0];
+    var preview = document.getElementById('filePreview');
+    if (!file) return;
+    if (file.type.startsWith('image/')) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            preview.innerHTML = '<img src="' + e.target.result + '" class="img-fluid rounded mb-3" style="max-height:200px;object-fit:contain;">';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.innerHTML = '<div class="d-flex align-items-center gap-3 p-3 bg-light rounded mb-3"><i class="bi bi-file-pdf fs-1 text-danger"></i><div><div class="fw-semibold">' + file.name + '</div><div class="text-muted small">' + (file.size / 1024 / 1024).toFixed(2) + ' MB</div></div></div>';
+    }
+}
+</script>
+</body>
+</html>
+

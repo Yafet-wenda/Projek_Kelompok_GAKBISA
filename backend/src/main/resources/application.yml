@@ -1,0 +1,63 @@
+spring:
+  application:
+    name: gakbisa-backend
+
+  config:
+    # Baca .env lokal sebagai properties; placeholder ${DB_HOST} dan sejenisnya ikut terisi.
+    import: optional:file:.env[.properties]
+
+  datasource:
+    # Nilainya diambil dari .env (lihat .env.example). DB_SSL_MODE: require untuk Supabase, disable untuk lokal.
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:gakbisa}?sslmode=${DB_SSL_MODE:disable}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:}
+    hikari:
+      maximum-pool-size: 5
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc.time_zone: UTC
+
+  servlet:
+    multipart:
+      max-file-size: 12MB
+      max-request-size: 15MB
+
+  thymeleaf:
+    cache: false
+
+  web:
+    resources:
+      chain:
+        # URL /css dan /js diberi cap hash isi berkas, jadi browser ikut mengambil
+        # versi baru setiap kali desainnya berubah.
+        enabled: true
+        strategy:
+          content:
+            enabled: true
+            paths: "/**"
+
+server:
+  port: 8080
+
+gakbisa:
+  seed-data: ${SEED_DATA:false}
+  storage:
+    base-url: ${SUPABASE_URL:}
+    service-key: ${SUPABASE_SERVICE_KEY:}
+    bucket: ${STORAGE_BUCKET:portfolio-files}
+    max-file-size-bytes: ${MAX_FILE_SIZE_BYTES:10485760}
+    allowed-mime-types: ${ALLOWED_MIME_TYPES:image/jpeg,image/png,image/webp,application/pdf}
+
+logging:
+  level:
+    com.gakbisa: INFO

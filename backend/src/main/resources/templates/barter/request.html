@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Kirim Permintaan Barter')}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<div class="fb-layout container-fluid">
+    <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
+
+    <main class="fb-main">
+
+        <!-- Target user profile card -->
+        <div class="fb-card p-4 mb-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="fb-avatar-placeholder fb-avatar-xl" style="font-size:36px;">
+                    <span th:text="${#strings.substring(targetUser.fullName,0,1)}">A</span>
+                </div>
+                <div>
+                    <h5 style="font-size:20px;font-weight:700;margin:0;" th:text="${targetUser.fullName}">Nama</h5>
+                    <p style="color:#65676B;margin:2px 0;" th:text="${targetUser.campus ?: 'Mahasiswa GAKBISA'}">Kampus</p>
+                    <p style="color:#65676B;font-size:13px;margin:0;" th:if="${targetUser.bio}"
+                       th:text="${#strings.abbreviate(targetUser.bio,100)}"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Barter Request Form -->
+        <div class="fb-card p-4">
+            <h5 style="font-size:20px;font-weight:700;margin-bottom:16px;">
+                <i class="bi bi-arrow-left-right text-primary me-2"></i>
+                Kirim Permintaan Barter
+            </h5>
+
+            <div th:if="${#lists.isEmpty(myOfferSkills)}" class="fb-alert fb-alert-warning mb-3">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                Anda belum memiliki keahlian OFFER.
+                <a th:href="@{/profile/skills}" class="fw-semibold">Tambahkan sekarang</a>
+            </div>
+
+            <form th:action="@{'/barter/request/' + ${targetUser.id}}" method="post"
+                  th:object="${barterRequestDto}">
+
+                <!-- My offered skill -->
+                <div class="mb-3">
+                    <label class="fb-form-label">
+                        <i class="bi bi-hand-thumbs-up-fill text-primary me-1"></i>
+                        Keahlian yang Kamu Tawarkan <span style="color:#c62828;">*</span>
+                    </label>
+                    <select th:field="*{offeredUserSkillId}" class="form-select form-select-lg" required>
+                        <option value="">Pilih keahlian yang akan kamu tawarkan...</option>
+                        <option th:each="us : ${myOfferSkills}"
+                                th:value="${us.id}"
+                                th:text="${us.skill.name} + (${us.level != null} ? ' (' + ${us.level} + ')' : '')">Keahlian</option>
+                    </select>
+                    <div th:if="${#fields.hasErrors('offeredUserSkillId')}" class="text-danger small mt-1"
+                         th:errors="*{offeredUserSkillId}"></div>
+                </div>
+
+                <!-- What I want to learn -->
+                <div class="mb-3">
+                    <label class="fb-form-label">
+                        <i class="bi bi-book-fill text-danger me-1"></i>
+                        Keahlian yang Ingin Kamu Pelajari <span style="color:#c62828;">*</span>
+                    </label>
+                    <select th:field="*{wantedUserSkillId}" class="form-select form-select-lg" required>
+                        <option value="">Pilih keahlian yang ingin kamu pelajari...</option>
+                        <option th:each="us : ${myWantSkills}"
+                                th:value="${us.id}"
+                                th:text="${us.skill.name} + (${us.level != null} ? ' (' + ${us.level} + ')' : '')">Keahlian</option>
+                    </select>
+                    <div th:if="${#fields.hasErrors('wantedUserSkillId')}" class="text-danger small mt-1"
+                         th:errors="*{wantedUserSkillId}"></div>
+                </div>
+
+                <!-- Message -->
+                <div class="mb-4">
+                    <label class="fb-form-label">Pesan (Opsional)</label>
+                    <textarea th:field="*{message}" class="form-control" rows="4"
+                              placeholder="Perkenalkan dirimu, jelaskan harapanmu dari barter ini, atau informasi lain yang berguna..."></textarea>
+                </div>
+
+                <!-- Preview exchange -->
+                <div style="background:#F0F2F5;border-radius:8px;padding:12px 16px;margin-bottom:16px;">
+                    <div style="font-size:12px;font-weight:700;color:#65676B;margin-bottom:6px;">RINGKASAN PERTUKARAN</div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div style="flex:1;text-align:center;">
+                            <div style="font-size:11px;color:#65676B;">KAMU TAWARKAN</div>
+                            <div style="font-weight:700;color:#1565c0;">Pilih di atas ↑</div>
+                        </div>
+                        <i class="bi bi-arrow-left-right" style="color:#1877F2;font-size:20px;"></i>
+                        <div style="flex:1;text-align:center;">
+                            <div style="font-size:11px;color:#65676B;">KAMU PELAJARI DARI</div>
+                            <div style="font-weight:700;color:#880e4f;" th:text="${targetUser.fullName}">Nama</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3">
+                    <button type="submit" class="btn btn-primary fw-bold px-4">
+                        <i class="bi bi-send-fill me-1"></i>Kirim Permintaan
+                    </button>
+                    <a th:href="@{'/profile/' + ${targetUser.id}}" class="btn btn-fb-secondary fw-bold px-4">
+                        Batal
+                    </a>
+                </div>
+            </form>
+        </div>
+
+    </main>
+
+    <aside class="fb-sidebar-right">
+        <div class="fb-card p-3">
+            <div style="font-size:16px;font-weight:700;margin-bottom:8px;">📋 Tips Barter</div>
+            <ul style="font-size:13px;color:#65676B;padding-left:16px;line-height:1.8;">
+                <li>Pilih keahlian OFFER yang benar-benar kamu kuasai</li>
+                <li>Tulis pesan yang ramah dan jelas</li>
+                <li>Jelaskan level kemampuanmu</li>
+                <li>Barter yang baik menguntungkan kedua pihak!</li>
+            </ul>
+        </div>
+    </aside>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>
+
