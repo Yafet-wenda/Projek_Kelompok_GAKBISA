@@ -112,6 +112,12 @@ public class PageController {
         return "home";
     }
 
+    /** Halaman referensi komponen — hanya untuk developer, login required. */
+    @GetMapping("/design-system")
+    public String designSystem() {
+        return "design-system";
+    }
+
     @GetMapping("/login")
     public String login() {
         return "login";

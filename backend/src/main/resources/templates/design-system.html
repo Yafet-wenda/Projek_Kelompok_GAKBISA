@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="id">
+<head th:replace="~{fragments/head :: head('Design System')}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<div class="fb-layout container-fluid">
+  <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
+
+  <main class="fb-main" style="max-width: 860px; padding: 0 16px;">
+
+    <!-- PAGE HEADER -->
+    <div class="gk-page-header mt-3">
+      <div class="gk-page-header__text">
+        <span class="gk-page-header__eyebrow">UI Foundation</span>
+        <h1 class="gk-page-header__title">GAKBISA Design System</h1>
+        <p class="gk-page-header__desc">
+          Komponen reusable, token warna, tipografi, dan utilitas yang membangun
+          antarmuka GAKBISA secara konsisten di seluruh halaman.
+        </p>
+      </div>
+    </div>
+
+    <!-- ─── COLOUR TOKENS ─────────────────────────────────────────────── -->
+    <div class="gk-card mb-3">
+      <div class="gk-card__header">
+        <h2 class="gk-card__title">Colour Tokens</h2>
+      </div>
+
+      <div class="d-flex flex-wrap gap-2 mb-3">
+        <div style="background:var(--gk-primary);color:#fff;padding:8px 14px;border-radius:var(--gk-radius);font-size:13px;font-weight:600;">
+          --gk-primary<br><small style="opacity:.8;">#1A6BFF</small>
+        </div>
+        <div style="background:var(--gk-primary-dark);color:#fff;padding:8px 14px;border-radius:var(--gk-radius);font-size:13px;font-weight:600;">
+          --gk-primary-dark<br><small style="opacity:.8;">#1459D6</small>
+        </div>
+        <div style="background:var(--gk-primary-muted);color:var(--gk-primary-dark);padding:8px 14px;border-radius:var(--gk-radius);font-size:13px;font-weight:600;border:1px solid #b5ccfb;">
+          --gk-primary-muted<br><small>#E8F0FE</small>
+        </div>
+        <div style="background:var(--gk-success);color:#fff;padding:8px 14px;border-radius:var(--gk-radius);font-size:13px;font-weight:600;">
+          --gk-success<br><small style="opacity:.8;">#1B7E4A</small>
+        </div>
+        <div style="background:var(--gk-warning);color:#fff;padding:8px 14px;border-radius:var(--gk-radius);font-size:13px;font-weight:600;">
+          --gk-warning<br><small style="opacity:.8;">#895C00</small>
+        </div>
+        <div style="background:var(--gk-danger);color:#fff;padding:8px 14px;border-radius:var(--gk-radius);font-size:13px;font-weight:600;">
+          --gk-danger<br><small style="opacity:.8;">#C0281E</small>
+        </div>
+        <div style="background:var(--gk-info);color:#fff;padding:8px 14px;border-radius:var(--gk-radius);font-size:13px;font-weight:600;">
+          --gk-info<br><small style="opacity:.8;">#1A5FAD</small>
+        </div>
+      </div>
+
+      <!-- Grey scale -->
+      <div class="d-flex flex-wrap gap-2">
+        <div style="background:var(--gk-grey-0);color:#1C2127;padding:6px 12px;border-radius:var(--gk-radius);font-size:12px;border:1px solid var(--gk-border);">grey-0 · #FFF</div>
+        <div style="background:var(--gk-grey-50);color:#1C2127;padding:6px 12px;border-radius:var(--gk-radius);font-size:12px;border:1px solid var(--gk-border);">grey-50 · Page BG</div>
+        <div style="background:var(--gk-grey-100);color:#1C2127;padding:6px 12px;border-radius:var(--gk-radius);font-size:12px;border:1px solid var(--gk-border);">grey-100 · Divider</div>
+        <div style="background:var(--gk-grey-200);color:#1C2127;padding:6px 12px;border-radius:var(--gk-radius);font-size:12px;border:1px solid #b8bfc9;">grey-200 · Border</div>
+        <div style="background:var(--gk-grey-300);color:#fff;padding:6px 12px;border-radius:var(--gk-radius);font-size:12px;">grey-300 · Placeholder</div>
+        <div style="background:var(--gk-grey-500);color:#fff;padding:6px 12px;border-radius:var(--gk-radius);font-size:12px;">grey-500 · Muted</div>
+        <div style="background:var(--gk-grey-700);color:#fff;padding:6px 12px;border-radius:var(--gk-radius);font-size:12px;">grey-700 · Secondary</div>
+        <div style="background:var(--gk-grey-900);color:#fff;padding:6px 12px;border-radius:var(--gk-radius);font-size:12px;">grey-900 · Ink</div>
+      </div>
+    </div>
+
+    <!-- ─── TYPOGRAPHY ──────────────────────────────────────────────────── -->
+    <div class="gk-card mb-3">
+      <div class="gk-card__header">
+        <h2 class="gk-card__title">Typography</h2>
+        <span class="gk-badge gk-badge--primary">Plus Jakarta Sans</span>
+      </div>
+      <p style="font-size:var(--gk-text-2xl);font-weight:700;line-height:1.2;margin:0 0 8px;">
+        32px — Judul Halaman Utama
+      </p>
+      <p style="font-size:var(--gk-text-xl);font-weight:700;line-height:1.25;margin:0 0 8px;">
+        24px — Judul Section
+      </p>
+      <p style="font-size:var(--gk-text-lg);font-weight:600;line-height:1.3;margin:0 0 8px;">
+        20px — Subjudul / Card Title
+      </p>
+      <p style="font-size:var(--gk-text-base);font-weight:400;line-height:1.6;margin:0 0 8px;">
+        16px — Body text reguler. GAKBISA adalah platform pertukaran keahlian antarmahasiswa.
+      </p>
+      <p style="font-size:var(--gk-text-sm);font-weight:400;line-height:1.5;margin:0 0 8px;color:var(--gk-ink-2);">
+        14px — Teks sekunder, meta, label form, keterangan.
+      </p>
+      <p style="font-size:var(--gk-text-xs);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin:0;color:var(--gk-ink-3);">
+        12px — Eyebrow / Label uppercase
+      </p>
+    </div>
+
+    <!-- ─── BUTTONS ─────────────────────────────────────────────────────── -->
+    <div class="gk-card mb-3">
+      <div class="gk-card__header">
+        <h2 class="gk-card__title">Buttons</h2>
+      </div>
+
+      <p class="gk-text-sm gk-text-muted mb-2">Variants</p>
+      <div class="gk-btn-group mb-4">
+        <button class="gk-btn gk-btn--primary"><i class="bi bi-check-lg"></i> Primary</button>
+        <button class="gk-btn gk-btn--secondary">Secondary</button>
+        <button class="gk-btn gk-btn--ghost">Ghost</button>
+        <button class="gk-btn gk-btn--success"><i class="bi bi-check-circle"></i> Success</button>
+        <button class="gk-btn gk-btn--danger"><i class="bi bi-x-circle"></i> Danger</button>
+      </div>
+
+      <p class="gk-text-sm gk-text-muted mb-2">Sizes</p>
+      <div class="gk-btn-group mb-4">
+        <button class="gk-btn gk-btn--primary gk-btn--sm">Small</button>
+        <button class="gk-btn gk-btn--primary">Default</button>
+        <button class="gk-btn gk-btn--primary gk-btn--lg">Large</button>
+        <button class="gk-btn gk-btn--ghost gk-btn--icon"><i class="bi bi-three-dots"></i></button>
+      </div>
+
+      <p class="gk-text-sm gk-text-muted mb-2">States</p>
+      <div class="gk-btn-group">
+        <button class="gk-btn gk-btn--primary" disabled>Disabled</button>
+        <button class="gk-btn gk-btn--primary gk-btn--loading">Loading</button>
+        <button class="gk-btn gk-btn--primary gk-btn--block" style="max-width:260px;">Block button</button>
+      </div>
+    </div>
+
+    <!-- ─── BADGES ──────────────────────────────────────────────────────── -->
+    <div class="gk-card mb-3">
+      <div class="gk-card__header">
+        <h2 class="gk-card__title">Badges</h2>
+      </div>
+
+      <p class="gk-text-sm gk-text-muted mb-2">Semantic colours</p>
+      <div class="d-flex flex-wrap gap-2 mb-3">
+        <span class="gk-badge gk-badge--primary">Primary</span>
+        <span class="gk-badge gk-badge--success">Success</span>
+        <span class="gk-badge gk-badge--warning">Warning</span>
+        <span class="gk-badge gk-badge--danger">Danger</span>
+        <span class="gk-badge gk-badge--info">Info</span>
+        <span class="gk-badge gk-badge--neutral">Neutral</span>
+      </div>
+
+      <p class="gk-text-sm gk-text-muted mb-2">Domain-specific (status barter &amp; sesi)</p>
+      <div class="d-flex flex-wrap gap-2 mb-3">
+        <span class="gk-badge gk-badge--PENDING"><i class="bi bi-clock"></i> PENDING</span>
+        <span class="gk-badge gk-badge--ACCEPTED"><i class="bi bi-check-circle"></i> ACCEPTED</span>
+        <span class="gk-badge gk-badge--REJECTED"><i class="bi bi-x-circle"></i> REJECTED</span>
+        <span class="gk-badge gk-badge--CANCELLED">CANCELLED</span>
+        <span class="gk-badge gk-badge--COMPLETED"><i class="bi bi-trophy"></i> COMPLETED</span>
+        <span class="gk-badge gk-badge--SCHEDULED"><i class="bi bi-calendar"></i> SCHEDULED</span>
+        <span class="gk-badge gk-badge--ONGOING">ONGOING</span>
+        <span class="gk-badge gk-badge--OFFER">OFFER</span>
+        <span class="gk-badge gk-badge--WANT">WANT</span>
+        <span class="gk-badge gk-badge--PUBLIC">PUBLIC</span>
+        <span class="gk-badge gk-badge--PRIVATE">PRIVATE</span>
+      </div>
+
+      <p class="gk-text-sm gk-text-muted mb-2">Size variant</p>
+      <div class="d-flex gap-2">
+        <span class="gk-badge gk-badge--primary">Default</span>
+        <span class="gk-badge gk-badge--primary gk-badge--sm">Small</span>
+      </div>
+    </div>
+
+    <!-- ─── EMPTY STATE ─────────────────────────────────────────────────── -->
+    <div class="gk-card mb-3">
+      <div class="gk-card__header">
+        <h2 class="gk-card__title">Empty States</h2>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="gk-empty">
+            <div class="gk-empty__icon"><i class="bi bi-inbox"></i></div>
+            <h3 class="gk-empty__title">Belum ada barter</h3>
+            <p class="gk-empty__desc">Temukan partner dan kirimkan permintaan barter pertamamu.</p>
+            <div class="gk-empty__action">
+              <a href="/matching" class="gk-btn gk-btn--primary gk-btn--sm">
+                <i class="bi bi-people-fill"></i> Cari Partner
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="gk-empty gk-empty--compact">
+            <div class="gk-empty__icon"><i class="bi bi-collection"></i></div>
+            <h3 class="gk-empty__title">Portofolio kosong</h3>
+            <p class="gk-empty__desc">Unggah karya pertamamu.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── PAGE HEADER COMPONENT ───────────────────────────────────────── -->
+    <div class="gk-card mb-3">
+      <div class="gk-card__header">
+        <h2 class="gk-card__title">Page Header</h2>
+      </div>
+      <div class="gk-page-header" style="border:1px dashed var(--gk-border);border-radius:var(--gk-radius);padding:16px;margin-bottom:0;">
+        <div class="gk-page-header__text">
+          <span class="gk-page-header__eyebrow">Skill Exchange</span>
+          <h1 class="gk-page-header__title">Permintaan Barter</h1>
+          <p class="gk-page-header__desc">Kelola permintaan barter masuk dan keluar dari semua partner belajar.</p>
+        </div>
+        <div class="gk-page-header__actions">
+          <a href="/matching" class="gk-btn gk-btn--ghost gk-btn--sm">
+            <i class="bi bi-people-fill"></i> Cari Partner
+          </a>
+          <a href="/matching" class="gk-btn gk-btn--primary gk-btn--sm">
+            <i class="bi bi-plus-lg"></i> Barter Baru
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── STAT CARDS ──────────────────────────────────────────────────── -->
+    <div class="gk-card mb-3">
+      <div class="gk-card__header">
+        <h2 class="gk-card__title">Stat Cards</h2>
+      </div>
+      <div class="row g-3">
+        <div class="col-6 col-md-3">
+          <div class="gk-stat gk-stat--primary">
+            <span class="gk-stat__label">Barter Aktif</span>
+            <span class="gk-stat__value">12</span>
+            <span class="gk-stat__sub">dari 18 total</span>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="gk-stat gk-stat--success">
+            <span class="gk-stat__label">Sesi Selesai</span>
+            <span class="gk-stat__value">8</span>
+            <span class="gk-stat__sub">bulan ini</span>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="gk-stat gk-stat--warning">
+            <span class="gk-stat__label">Menunggu</span>
+            <span class="gk-stat__value">3</span>
+            <span class="gk-stat__sub">perlu respons</span>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="gk-stat gk-stat--danger">
+            <span class="gk-stat__label">Notifikasi</span>
+            <span class="gk-stat__value">5</span>
+            <span class="gk-stat__sub">belum dibaca</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── ALERTS ──────────────────────────────────────────────────────── -->
+    <div class="gk-card mb-3">
+      <div class="gk-card__header">
+        <h2 class="gk-card__title">Alerts</h2>
+      </div>
+      <div class="gk-alert gk-alert--success">
+        <i class="bi bi-check-circle-fill"></i>
+        <span>Permintaan barter berhasil dikirim! Tunggu konfirmasi dari partner.</span>
+      </div>
+      <div class="gk-alert gk-alert--warning">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span>Sesi belajar dijadwalkan dalam 30 menit. Pastikan kamu sudah siap.</span>
+      </div>
+      <div class="gk-alert gk-alert--danger">
+        <i class="bi bi-x-circle-fill"></i>
+        <span>Permintaan barter ditolak. Coba cari partner lain yang sesuai.</span>
+      </div>
+      <div class="gk-alert gk-alert--info">
+        <i class="bi bi-info-circle-fill"></i>
+        <span>Lengkapi profil dan tambahkan keahlianmu agar mudah ditemukan partner.</span>
+      </div>
+    </div>
+
+    <!-- ─── SCORE BAR & AVATAR ──────────────────────────────────────────── -->
+    <div class="gk-card mb-3">
+      <div class="gk-card__header">
+        <h2 class="gk-card__title">Score Bar &amp; Avatar</h2>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6">
+          <p class="gk-text-sm gk-text-muted mb-2">Score Bar (Matching Algorithm)</p>
+          <div class="d-flex align-items-center gap-3 mb-2">
+            <div class="gk-score-bar flex-grow-1"><div class="gk-score-bar__fill" style="--pct: 90%;"></div></div>
+            <span class="gk-text-sm gk-font-semibold" style="min-width:30px;">90</span>
+          </div>
+          <div class="d-flex align-items-center gap-3 mb-2">
+            <div class="gk-score-bar flex-grow-1"><div class="gk-score-bar__fill" style="--pct: 65%;"></div></div>
+            <span class="gk-text-sm gk-font-semibold" style="min-width:30px;">65</span>
+          </div>
+          <div class="d-flex align-items-center gap-3">
+            <div class="gk-score-bar flex-grow-1"><div class="gk-score-bar__fill" style="--pct: 40%;"></div></div>
+            <span class="gk-text-sm gk-font-semibold" style="min-width:30px;">40</span>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <p class="gk-text-sm gk-text-muted mb-2">Avatar</p>
+          <div class="d-flex align-items-center gap-3">
+            <div class="gk-avatar gk-avatar--xs">YW</div>
+            <div class="gk-avatar gk-avatar--sm">FK</div>
+            <div class="gk-avatar gk-avatar--md">HN</div>
+            <div class="gk-avatar gk-avatar--lg">AD</div>
+            <div class="gk-avatar gk-avatar--xl">G</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── SKELETON ─────────────────────────────────────────────────────── -->
+    <div class="gk-card mb-3">
+      <div class="gk-card__header">
+        <h2 class="gk-card__title">Skeleton Loader</h2>
+      </div>
+      <div class="d-flex align-items-center gap-3 mb-3">
+        <div class="gk-skeleton gk-skeleton--avatar"></div>
+        <div class="flex-grow-1">
+          <div class="gk-skeleton gk-skeleton--text mb-2" style="width:60%;"></div>
+          <div class="gk-skeleton gk-skeleton--text" style="width:40%;"></div>
+        </div>
+      </div>
+      <div class="gk-skeleton" style="height:80px;"></div>
+    </div>
+
+    <div class="mb-4">
+      <p class="gk-text-xs gk-text-muted">
+        <i class="bi bi-info-circle"></i>
+        Halaman ini hanya untuk referensi pengembang. Tidak terhubung ke route publik.
+      </p>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
