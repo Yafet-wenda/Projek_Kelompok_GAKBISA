@@ -1,0 +1,346 @@
+/*
+ * ╔══════════════════════════════════════════════════════════════════════════╗
+ * ║  GAKBISA Sidebar — gk-sidebar.css                                        ║
+ * ║                                                                          ║
+ * ║  Sistem sidebar kiri modern & monokrom:                                  ║
+ * ║  - Lebar 270px tetap, independen scroll, menu Admin tidak terpotong      ║
+ * ║  - Ikon monokrom (abu-abu saat nonaktif, biru primer saat aktif)        ║
+ * ║  - Indikator bar aktif di sisi kiri, highlight background konsisten       ║
+ * ║  - Header profil lengkap: avatar, nama, email ber-ellipsis, badge role   ║
+ * ║  - Bagian Admin terpisah dengan divider & section label uppercase        ║
+ * ║  - Mobile/tablet drawer offcanvas dengan backdrop overlay & transisi     ║
+ * ╚══════════════════════════════════════════════════════════════════════════╝
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §1 · SIDEBAR CONTAINER (DESKTOP)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.gk-sidebar {
+  width: 270px;
+  min-width: 270px;
+  max-width: 270px;
+  padding: 12px 10px 40px 10px;
+  position: sticky;
+  top: calc(var(--gk-navbar-height, 64px) + 8px);
+  height: calc(100vh - var(--gk-navbar-height, 64px) - 16px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  flex-shrink: 0;
+}
+
+/* Custom scrollbar halus */
+.gk-sidebar::-webkit-scrollbar {
+  width: 5px;
+}
+.gk-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.gk-sidebar::-webkit-scrollbar-thumb {
+  background: var(--gk-grey-200);
+  border-radius: 4px;
+}
+.gk-sidebar::-webkit-scrollbar-thumb:hover {
+  background: var(--gk-grey-300);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §2 · PROFILE HEADER
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.gk-sidebar-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--gk-radius-md, 12px);
+  background: var(--gk-grey-0);
+  border: 1px solid var(--gk-border);
+  box-shadow: var(--gk-shadow-sm);
+  text-decoration: none !important;
+  color: var(--gk-ink);
+  margin-bottom: 14px;
+  transition: background 180ms ease, border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+  user-select: none;
+}
+.gk-sidebar-profile:hover {
+  background: var(--gk-grey-50);
+  border-color: var(--gk-border-strong);
+  box-shadow: var(--gk-shadow-md);
+  transform: translateY(-1px);
+}
+.gk-sidebar-profile:focus-visible {
+  outline: none;
+  box-shadow: var(--gk-ring);
+}
+
+.gk-sidebar-profile__avatar {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  font-size: 16px;
+  font-weight: 700;
+  background: var(--gk-primary-muted);
+  color: var(--gk-primary-dark);
+}
+
+.gk-sidebar-profile__info {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.gk-sidebar-profile__name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gk-ink);
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gk-sidebar-profile__email {
+  font-size: 12px;
+  color: var(--gk-ink-3);
+  line-height: 1.3;
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §3 · SIDEBAR REUSABLE ITEMS (MONOKROM SYSTEM)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.gk-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.gk-sidebar-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 12px 9px 14px;
+  border-radius: var(--gk-radius, 8px);
+  text-decoration: none !important;
+  color: var(--gk-ink-2);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+  transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+  user-select: none;
+}
+
+/* Ikon Monokrom: abu-abu netral secara default */
+.gk-sidebar-item__icon {
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  color: var(--gk-ink-3);
+  transition: color 180ms ease, transform 180ms ease;
+  flex-shrink: 0;
+}
+
+.gk-sidebar-item__label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Indikator aktif di sisi kiri */
+.gk-sidebar-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 7px;
+  bottom: 7px;
+  width: 3.5px;
+  border-radius: 0 4px 4px 0;
+  background: var(--gk-primary);
+  opacity: 0;
+  transform: scaleY(0.3);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+/* Hover state */
+.gk-sidebar-item:hover {
+  background: var(--gk-grey-100);
+  color: var(--gk-ink);
+}
+.gk-sidebar-item:hover .gk-sidebar-item__icon {
+  color: var(--gk-ink);
+  transform: scale(1.08);
+}
+
+/* Focus state */
+.gk-sidebar-item:focus-visible {
+  outline: none;
+  box-shadow: var(--gk-ring);
+}
+
+/* Active state */
+.gk-sidebar-item.active {
+  background: var(--gk-primary-muted);
+  color: var(--gk-primary-dark);
+  font-weight: 600;
+}
+.gk-sidebar-item.active .gk-sidebar-item__icon {
+  color: var(--gk-primary);
+}
+.gk-sidebar-item.active::before {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §4 · SECTION HEADERS & DIVIDERS
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.gk-sidebar-divider {
+  border: none;
+  border-top: 1px solid var(--gk-border);
+  margin: 10px 4px;
+}
+
+.gk-sidebar-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gk-ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 8px 12px 4px 14px;
+  margin: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §5 · MOBILE / TABLET DRAWER (≤ 992px)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.gk-sidebar__drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px 12px 8px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--gk-border);
+}
+
+.gk-sidebar__close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: var(--gk-grey-100);
+  color: var(--gk-ink-2);
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 180ms ease, color 180ms ease;
+}
+.gk-sidebar__close-btn:hover {
+  background: var(--gk-border);
+  color: var(--gk-ink);
+}
+
+/* Backdrop */
+.gk-sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(16, 24, 40, 0.45);
+  z-index: 1040;
+  opacity: 0;
+  transition: opacity 240ms ease;
+  backdrop-filter: blur(2px);
+}
+.gk-sidebar-backdrop.is-open {
+  display: block;
+  opacity: 1;
+}
+
+/* Responsif drawer transform */
+@media (max-width: 992px) {
+  .gk-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    height: 100vh;
+    z-index: 1050;
+    background: var(--gk-grey-0);
+    box-shadow: var(--gk-shadow-lg);
+    transform: translateX(-100%);
+    transition: transform 240ms cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 16px 14px 40px 14px;
+    width: 280px;
+    max-width: 85vw;
+    border-right: 1px solid var(--gk-border);
+  }
+
+  .gk-sidebar.is-open {
+    transform: translateX(0);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §6 · DARK MODE SUPPORT (.fb-dashboard)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.fb-dashboard .gk-sidebar-profile {
+  background: #242526;
+  border-color: #3e4042;
+  color: #e4e6eb;
+}
+.fb-dashboard .gk-sidebar-profile:hover {
+  background: #3a3b3c;
+  border-color: #4e5052;
+}
+.fb-dashboard .gk-sidebar-profile__name { color: #e4e6eb; }
+.fb-dashboard .gk-sidebar-profile__email { color: #b0b3b8; }
+.fb-dashboard .gk-sidebar-item { color: #b0b3b8; }
+.fb-dashboard .gk-sidebar-item:hover {
+  background: #3a3b3c;
+  color: #e4e6eb;
+}
+.fb-dashboard .gk-sidebar-item:hover .gk-sidebar-item__icon {
+  color: #e4e6eb;
+}
+.fb-dashboard .gk-sidebar-item.active {
+  background: rgba(26, 107, 255, 0.15);
+  color: #5c9cff;
+}
+.fb-dashboard .gk-sidebar-item.active .gk-sidebar-item__icon {
+  color: var(--gk-primary);
+}
+.fb-dashboard .gk-sidebar-divider {
+  border-top-color: #3e4042;
+}
+.fb-dashboard .gk-sidebar-section-title {
+  color: #8a8d91;
+}
+.fb-dashboard .gk-sidebar {
+  background: #18191a;
+}
+.fb-dashboard .gk-sidebar__drawer-header {
+  border-bottom-color: #3e4042;
+}
+.fb-dashboard .gk-sidebar__close-btn {
+  background: #3a3b3c;
+  color: #e4e6eb;
+}
+

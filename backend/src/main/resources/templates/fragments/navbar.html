@@ -18,6 +18,16 @@
   <!-- ── Zona kiri: logo + search ──────────────────────────────────── -->
   <div class="gk-navbar__left">
 
+    <!-- Sidebar drawer toggle for mobile / tablet (<= 992px) -->
+    <button class="gk-icon-btn d-lg-none me-1"
+            id="gk-sidebar-toggle"
+            type="button"
+            aria-label="Buka navigasi samping"
+            sec:authorize="isAuthenticated()"
+            title="Menu">
+      <i class="bi bi-list" style="font-size: 22px;" aria-hidden="true"></i>
+    </button>
+
     <!-- Logo / brand -->
     <a th:href="@{/}" class="gk-navbar__brand" aria-label="GAKBISA - beranda">
       <span class="gk-navbar__brand-mark" aria-hidden="true">G</span>
