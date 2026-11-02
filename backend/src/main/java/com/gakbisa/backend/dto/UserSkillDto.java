@@ -54,3 +54,4 @@ public class UserSkillDto {
         this.notes = notes;
     }
 }
+

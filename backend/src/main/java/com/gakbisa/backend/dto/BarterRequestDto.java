@@ -44,3 +44,4 @@ public class BarterRequestDto {
         this.message = message;
     }
 }
+

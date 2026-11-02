@@ -21,14 +21,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Data awal untuk pengembangan & demo: kategori/keahlian umum + akun demo.
- * Aktif hanya bila gakbisa.seed-data=true — matikan sebelum presentasi akhir.
+ * Aktif bila gakbisa.seed-data=true (atau SEED_DATA=true di .env).
  */
 @Component
-// Bean tidak dibuat sama sekali bila seed mati; dengan begitu start tanpa database tetap bersih.
 @ConditionalOnProperty(prefix = "gakbisa", name = "seed-data", havingValue = "true")
 public class SeedDataRunner implements ApplicationRunner {
 
@@ -52,38 +52,47 @@ public class SeedDataRunner implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
-        if (users.count() > 0) {
-            log.info("Seed dilewati: database sudah berisi data pengguna.");
-            return;
+        Map<String, SkillCategory> cats = new HashMap<>();
+
+        if (categories.count() == 0) {
+            cats.put("Pemrograman", save("Pemrograman", "Bahasa pemrograman dan rekayasa perangkat lunak"));
+            cats.put("Desain", save("Desain", "UI/UX, grafis, dan visual"));
+            cats.put("Bahasa", save("Bahasa", "Bahasa asing dan komunikasi"));
+            cats.put("Data", save("Data", "Analisis dan pengolahan data"));
+
+            skill("Java", cats.get("Pemrograman"));
+            skill("Python", cats.get("Pemrograman"));
+            skill("HTML/CSS", cats.get("Pemrograman"));
+            skill("UI/UX", cats.get("Desain"));
+            skill("Inggris", cats.get("Bahasa"));
+            skill("Excel", cats.get("Data"));
+            log.info("Kategori dan keahlian awal berhasil di-seed.");
+        } else {
+            for (SkillCategory sc : categories.findAll()) {
+                cats.put(sc.getName(), sc);
+            }
         }
 
-        Map<String, SkillCategory> cats = Map.of(
-            "Pemrograman", save("Pemrograman", "Bahasa pemrograman dan rekayasa perangkat lunak"),
-            "Desain", save("Desain", "UI/UX, grafis, dan visual"),
-            "Bahasa", save("Bahasa", "Bahasa asing dan komunikasi"),
-            "Data", save("Data", "Analisis dan pengolahan data"));
+        if (!users.existsByEmail("yafet@gakbisa.test")) {
+            user("Admin GAKBISA", "admin@gakbisa.test", "admin123", UserRole.ADMIN);
+            User yafet = user("Yafet Wenda", "yafet@gakbisa.test", "yafet123", UserRole.STUDENT);
+            User faiz = user("Moh. Faiz", "faiz@gakbisa.test", "faiz123", UserRole.STUDENT);
+            User nando = user("Haudajun Nando", "haudajun@gakbisa.test", "haudajun123", UserRole.STUDENT);
 
-        Skill java = skill("Java", cats.get("Pemrograman"));
-        skill("Python", cats.get("Pemrograman"));
-        skill("HTML/CSS", cats.get("Pemrograman"));
-        skill("UI/UX", cats.get("Desain"));
-        skill("Inggris", cats.get("Bahasa"));
-        skill("Excel", cats.get("Data"));
+            Skill javaSkill = skillByName("Java");
+            Skill uiuxSkill = skillByName("UI/UX");
+            Skill excelSkill = skillByName("Excel");
+            Skill inggrisSkill = skillByName("Inggris");
 
-        user("Admin GAKBISA", "admin@gakbisa.test", "admin123", UserRole.ADMIN);
-        User yafet = user("Yafet Wenda", "yafet@gakbisa.test", "yafet123", UserRole.STUDENT);
-        User faiz = user("Moh. Faiz", "faiz@gakbisa.test", "faiz123", UserRole.STUDENT);
-        User nando = user("Haudajun Nando", "haudajun@gakbisa.test", "haudajun123", UserRole.STUDENT);
+            if (javaSkill != null && yafet != null) offer(yafet, javaSkill, SkillLevel.INTERMEDIATE);
+            if (uiuxSkill != null && yafet != null) want(yafet, uiuxSkill, SkillLevel.BEGINNER);
+            if (uiuxSkill != null && faiz != null) offer(faiz, uiuxSkill, SkillLevel.ADVANCED);
+            if (javaSkill != null && faiz != null) want(faiz, javaSkill, SkillLevel.BEGINNER);
+            if (excelSkill != null && nando != null) offer(nando, excelSkill, SkillLevel.INTERMEDIATE);
+            if (inggrisSkill != null && nando != null) want(nando, inggrisSkill, SkillLevel.BEGINNER);
 
-        offer(yafet, java, SkillLevel.INTERMEDIATE);
-        want(yafet, skillByName("UI/UX"), SkillLevel.BEGINNER);
-        offer(faiz, skillByName("UI/UX"), SkillLevel.ADVANCED);
-        want(faiz, java, SkillLevel.BEGINNER);
-        offer(nando, skillByName("Excel"), SkillLevel.INTERMEDIATE);
-        want(nando, skillByName("Inggris"), SkillLevel.BEGINNER);
-
-        log.info("Seed selesai: {} pengguna, {} keahlian. Login demo: yafet@gakbisa.test / yafet123",
-            users.count(), skills.count());
+            log.info("Akun demo kelompok berhasil di-seed (Yafet, Faiz, Nando, Admin).");
+        }
     }
 
     private SkillCategory save(String name, String desc) {
@@ -101,10 +110,11 @@ public class SeedDataRunner implements ApplicationRunner {
     }
 
     private Skill skillByName(String name) {
-        return skills.findByNameIgnoreCase(name).orElseThrow();
+        return skills.findByNameIgnoreCase(name).orElse(null);
     }
 
     private User user(String name, String email, String pass, UserRole role) {
+        if (users.existsByEmail(email)) return users.findByEmail(email).orElse(null);
         User u = new User();
         u.setFullName(name);
         u.setEmail(email);
