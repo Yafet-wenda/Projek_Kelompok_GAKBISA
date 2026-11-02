@@ -4,125 +4,170 @@
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
-<div class="fb-layout container-fluid">
+<div class="gk-layout container-fluid">
     <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
 
-    <main class="fb-main">
+    <main class="gk-main">
 
-        <div th:if="${success}" class="fb-alert fb-alert-success mt-2">
-            <i class="bi bi-check-circle-fill"></i> <span th:text="${success}"></span>
+        <!-- Flash alert -->
+        <div th:if="${success}" class="gk-alert gk-alert--success">
+            <i class="bi bi-check-circle-fill"></i>
+            <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="gk-alert gk-alert--danger">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            <span th:text="${error}"></span>
         </div>
 
         <!-- Barter Detail Card -->
-        <div class="fb-card p-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 style="font-size:20px;font-weight:700;margin:0;">
-                    <i class="bi bi-arrow-left-right text-primary me-2"></i>Detail Permintaan Barter
-                </h5>
-                <span class="fb-badge"
-                      th:classappend="${barter.status == 'PENDING'} ? 'fb-badge-pending' : (${barter.status == 'ACCEPTED'} ? 'fb-badge-accepted' : (${barter.status == 'REJECTED'} ? 'fb-badge-rejected' : (${barter.status == 'CANCELLED'} ? 'fb-badge-cancelled' : 'fb-badge-completed')))"
+        <div class="gk-card p-4 mb-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 pb-3" style="border-bottom: 1px solid var(--gk-border);">
+                <div class="gk-page-header m-0 p-0" style="border-bottom: none;">
+                    <div class="gk-page-header__icon">
+                        <i class="bi bi-arrow-left-right"></i>
+                    </div>
+                    <div>
+                        <h1 class="gk-page-header__title" style="font-size: var(--gk-text-lg);">Detail Permintaan Barter</h1>
+                        <p class="gk-page-header__subtitle">Informasi pertukaran keahlian antara dua pengguna</p>
+                    </div>
+                </div>
+                <span class="gk-badge gk-badge--lg"
+                      th:classappend="'gk-badge--' + ${barter.status}"
+                      style="font-size: var(--gk-text-sm); padding: 4px 12px;"
                       th:text="${barter.status}">STATUS</span>
             </div>
 
             <!-- Two users exchange visualization -->
-            <div class="row g-3 mb-3">
-                <!-- Requester -->
-                <div class="col-5 text-center">
-                    <div class="fb-avatar-placeholder" style="width:64px;height:64px;font-size:26px;margin:0 auto 8px;">
-                        <span th:text="${#strings.substring(barter.requester.fullName,0,1)}">A</span>
+            <div class="p-4 rounded-3 mb-4" style="background: var(--gk-grey-50); border: 1px solid var(--gk-border);">
+                <div class="row g-3 align-items-center">
+                    <!-- Requester -->
+                    <div class="col-md-5 text-center">
+                        <div class="gk-avatar gk-avatar--xl mx-auto mb-2">
+                            <span th:text="${#strings.substring(barter.requester.fullName,0,1)}">A</span>
+                        </div>
+                        <a th:href="@{'/profile/' + ${barter.requester.id}}"
+                           class="fw-bold text-decoration-none d-block"
+                           style="color: var(--gk-ink); font-size: var(--gk-text-base);"
+                           th:text="${barter.requester.fullName}">Pengirim</a>
+                        <div class="text-muted small" th:text="${barter.requester.campus ?: 'Mahasiswa GAKBISA'}"></div>
+                        <div class="mt-3">
+                            <div class="text-uppercase mb-1" style="font-size: 0.6875rem; font-weight: 700; color: var(--gk-ink-3); letter-spacing: 0.05em;">Menawarkan</div>
+                            <span class="gk-badge gk-badge--OFFER" th:text="${barter.offeredUserSkill?.skill?.name ?: '-'}">Skill</span>
+                        </div>
                     </div>
-                    <div style="font-weight:700;font-size:14px;" th:text="${barter.requester.fullName}">Pengirim</div>
-                    <div style="color:#65676B;font-size:12px;" th:text="${barter.requester.campus ?: ''}"></div>
-                    <div style="margin-top:8px;">
-                        <div style="font-size:11px;font-weight:700;color:#65676B;text-transform:uppercase;">Menawarkan</div>
-                        <span class="skill-tag offer" th:text="${barter.offeredUserSkill?.skill?.name ?: '-'}">Skill</span>
+
+                    <!-- Arrow Indicator -->
+                    <div class="col-md-2 text-center my-3 my-md-0">
+                        <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--gk-primary-muted); color: var(--gk-primary); display: flex; align-items: center; justify-content: center; font-size: 20px; margin: 0 auto; box-shadow: var(--gk-shadow-sm);">
+                            <i class="bi bi-arrow-left-right"></i>
+                        </div>
                     </div>
-                </div>
-                <!-- Arrow -->
-                <div class="col-2 d-flex align-items-center justify-content-center">
-                    <i class="bi bi-arrow-left-right" style="font-size:28px;color:#1877F2;"></i>
-                </div>
-                <!-- Target -->
-                <div class="col-5 text-center">
-                    <div class="fb-avatar-placeholder" style="width:64px;height:64px;font-size:26px;margin:0 auto 8px;">
-                        <span th:text="${#strings.substring(barter.targetUser.fullName,0,1)}">B</span>
-                    </div>
-                    <div style="font-weight:700;font-size:14px;" th:text="${barter.targetUser.fullName}">Penerima</div>
-                    <div style="color:#65676B;font-size:12px;" th:text="${barter.targetUser.campus ?: ''}"></div>
-                    <div style="margin-top:8px;">
-                        <div style="font-size:11px;font-weight:700;color:#65676B;text-transform:uppercase;">Diinginkan</div>
-                        <span class="skill-tag want" th:text="${barter.wantedUserSkill?.skill?.name ?: '-'}">Skill</span>
+
+                    <!-- Target Partner -->
+                    <div class="col-md-5 text-center">
+                        <div class="gk-avatar gk-avatar--xl mx-auto mb-2">
+                            <span th:text="${#strings.substring(barter.targetUser.fullName,0,1)}">B</span>
+                        </div>
+                        <a th:href="@{'/profile/' + ${barter.targetUser.id}}"
+                           class="fw-bold text-decoration-none d-block"
+                           style="color: var(--gk-ink); font-size: var(--gk-text-base);"
+                           th:text="${barter.targetUser.fullName}">Penerima</a>
+                        <div class="text-muted small" th:text="${barter.targetUser.campus ?: 'Mahasiswa GAKBISA'}"></div>
+                        <div class="mt-3">
+                            <div class="text-uppercase mb-1" style="font-size: 0.6875rem; font-weight: 700; color: var(--gk-ink-3); letter-spacing: 0.05em;">Diinginkan</div>
+                            <span class="gk-badge gk-badge--WANT" th:text="${barter.wantedUserSkill?.skill?.name ?: '-'}">Skill</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Message -->
-            <div th:if="${barter.message}"
-                 style="background:#F0F2F5;border-radius:8px;padding:12px 16px;margin-bottom:16px;">
-                <div style="font-size:12px;font-weight:700;color:#65676B;margin-bottom:4px;">PESAN</div>
-                <p style="margin:0;font-size:14px;" th:text="${barter.message}"></p>
+            <!-- Message Box -->
+            <div th:if="${barter.message}" class="p-3 rounded-3 mb-3" style="background: var(--gk-card-bg); border-left: 4px solid var(--gk-primary); border: 1px solid var(--gk-border); border-left-width: 4px;">
+                <div class="text-uppercase fw-bold text-muted mb-1" style="font-size: 0.6875rem; letter-spacing: 0.05em;">
+                    <i class="bi bi-chat-quote-fill me-1 text-primary"></i>Pesan Pengantar
+                </div>
+                <p class="m-0" style="font-size: var(--gk-text-sm); color: var(--gk-ink-1); line-height: 1.6;" th:text="${barter.message}"></p>
             </div>
 
             <!-- Timestamps -->
-            <div style="font-size:12px;color:#65676B;margin-bottom:16px;">
-                Dikirim: <span th:text="${#temporals.format(barter.createdAt, 'dd MMM yyyy HH:mm')}"></span>
-                &nbsp;·&nbsp;
-                Diperbarui: <span th:text="${#temporals.format(barter.updatedAt, 'dd MMM yyyy HH:mm')}"></span>
+            <div class="text-muted small mb-4 d-flex align-items-center gap-3">
+                <span><i class="bi bi-send me-1"></i>Dikirim: <strong th:text="${#temporals.format(barter.createdAt, 'dd MMM yyyy HH:mm')}"></strong></span>
+                <span>·</span>
+                <span><i class="bi bi-clock-history me-1"></i>Pembaruan: <strong th:text="${#temporals.format(barter.updatedAt, 'dd MMM yyyy HH:mm')}"></strong></span>
             </div>
 
             <!-- Actions based on status -->
             <div class="d-flex gap-2 flex-wrap" th:if="${barter.status == 'PENDING'}">
-                <form th:action="@{'/barter/' + ${barter.id} + '/accept'}" method="post" style="margin:0;">
-                    <button type="submit" class="btn btn-success fw-semibold">
+                <form th:action="@{'/barter/' + ${barter.id} + '/accept'}" method="post" class="m-0">
+                    <button type="submit" class="gk-btn text-white" style="background: var(--gk-success); border-color: var(--gk-success);">
                         <i class="bi bi-check-lg me-1"></i>Terima Barter
                     </button>
                 </form>
-                <form th:action="@{'/barter/' + ${barter.id} + '/reject'}" method="post" style="margin:0;">
-                    <button type="submit" class="btn btn-fb-danger fw-semibold"
+                <form th:action="@{'/barter/' + ${barter.id} + '/reject'}" method="post" class="m-0">
+                    <button type="submit" class="gk-btn gk-btn--danger"
                             data-confirm="Tolak permintaan barter ini?">
-                        <i class="bi bi-x-lg me-1"></i>Tolak
+                        <i class="bi bi-x-lg me-1"></i>Tolak Barter
                     </button>
                 </form>
-                <form th:action="@{'/barter/' + ${barter.id} + '/cancel'}" method="post" style="margin:0;">
-                    <button type="submit" class="btn btn-fb-secondary fw-semibold"
+                <form th:action="@{'/barter/' + ${barter.id} + '/cancel'}" method="post" class="m-0">
+                    <button type="submit" class="gk-btn gk-btn--secondary"
                             data-confirm="Batalkan permintaan barter ini?">
                         <i class="bi bi-x-circle me-1"></i>Batalkan
                     </button>
                 </form>
             </div>
 
-            <a th:href="@{/barter}" class="btn btn-fb-secondary btn-sm mt-3">
-                <i class="bi bi-arrow-left me-1"></i>Kembali ke Daftar
-            </a>
+            <div class="mt-4 pt-3" style="border-top: 1px solid var(--gk-border);">
+                <a th:href="@{/barter}" class="gk-btn gk-btn--secondary gk-btn--sm">
+                    <i class="bi bi-arrow-left me-1"></i>Kembali ke Daftar Barter
+                </a>
+            </div>
         </div>
 
-        <!-- Schedule Session (only if ACCEPTED) -->
-        <div th:if="${barter.status == 'ACCEPTED'}" class="fb-card p-4">
-            <h5 style="font-size:20px;font-weight:700;margin-bottom:16px;">
-                <i class="bi bi-calendar-plus-fill text-success me-2"></i>Jadwalkan Sesi Belajar
-            </h5>
+        <!-- Schedule Session Form Card (Only visible if status is ACCEPTED) -->
+        <div th:if="${barter.status == 'ACCEPTED'}" class="gk-card p-4">
+            <div class="gk-page-header mb-3" style="border-bottom: none; padding-bottom: 0;">
+                <div class="gk-page-header__icon" style="background: var(--gk-success-muted); color: var(--gk-success);">
+                    <i class="bi bi-calendar-plus-fill"></i>
+                </div>
+                <div>
+                    <h2 class="gk-page-header__title" style="font-size: var(--gk-text-lg);">Jadwalkan Sesi Belajar</h2>
+                    <p class="gk-page-header__subtitle">Tentukan waktu dan platform pertemuan daring dengan partnermu</p>
+                </div>
+            </div>
+
             <form th:action="@{'/sessions/create/' + ${barter.id}}" method="post">
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="fb-form-label">Tanggal & Waktu <span style="color:#c62828;">*</span></label>
-                        <input type="datetime-local" name="scheduledAt" class="form-control" required>
+                        <label class="form-label fw-bold small text-muted text-uppercase mb-1" style="letter-spacing: 0.05em;">
+                            Tanggal & Waktu Pertemuan <span class="text-danger">*</span>
+                        </label>
+                        <input type="datetime-local" name="scheduledAt" class="form-control" required
+                               style="border-radius: var(--gk-radius); border-color: var(--gk-border);">
                     </div>
                     <div class="col-md-3">
-                        <label class="fb-form-label">Durasi (menit)</label>
+                        <label class="form-label fw-bold small text-muted text-uppercase mb-1" style="letter-spacing: 0.05em;">
+                            Durasi (menit)
+                        </label>
                         <input type="number" name="durationMinutes" class="form-control"
-                               value="60" min="15" max="480">
+                               value="60" min="15" max="480"
+                               style="border-radius: var(--gk-radius); border-color: var(--gk-border);">
                     </div>
                     <div class="col-md-3">
-                        <label class="fb-form-label">Platform Meeting</label>
-                        <select name="meetingProvider" class="form-select">
-                            <option value="JITSI">Jitsi Meet</option>
+                        <label class="form-label fw-bold small text-muted text-uppercase mb-1" style="letter-spacing: 0.05em;">
+                            Platform Meeting
+                        </label>
+                        <select name="meetingProvider" class="form-select"
+                                style="border-radius: var(--gk-radius); border-color: var(--gk-border);">
+                            <option value="JITSI">Jitsi Meet (Otomatis)</option>
                             <option value="EXTERNAL_LINK">Link Eksternal</option>
                         </select>
                     </div>
                 </div>
-                <div class="mt-3">
-                    <button type="submit" class="btn btn-success fw-semibold px-4">
-                        <i class="bi bi-calendar-check me-1"></i>Buat Sesi Belajar
+
+                <div class="mt-4">
+                    <button type="submit" class="gk-btn text-white" style="background: var(--gk-success); border-color: var(--gk-success);">
+                        <i class="bi bi-calendar-check me-1"></i>Buat Sesi Belajar Sekarang
                     </button>
                 </div>
             </form>
@@ -130,19 +175,32 @@
 
     </main>
 
-    <aside class="fb-sidebar-right">
-        <div class="fb-card p-3">
-            <div style="font-size:16px;font-weight:700;margin-bottom:8px;">ℹ️ Status Barter</div>
-            <div style="font-size:13px;color:#65676B;line-height:2;">
-                <div th:if="${barter.status == 'PENDING'}">⏳ Menunggu respons dari penerima.</div>
-                <div th:if="${barter.status == 'ACCEPTED'}">✅ Barter diterima! Jadwalkan sesi belajar.</div>
-                <div th:if="${barter.status == 'REJECTED'}">❌ Permintaan ditolak.</div>
-                <div th:if="${barter.status == 'CANCELLED'}">🚫 Permintaan dibatalkan.</div>
-                <div th:if="${barter.status == 'COMPLETED'}">🏆 Barter selesai!</div>
+    <!-- RIGHT PANEL -->
+    <aside class="gk-sidebar-right">
+        <div class="gk-card p-3 mb-3">
+            <h6 class="fw-bold mb-3 d-flex align-items-center gap-2" style="font-size: var(--gk-text-sm); color: var(--gk-ink);">
+                <i class="bi bi-info-circle-fill text-primary"></i>
+                Status Barter Ini
+            </h6>
+            <div class="text-muted small mb-3" style="line-height: 1.6;">
+                <div th:if="${barter.status == 'PENDING'}">
+                    ⏳ <strong>Menunggu Konfirmasi:</strong> Permintaan sedang menunggu respon dari penerima.
+                </div>
+                <div th:if="${barter.status == 'ACCEPTED'}">
+                    ✅ <strong>Disetujui:</strong> Barter sudah diterima! Silakan jadwalkan sesi belajar melalui formulir di samping.
+                </div>
+                <div th:if="${barter.status == 'REJECTED'}">
+                    ❌ <strong>Ditolak:</strong> Permintaan barter tidak disetujui. Kamu dapat mencari partner lain.
+                </div>
+                <div th:if="${barter.status == 'CANCELLED'}">
+                    🚫 <strong>Dibatalkan:</strong> Permintaan telah dibatalkan.
+                </div>
+                <div th:if="${barter.status == 'COMPLETED'}">
+                    🏆 <strong>Selesai:</strong> Seluruh sesi barter telah tuntas dilakukan.
+                </div>
             </div>
-            <hr style="border-color:#CED0D4;">
-            <a th:href="@{/sessions}" class="btn btn-fb-secondary w-100 btn-sm">
-                <i class="bi bi-calendar-event me-1"></i>Lihat Sesi
+            <a th:href="@{/sessions}" class="gk-btn gk-btn--secondary w-100 gk-btn--sm">
+                <i class="bi bi-calendar-event me-1"></i>Lihat Seluruh Sesi Belajar
             </a>
         </div>
     </aside>
@@ -153,4 +211,3 @@
 <script th:src="@{/js/app.js}"></script>
 </body>
 </html>
-

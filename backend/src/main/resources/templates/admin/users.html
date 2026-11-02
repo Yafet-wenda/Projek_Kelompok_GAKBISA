@@ -1,87 +1,109 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head('Admin - Pengguna')}"></head>
+<head th:replace="~{fragments/head :: head('Admin - Kelola Pengguna')}"></head>
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
-<div class="fb-layout container-fluid">
+<div class="gk-layout container-fluid">
     <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
 
-    <main class="fb-main" style="max-width:1000px;">
+    <main class="gk-main">
 
-        <div th:if="${success}" class="fb-alert fb-alert-success mt-2">
-            <i class="bi bi-check-circle-fill"></i> <span th:text="${success}"></span>
+        <!-- Flash alerts -->
+        <div th:if="${success}" class="gk-alert gk-alert--success">
+            <i class="bi bi-check-circle-fill"></i>
+            <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="gk-alert gk-alert--danger">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            <span th:text="${error}"></span>
         </div>
 
-        <div class="fb-card">
-            <div class="fb-card-header" style="padding:16px;">
-                <h4 style="font-size:22px;font-weight:700;margin:0;">
-                    <i class="bi bi-people-fill text-primary me-2"></i>Kelola Pengguna
-                </h4>
-                <span class="fb-badge fb-badge-scheduled" th:text="${users.size()} + ' pengguna'">0</span>
+        <!-- Page Header -->
+        <div class="gk-page-header">
+            <div class="gk-page-header__icon">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <div class="flex-grow-1">
+                <h1 class="gk-page-header__title">Kelola Pengguna</h1>
+                <p class="gk-page-header__subtitle">Daftar seluruh mahasiswa dan administrator terdaftar di GAKBISA</p>
+            </div>
+            <div>
+                <span class="gk-badge gk-badge--primary" th:text="${users.size()} + ' Total Pengguna'">0 Pengguna</span>
+            </div>
+        </div>
+
+        <div class="gk-card p-0" style="overflow: hidden;">
+            <!-- Empty state -->
+            <div th:if="${#lists.isEmpty(users)}" class="p-4">
+                <div class="gk-empty">
+                    <div class="gk-empty__icon"><i class="bi bi-people"></i></div>
+                    <h3 class="gk-empty__title">Belum Ada Pengguna</h3>
+                    <p class="gk-empty__desc">Tidak ada data pengguna yang ditemukan di sistem database.</p>
+                </div>
             </div>
 
-            <div th:if="${#lists.isEmpty(users)}" class="fb-empty">
-                <i class="bi bi-people"></i>
-                <h5>Belum Ada Pengguna</h5>
-            </div>
-
-            <div th:if="${!#lists.isEmpty(users)}" class="p-0">
-                <table class="fb-table">
-                    <thead>
+            <!-- Users Table -->
+            <div th:if="${!#lists.isEmpty(users)}" class="table-responsive m-0">
+                <table class="table table-hover align-middle mb-0" style="font-size: var(--gk-text-sm);">
+                    <thead style="background: var(--gk-grey-50); border-bottom: 1px solid var(--gk-border);">
                         <tr>
-                            <th>Pengguna</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Status</th>
-                            <th>Bergabung</th>
-                            <th>Aksi</th>
+                            <th class="py-3 px-3 text-muted text-uppercase fw-bold" style="font-size: 0.6875rem; letter-spacing: 0.05em;">Pengguna</th>
+                            <th class="py-3 px-3 text-muted text-uppercase fw-bold" style="font-size: 0.6875rem; letter-spacing: 0.05em;">Email</th>
+                            <th class="py-3 px-3 text-muted text-uppercase fw-bold" style="font-size: 0.6875rem; letter-spacing: 0.05em;">Role</th>
+                            <th class="py-3 px-3 text-muted text-uppercase fw-bold" style="font-size: 0.6875rem; letter-spacing: 0.05em;">Status</th>
+                            <th class="py-3 px-3 text-muted text-uppercase fw-bold" style="font-size: 0.6875rem; letter-spacing: 0.05em;">Bergabung</th>
+                            <th class="py-3 px-3 text-muted text-uppercase fw-bold text-end" style="font-size: 0.6875rem; letter-spacing: 0.05em;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="user : ${users}">
-                            <td>
+                        <tr th:each="user : ${users}" style="border-bottom: 1px solid var(--gk-border);">
+                            <td class="py-3 px-3">
                                 <div class="d-flex align-items-center gap-2">
-                                    <div class="fb-avatar-placeholder" style="width:36px;height:36px;font-size:14px;flex-shrink:0;">
+                                    <div class="gk-avatar gk-avatar--sm flex-shrink-0" style="width: 32px; height: 32px; font-size: 13px;">
                                         <span th:text="${#strings.substring(user.fullName,0,1)}">A</span>
                                     </div>
-                                    <span style="font-weight:600;font-size:14px;" th:text="${user.fullName}">Nama</span>
+                                    <div>
+                                        <span class="fw-bold d-block text-dark" th:text="${user.fullName}">Nama Pengguna</span>
+                                        <span class="text-muted small" th:if="${user.campus != null and !user.campus.isEmpty()}" th:text="${user.campus}">Kampus</span>
+                                    </div>
                                 </div>
                             </td>
-                            <td style="font-size:13px;color:#65676B;" th:text="${user.email}">email</td>
-                            <td>
-                                <span class="fb-badge"
-                                      th:classappend="${user.role == 'ADMIN'} ? 'fb-badge-scheduled' : 'fb-badge-cancelled'"
+                            <td class="py-3 px-3 text-muted" th:text="${user.email}">user@gakbisa.test</td>
+                            <td class="py-3 px-3">
+                                <span class="gk-badge gk-badge--sm"
+                                      th:classappend="${user.role == 'ADMIN'} ? 'gk-badge--primary' : 'gk-badge--neutral'"
                                       th:text="${user.role}">STUDENT</span>
                             </td>
-                            <td>
-                                <span class="fb-badge"
-                                      th:classappend="${user.status == 'ACTIVE'} ? 'fb-badge-accepted' : 'fb-badge-rejected'"
+                            <td class="py-3 px-3">
+                                <span class="gk-badge gk-badge--sm"
+                                      th:classappend="${user.status == 'ACTIVE'} ? 'gk-badge--success' : 'gk-badge--danger'"
                                       th:text="${user.status}">ACTIVE</span>
                             </td>
-                            <td style="font-size:13px;color:#65676B;"
-                                th:text="${#temporals.format(user.createdAt, 'dd MMM yyyy')}">Tanggal</td>
-                            <td>
-                                <div class="d-flex gap-1">
+                            <td class="py-3 px-3 text-muted small"
+                                th:text="${#temporals.format(user.createdAt, 'dd MMM yyyy')}">01 Jan 2026</td>
+                            <td class="py-3 px-3 text-end">
+                                <div class="d-inline-flex gap-1">
                                     <form th:if="${user.status == 'ACTIVE'}"
                                           th:action="@{'/admin/users/' + ${user.id} + '/suspend'}"
-                                          method="post" style="margin:0;">
-                                        <button type="submit" class="btn btn-fb-danger btn-sm"
-                                                data-confirm="Suspend pengguna ini?"
-                                                title="Suspend">
+                                          method="post" class="m-0">
+                                        <button type="submit" class="gk-btn gk-btn--danger gk-btn--sm"
+                                                data-confirm="Suspend pengguna ini? Pengguna tidak akan bisa login sementara."
+                                                title="Suspend Akun" style="padding: 4px 8px;">
                                             <i class="bi bi-pause-circle"></i>
                                         </button>
                                     </form>
                                     <form th:if="${user.status != 'ACTIVE'}"
                                           th:action="@{'/admin/users/' + ${user.id} + '/activate'}"
-                                          method="post" style="margin:0;">
-                                        <button type="submit" class="btn btn-success btn-sm"
-                                                title="Aktifkan">
+                                          method="post" class="m-0">
+                                        <button type="submit" class="gk-btn gk-btn--sm text-white"
+                                                style="background: var(--gk-success); border-color: var(--gk-success); padding: 4px 8px;"
+                                                title="Aktifkan Akun">
                                             <i class="bi bi-play-circle"></i>
                                         </button>
                                     </form>
                                     <a th:href="@{'/profile/' + ${user.id}}"
-                                       class="btn btn-fb-secondary btn-sm" title="Lihat Profil">
+                                       class="gk-btn gk-btn--secondary gk-btn--sm" title="Lihat Profil" style="padding: 4px 8px;">
                                         <i class="bi bi-eye"></i>
                                     </a>
                                 </div>
@@ -93,7 +115,24 @@
         </div>
 
     </main>
-    <aside class="fb-sidebar-right"></aside>
+
+    <!-- RIGHT PANEL -->
+    <aside class="gk-sidebar-right">
+        <div class="gk-card p-3 mb-3">
+            <h6 class="fw-bold mb-3 d-flex align-items-center gap-2" style="font-size: var(--gk-text-sm); color: var(--gk-ink);">
+                <i class="bi bi-shield-check text-primary"></i>
+                Kebijakan Akun
+            </h6>
+            <div class="d-flex flex-column gap-2 text-muted small" style="font-size: var(--gk-text-xs); line-height: 1.6;">
+                <p class="m-0">
+                    <strong>Suspend Akun:</strong> Digunakan untuk menonaktifkan pengguna sementara saat terdapat laporan pelanggaran etika atau penipuan barter.
+                </p>
+                <p class="m-0">
+                    <strong>Aktifkan:</strong> Membuka kembali akses akun yang sebelumnya ditangguhkan.
+                </p>
+            </div>
+        </div>
+    </aside>
 </div>
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>
@@ -101,4 +140,3 @@
 <script th:src="@{/js/app.js}"></script>
 </body>
 </html>
-

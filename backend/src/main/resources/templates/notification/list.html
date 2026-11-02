@@ -4,54 +4,85 @@
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
-<div class="fb-layout container-fluid">
+<div class="gk-layout container-fluid">
     <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
 
-    <main class="fb-main">
+    <main class="gk-main">
 
-        <div class="fb-card">
-            <div class="fb-card-header" style="padding:16px;">
-                <h4 style="font-size:24px;font-weight:700;margin:0;">Notifikasi</h4>
-                <form th:action="@{/notifications/read-all}" method="post" style="margin:0;">
-                    <button type="submit" class="btn btn-fb-secondary btn-sm fw-semibold">
+        <!-- Flash alerts -->
+        <div th:if="${success}" class="gk-alert gk-alert--success">
+            <i class="bi bi-check-circle-fill"></i>
+            <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="gk-alert gk-alert--danger">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            <span th:text="${error}"></span>
+        </div>
+
+        <div class="gk-card p-4">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pb-3 mb-3" style="border-bottom: 1px solid var(--gk-border);">
+                <div class="gk-page-header m-0 p-0" style="border-bottom: none;">
+                    <div class="gk-page-header__icon">
+                        <i class="bi bi-bell-fill"></i>
+                    </div>
+                    <div>
+                        <h1 class="gk-page-header__title" style="font-size: var(--gk-text-lg);">Pusat Notifikasi</h1>
+                        <p class="gk-page-header__subtitle">Pemberitahuan aktivitas barter, sesi, dan akunmu</p>
+                    </div>
+                </div>
+
+                <form th:if="${!#lists.isEmpty(notifications)}" th:action="@{/notifications/read-all}" method="post" class="m-0">
+                    <button type="submit" class="gk-btn gk-btn--secondary gk-btn--sm">
                         <i class="bi bi-check2-all me-1"></i>Tandai Semua Dibaca
                     </button>
                 </form>
             </div>
 
             <!-- Empty state -->
-            <div th:if="${#lists.isEmpty(notifications)}" class="fb-empty">
-                <i class="bi bi-bell-slash"></i>
-                <h5>Tidak Ada Notifikasi</h5>
-                <p>Anda akan mendapat notifikasi saat ada barter, sesi, atau ulasan baru.</p>
+            <div th:if="${#lists.isEmpty(notifications)}" class="py-4">
+                <div class="gk-empty">
+                    <div class="gk-empty__icon"><i class="bi bi-bell-slash"></i></div>
+                    <h3 class="gk-empty__title">Belum Ada Notifikasi</h3>
+                    <p class="gk-empty__desc">Kamu akan menerima pemberitahuan setiap ada tawaran barter masuk, sesi belajar baru dijadwalkan, atau ulasan yang diberikan.</p>
+                </div>
             </div>
 
             <!-- Notification list -->
-            <div th:if="${!#lists.isEmpty(notifications)}" class="p-2">
-                <div th:each="notif : ${notifications}">
-                    <div th:classappend="${!notif.isRead} ? 'unread'" class="fb-notif-item">
-                        <!-- Icon based on type -->
-                        <div class="notif-icon"
-                             th:style="${notif.type == 'barter'} ? 'background:#1877F2' : (${notif.type == 'session'} ? 'background:#42b72a' : (${notif.type == 'review'} ? 'background:#f7981c' : 'background:#65676B'))">
-                            <i th:classappend="${notif.type == 'barter'} ? 'bi bi-arrow-left-right' : (${notif.type == 'session'} ? 'bi bi-calendar-event-fill' : (${notif.type == 'review'} ? 'bi bi-star-fill' : 'bi bi-bell-fill'))"></i>
+            <div th:if="${!#lists.isEmpty(notifications)}" class="d-flex flex-column gap-2">
+                <div th:each="notif : ${notifications}"
+                     class="p-3 rounded-3 d-flex align-items-start gap-3 transition-all"
+                     th:style="${!notif.isRead} ? 'background: var(--gk-primary-muted); border-left: 3px solid var(--gk-primary); border: 1px solid #c2d8fe; border-left-width: 3px;' : 'background: var(--gk-card-bg); border: 1px solid var(--gk-border);'">
+
+                    <!-- Dynamic Icon based on type -->
+                    <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                         style="width: 38px; height: 38px; font-size: 16px;"
+                         th:styleappend="${notif.type == 'barter'} ? 'background: var(--gk-primary); color: white;' : (${notif.type == 'session'} ? 'background: var(--gk-success); color: white;' : (${notif.type == 'review'} ? 'background: var(--gk-warning); color: white;' : 'background: var(--gk-grey-200); color: var(--gk-ink-2);'))">
+                        <i th:class="${notif.type == 'barter'} ? 'bi bi-arrow-left-right' : (${notif.type == 'session'} ? 'bi bi-calendar-event' : (${notif.type == 'review'} ? 'bi bi-star-fill' : 'bi bi-bell'))"></i>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="flex-grow-1 min-w-0">
+                        <div class="d-flex justify-content-between align-items-start gap-2">
+                            <h4 class="fw-bold m-0 text-truncate" style="font-size: var(--gk-text-sm); color: var(--gk-ink);" th:text="${notif.title}">Judul Notifikasi</h4>
+                            <span th:if="${!notif.isRead}"
+                                  style="width: 8px; height: 8px; background: var(--gk-primary); border-radius: 50%; display: inline-block; flex-shrink: 0; margin-top: 5px;"></span>
                         </div>
-                        <div class="notif-content flex-grow-1">
-                            <div class="notif-title" th:text="${notif.title}">Judul</div>
-                            <div class="notif-body" th:text="${notif.body}">Isi notifikasi</div>
-                            <div class="notif-time"
-                                 th:text="${#temporals.format(notif.createdAt, 'dd MMM yyyy HH:mm')}">Waktu</div>
+                        <p class="m-0 mt-1" style="font-size: var(--gk-text-xs); color: var(--gk-ink-2); line-height: 1.5;" th:text="${notif.body}">Isi pesan notifikasi...</p>
+                        <div class="mt-2 text-muted" style="font-size: 0.6875rem;">
+                            <i class="bi bi-clock me-1"></i>
+                            <span th:text="${#temporals.format(notif.createdAt, 'dd MMM yyyy HH:mm')}">Waktu</span>
                         </div>
-                        <div class="d-flex flex-column align-items-end gap-2">
-                            <div th:if="${!notif.isRead}" class="unread-dot"></div>
-                            <form th:if="${!notif.isRead}"
-                                  th:action="@{'/notifications/' + ${notif.id} + '/read'}"
-                                  method="post" style="margin:0;">
-                                <button type="submit" class="btn btn-link btn-sm p-0"
-                                        style="font-size:12px;color:#65676B;" title="Tandai dibaca">
-                                    <i class="bi bi-check2"></i>
-                                </button>
-                            </form>
-                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div th:if="${!notif.isRead}" class="flex-shrink-0">
+                        <form th:action="@{'/notifications/' + ${notif.id} + '/read'}" method="post" class="m-0">
+                            <button type="submit" class="gk-btn gk-btn--ghost gk-btn--sm"
+                                    title="Tandai telah dibaca" style="padding: 4px 8px;">
+                                <i class="bi bi-check2 text-primary"></i>
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -59,14 +90,32 @@
 
     </main>
 
-    <aside class="fb-sidebar-right">
-        <div class="fb-card p-3">
-            <div style="font-size:16px;font-weight:700;margin-bottom:8px;">🔔 Jenis Notifikasi</div>
-            <div style="font-size:13px;color:#65676B;line-height:2;">
-                <div><i class="bi bi-arrow-left-right text-primary me-1"></i> Permintaan barter</div>
-                <div><i class="bi bi-calendar-event text-success me-1"></i> Sesi belajar</div>
-                <div><i class="bi bi-star-fill text-warning me-1"></i> Ulasan baru</div>
-                <div><i class="bi bi-shield-fill text-secondary me-1"></i> Moderasi</div>
+    <!-- RIGHT PANEL -->
+    <aside class="gk-sidebar-right">
+        <div class="gk-card p-3 mb-3">
+            <h6 class="fw-bold mb-3 d-flex align-items-center gap-2" style="font-size: var(--gk-text-sm); color: var(--gk-ink);">
+                <i class="bi bi-info-circle-fill text-primary"></i>
+                Kategori Notifikasi
+            </h6>
+            <div class="d-flex flex-column gap-2" style="font-size: var(--gk-text-xs); line-height: 1.5;">
+                <div class="d-flex align-items-center gap-2">
+                    <div style="width: 24px; height: 24px; border-radius: 50%; background: var(--gk-primary-muted); color: var(--gk-primary); display: flex; align-items: center; justify-content: center; font-size: 11px;">
+                        <i class="bi bi-arrow-left-right"></i>
+                    </div>
+                    <span><strong>Barter:</strong> Tawaran baru, diterima, atau dibatalkan</span>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <div style="width: 24px; height: 24px; border-radius: 50%; background: var(--gk-success-muted); color: var(--gk-success); display: flex; align-items: center; justify-content: center; font-size: 11px;">
+                        <i class="bi bi-calendar-event"></i>
+                    </div>
+                    <span><strong>Sesi Belajar:</strong> Jadwal meeting dan pengingat</span>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <div style="width: 24px; height: 24px; border-radius: 50%; background: var(--gk-warning-muted); color: var(--gk-warning); display: flex; align-items: center; justify-content: center; font-size: 11px;">
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+                    <span><strong>Ulasan:</strong> Rating dan feedback dari rekan</span>
+                </div>
             </div>
         </div>
     </aside>
@@ -77,4 +126,3 @@
 <script th:src="@{/js/app.js}"></script>
 </body>
 </html>
-

@@ -4,95 +4,135 @@
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
-<div class="fb-layout container-fluid">
+<div class="gk-layout container-fluid">
     <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
 
-    <main class="fb-main" style="max-width:900px;">
+    <main class="gk-main">
 
-        <div class="d-flex align-items-center gap-2 mb-3">
-            <i class="bi bi-shield-fill-check text-warning" style="font-size:28px;"></i>
-            <h4 style="font-size:24px;font-weight:700;margin:0;">Admin Dashboard</h4>
+        <!-- Page Header -->
+        <div class="gk-page-header">
+            <div class="gk-page-header__icon" style="background: var(--gk-warning-muted); color: var(--gk-warning);">
+                <i class="bi bi-shield-fill-check"></i>
+            </div>
+            <div>
+                <h1 class="gk-page-header__title">Admin Dashboard</h1>
+                <p class="gk-page-header__subtitle">Ringkasan analitik, metrik pengguna, dan kontrol operasional platform GAKBISA</p>
+            </div>
         </div>
 
-        <!-- Stat cards -->
+        <!-- Stat Cards Grid -->
         <div class="row g-3 mb-4">
-            <div class="col-6 col-md-4">
-                <div class="admin-stat-card">
-                    <div class="stat-icon-circle" style="background:#e7f3ff;color:#1877F2;">
-                        <i class="bi bi-people-fill"></i>
+            <div class="col-6 col-lg-4">
+                <div class="gk-stat gk-stat--primary">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span class="gk-stat__label">Total Pengguna</span>
+                        <i class="bi bi-people-fill text-primary"></i>
                     </div>
-                    <div class="stat-num" th:text="${totalUsers}">0</div>
-                    <div class="stat-label">Total Pengguna</div>
+                    <span class="gk-stat__value" th:text="${totalUsers}">0</span>
+                    <span class="gk-stat__sub">Mahasiswa terdaftar</span>
                 </div>
             </div>
-            <div class="col-6 col-md-4">
-                <div class="admin-stat-card">
-                    <div class="stat-icon-circle" style="background:#e8f5e9;color:#2e7d32;">
-                        <i class="bi bi-collection-fill"></i>
+
+            <div class="col-6 col-lg-4">
+                <div class="gk-stat gk-stat--success">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span class="gk-stat__label">Total Portofolio</span>
+                        <i class="bi bi-collection-fill text-success"></i>
                     </div>
-                    <div class="stat-num" th:text="${totalPortfolios}">0</div>
-                    <div class="stat-label">Total Portofolio</div>
+                    <span class="gk-stat__value" th:text="${totalPortfolios}">0</span>
+                    <span class="gk-stat__sub">Karya terunggah</span>
                 </div>
             </div>
-            <div class="col-6 col-md-4">
-                <div class="admin-stat-card">
-                    <div class="stat-icon-circle" style="background:#fff3e0;color:#f57c00;">
-                        <i class="bi bi-arrow-left-right"></i>
+
+            <div class="col-6 col-lg-4">
+                <div class="gk-stat gk-stat--warning">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span class="gk-stat__label">Total Barter</span>
+                        <i class="bi bi-arrow-left-right text-warning"></i>
                     </div>
-                    <div class="stat-num" th:text="${totalBarters}">0</div>
-                    <div class="stat-label">Total Barter</div>
+                    <span class="gk-stat__value" th:text="${totalBarters}">0</span>
+                    <span class="gk-stat__sub">Semua permintaan</span>
                 </div>
             </div>
-            <div class="col-6 col-md-4">
-                <div class="admin-stat-card">
-                    <div class="stat-icon-circle" style="background:#e0f2f1;color:#00796b;">
-                        <i class="bi bi-calendar-check-fill"></i>
+
+            <div class="col-6 col-lg-4">
+                <div class="gk-stat" style="border-left: 3px solid var(--gk-info);">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span class="gk-stat__label">Total Sesi</span>
+                        <i class="bi bi-calendar-check-fill text-info"></i>
                     </div>
-                    <div class="stat-num" th:text="${totalSessions}">0</div>
-                    <div class="stat-label">Total Sesi</div>
+                    <span class="gk-stat__value" th:text="${totalSessions}">0</span>
+                    <span class="gk-stat__sub">Pertemuan terjadwal</span>
                 </div>
             </div>
-            <div class="col-6 col-md-4">
-                <div class="admin-stat-card">
-                    <div class="stat-icon-circle" style="background:#ffebee;color:#c62828;">
-                        <i class="bi bi-flag-fill"></i>
+
+            <div class="col-6 col-lg-4">
+                <div class="gk-stat gk-stat--danger">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span class="gk-stat__label">Laporan Terbuka</span>
+                        <i class="bi bi-flag-fill text-danger"></i>
                     </div>
-                    <div class="stat-num" th:text="${openReports}">0</div>
-                    <div class="stat-label">Laporan Terbuka</div>
+                    <span class="gk-stat__value" th:text="${openReports}">0</span>
+                    <span class="gk-stat__sub">Perlu peninjauan</span>
                 </div>
             </div>
         </div>
 
-        <!-- Quick actions -->
-        <div class="fb-card p-4">
-            <h5 style="font-size:18px;font-weight:700;margin-bottom:16px;">Aksi Cepat</h5>
+        <!-- Quick Navigation Cards -->
+        <div class="gk-card p-4">
+            <h2 class="fw-bold mb-3" style="font-size: var(--gk-text-base); color: var(--gk-ink);">
+                Navigasi Cepat Administrasi
+            </h2>
             <div class="row g-3">
                 <div class="col-6 col-md-3">
-                    <a th:href="@{/admin/users}" class="d-flex flex-column align-items-center p-3 rounded text-decoration-none"
-                       style="background:#F0F2F5;transition:background .2s;" onmouseover="this.style.background='#e4e6e9'" onmouseout="this.style.background='#F0F2F5'">
-                        <i class="bi bi-people-fill" style="font-size:28px;color:#1877F2;margin-bottom:8px;"></i>
-                        <span style="font-weight:600;font-size:14px;color:#050505;">Pengguna</span>
+                    <a th:href="@{/admin/users}"
+                       class="d-flex flex-column align-items-center p-3 rounded-3 text-decoration-none transition-all h-100 text-center"
+                       style="background: var(--gk-grey-50); border: 1px solid var(--gk-border);">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mb-2"
+                             style="width: 44px; height: 44px; background: var(--gk-primary-muted); color: var(--gk-primary); font-size: 20px;">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                        <span class="fw-bold text-dark" style="font-size: var(--gk-text-sm);">Kelola Pengguna</span>
+                        <span class="text-muted small mt-1" style="font-size: 0.75rem;">Status akun & hak akses</span>
                     </a>
                 </div>
+
                 <div class="col-6 col-md-3">
-                    <a th:href="@{/admin/categories}" class="d-flex flex-column align-items-center p-3 rounded text-decoration-none"
-                       style="background:#F0F2F5;transition:background .2s;" onmouseover="this.style.background='#e4e6e9'" onmouseout="this.style.background='#F0F2F5'">
-                        <i class="bi bi-tags-fill" style="font-size:28px;color:#42b72a;margin-bottom:8px;"></i>
-                        <span style="font-weight:600;font-size:14px;color:#050505;">Kategori</span>
+                    <a th:href="@{/catalog}"
+                       class="d-flex flex-column align-items-center p-3 rounded-3 text-decoration-none transition-all h-100 text-center"
+                       style="background: var(--gk-grey-50); border: 1px solid var(--gk-border);">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mb-2"
+                             style="width: 44px; height: 44px; background: var(--gk-success-muted); color: var(--gk-success); font-size: 20px;">
+                            <i class="bi bi-tags-fill"></i>
+                        </div>
+                        <span class="fw-bold text-dark" style="font-size: var(--gk-text-sm);">Katalog Keahlian</span>
+                        <span class="text-muted small mt-1" style="font-size: 0.75rem;">Kategori & topik barter</span>
                     </a>
                 </div>
+
                 <div class="col-6 col-md-3">
-                    <a th:href="@{/admin/portfolios}" class="d-flex flex-column align-items-center p-3 rounded text-decoration-none"
-                       style="background:#F0F2F5;transition:background .2s;" onmouseover="this.style.background='#e4e6e9'" onmouseout="this.style.background='#F0F2F5'">
-                        <i class="bi bi-collection-fill" style="font-size:28px;color:#f7981c;margin-bottom:8px;"></i>
-                        <span style="font-weight:600;font-size:14px;color:#050505;">Portofolio</span>
+                    <a th:href="@{/portfolio}"
+                       class="d-flex flex-column align-items-center p-3 rounded-3 text-decoration-none transition-all h-100 text-center"
+                       style="background: var(--gk-grey-50); border: 1px solid var(--gk-border);">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mb-2"
+                             style="width: 44px; height: 44px; background: var(--gk-warning-muted); color: var(--gk-warning); font-size: 20px;">
+                            <i class="bi bi-collection-fill"></i>
+                        </div>
+                        <span class="fw-bold text-dark" style="font-size: var(--gk-text-sm);">Portofolio</span>
+                        <span class="text-muted small mt-1" style="font-size: 0.75rem;">Galeri karya pengguna</span>
                     </a>
                 </div>
+
                 <div class="col-6 col-md-3">
-                    <a th:href="@{/admin/reports}" class="d-flex flex-column align-items-center p-3 rounded text-decoration-none"
-                       style="background:#F0F2F5;transition:background .2s;" onmouseover="this.style.background='#e4e6e9'" onmouseout="this.style.background='#F0F2F5'">
-                        <i class="bi bi-flag-fill" style="font-size:28px;color:#c62828;margin-bottom:8px;"></i>
-                        <span style="font-weight:600;font-size:14px;color:#050505;">Laporan</span>
+                    <a th:href="@{/sessions}"
+                       class="d-flex flex-column align-items-center p-3 rounded-3 text-decoration-none transition-all h-100 text-center"
+                       style="background: var(--gk-grey-50); border: 1px solid var(--gk-border);">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mb-2"
+                             style="width: 44px; height: 44px; background: var(--gk-danger-muted); color: var(--gk-danger); font-size: 20px;">
+                            <i class="bi bi-calendar-event-fill"></i>
+                        </div>
+                        <span class="fw-bold text-dark" style="font-size: var(--gk-text-sm);">Sesi Belajar</span>
+                        <span class="text-muted small mt-1" style="font-size: 0.75rem;">Monitoring sesi barter</span>
                     </a>
                 </div>
             </div>
@@ -100,12 +140,20 @@
 
     </main>
 
-    <aside class="fb-sidebar-right">
-        <div class="fb-card p-3">
-            <div style="font-size:16px;font-weight:700;margin-bottom:8px;">⚙️ Panel Admin</div>
-            <p style="font-size:13px;color:#65676B;">
-                Anda memiliki akses penuh untuk mengelola pengguna, kategori, portofolio, dan laporan.
+    <!-- RIGHT PANEL -->
+    <aside class="gk-sidebar-right">
+        <div class="gk-card p-3 mb-3">
+            <h6 class="fw-bold mb-3 d-flex align-items-center gap-2" style="font-size: var(--gk-text-sm); color: var(--gk-ink);">
+                <i class="bi bi-gear-wide-connected text-primary"></i>
+                Hak Istimewa Admin
+            </h6>
+            <p class="text-muted small mb-3" style="line-height: 1.6;">
+                Sebagai Administrator, Anda memiliki otorisasi penuh untuk mengelola integritas komunitas, menonaktifkan akun yang melanggar aturan, dan memastikan kelancaran ekosistem barter GAKBISA.
             </p>
+            <div class="p-2 rounded-2" style="background: var(--gk-grey-50); border: 1px solid var(--gk-border); font-size: var(--gk-text-xs);">
+                <div class="fw-bold text-dark mb-1"><i class="bi bi-shield-lock me-1 text-success"></i>Keamanan Akun</div>
+                <span class="text-muted">Gunakan konfirmasi sebelum melakukan suspend akun atau moderasi konten.</span>
+            </div>
         </div>
     </aside>
 </div>
@@ -115,4 +163,3 @@
 <script th:src="@{/js/app.js}"></script>
 </body>
 </html>
-

@@ -4,65 +4,104 @@
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
-<div class="fb-layout container-fluid">
+<div class="gk-layout container-fluid">
     <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
 
-    <main class="fb-main">
-        <div class="fb-card p-4">
-            <h4 style="font-size:24px;font-weight:700;margin-bottom:20px;">
-                <i class="bi bi-pencil-fill text-primary me-2"></i>Edit Portofolio
-            </h4>
+    <main class="gk-main">
+        <div class="gk-card p-4">
+            <div class="gk-page-header mb-4">
+                <div class="gk-page-header__icon">
+                    <i class="bi bi-pencil-fill"></i>
+                </div>
+                <div>
+                    <h1 class="gk-page-header__title" style="font-size: var(--gk-text-lg);">Edit Portofolio</h1>
+                    <p class="gk-page-header__subtitle">Perbarui informasi dan visibilitas karyamu</p>
+                </div>
+            </div>
 
             <form th:action="@{'/portfolio/' + ${portfolio.id} + '/edit'}" method="post">
+                <!-- Title -->
                 <div class="mb-3">
-                    <label class="fb-form-label">Judul Karya <span style="color:#c62828;">*</span></label>
+                    <label class="form-label fw-bold small text-muted text-uppercase mb-1" style="letter-spacing: 0.05em;">
+                        Judul Karya <span class="text-danger">*</span>
+                    </label>
                     <input type="text" name="title" class="form-control"
+                           style="border-radius: var(--gk-radius); border-color: var(--gk-border);"
                            th:value="${portfolio.title}" required>
                 </div>
+
+                <!-- Description -->
                 <div class="mb-3">
-                    <label class="fb-form-label">Deskripsi</label>
+                    <label class="form-label fw-bold small text-muted text-uppercase mb-1" style="letter-spacing: 0.05em;">
+                        Deskripsi
+                    </label>
                     <textarea name="description" class="form-control" rows="4"
+                              style="border-radius: var(--gk-radius); border-color: var(--gk-border);"
                               th:text="${portfolio.description}"></textarea>
                 </div>
+
+                <!-- Visibility -->
                 <div class="mb-4">
-                    <label class="fb-form-label">Visibilitas</label>
-                    <div class="d-flex gap-4 mt-1">
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="visibility" value="PUBLIC"
+                    <label class="form-label fw-bold small text-muted text-uppercase mb-2" style="letter-spacing: 0.05em;">
+                        Visibilitas
+                    </label>
+                    <div class="d-flex flex-column flex-sm-row gap-3">
+                        <label class="p-3 rounded-3 flex-grow-1 d-flex align-items-center gap-3 cursor-pointer"
+                               style="border: 1px solid var(--gk-border); background: var(--gk-grey-50); cursor: pointer;">
+                            <input class="form-check-input mt-0" type="radio" name="visibility" value="PUBLIC"
                                    id="visPublic" th:checked="${portfolio.visibility == 'PUBLIC'}">
-                            <label class="form-check-label fw-semibold" for="visPublic">
-                                <i class="bi bi-globe2 text-success me-1"></i>Publik
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="visibility" value="PRIVATE"
+                            <div>
+                                <div class="fw-bold small d-flex align-items-center gap-1" style="color: var(--gk-ink);">
+                                    <i class="bi bi-globe2 text-success"></i>
+                                    Publik
+                                </div>
+                                <div class="text-muted" style="font-size: 0.75rem;">Dapat dilihat oleh semua pengguna platform</div>
+                            </div>
+                        </label>
+                        <label class="p-3 rounded-3 flex-grow-1 d-flex align-items-center gap-3 cursor-pointer"
+                               style="border: 1px solid var(--gk-border); background: var(--gk-grey-50); cursor: pointer;">
+                            <input class="form-check-input mt-0" type="radio" name="visibility" value="PRIVATE"
                                    id="visPrivate" th:checked="${portfolio.visibility == 'PRIVATE'}">
-                            <label class="form-check-label fw-semibold" for="visPrivate">
-                                <i class="bi bi-lock-fill text-secondary me-1"></i>Privat
-                            </label>
-                        </div>
+                            <div>
+                                <div class="fw-bold small d-flex align-items-center gap-1" style="color: var(--gk-ink);">
+                                    <i class="bi bi-lock-fill text-secondary"></i>
+                                    Privat
+                                </div>
+                                <div class="text-muted" style="font-size: 0.75rem;">Hanya kamu yang bisa melihat karya ini</div>
+                            </div>
+                        </label>
                     </div>
                 </div>
 
-                <!-- Current file info -->
-                <div class="fb-alert fb-alert-info mb-4">
+                <!-- Current file info note -->
+                <div class="gk-alert gk-alert--info mb-4">
                     <i class="bi bi-info-circle-fill"></i>
-                    File: <strong th:text="${portfolio.fileName}">filename.jpg</strong>
-                    (<span th:text="${portfolio.mimeType}">image/jpeg</span>).
-                    Edit ini tidak mengganti file.
+                    <div>
+                        File berkas saat ini: <strong th:text="${portfolio.fileName}">filename.jpg</strong>
+                        (<span th:text="${portfolio.mimeType}">image/jpeg</span>).
+                        <span class="text-muted d-block small">Mengubah formulir ini tidak menghapus atau mengganti berkas yang telah diunggah.</span>
+                    </div>
                 </div>
 
-                <div class="d-flex gap-3">
-                    <button type="submit" class="btn btn-primary fw-bold px-4">
-                        <i class="bi bi-check-lg me-1"></i>Simpan
+                <div class="d-flex align-items-center gap-3">
+                    <button type="submit" class="gk-btn gk-btn--primary">
+                        <i class="bi bi-check-lg me-1"></i>Simpan Perubahan
                     </button>
-                    <a th:href="@{/portfolio}" class="btn btn-fb-secondary fw-bold px-4">Batal</a>
+                    <a th:href="@{/portfolio}" class="gk-btn gk-btn--secondary">
+                        Batal
+                    </a>
                 </div>
             </form>
         </div>
     </main>
 
-    <aside class="fb-sidebar-right"></aside>
+    <!-- RIGHT PANEL -->
+    <aside class="gk-sidebar-right">
+        <div class="gk-card p-3 mb-3">
+            <h6 class="fw-bold mb-2" style="font-size: var(--gk-text-sm); color: var(--gk-ink);">Kelola Karya</h6>
+            <p class="text-muted small mb-0">Kamu dapat mengubah status karya menjadi Publik atau Privat kapan saja sesuai kebutuhan privasimu.</p>
+        </div>
+    </aside>
 </div>
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>
@@ -70,4 +109,3 @@
 <script th:src="@{/js/app.js}"></script>
 </body>
 </html>
-

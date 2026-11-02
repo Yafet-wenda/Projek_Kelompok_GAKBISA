@@ -760,6 +760,59 @@ body:not(.fb-dashboard) {
 .gk-toast--info    { border-left-color: var(--gk-info);    }
 
 
+/* ──────────────────────────────────────────────────────────────────────────
+   4.13 · SEGMENTED TABS
+   Usage:
+     <div class="gk-tabs">
+       <button class="gk-tab-btn active">Tab 1</button>
+       <button class="gk-tab-btn">Tab 2</button>
+     </div>
+   ────────────────────────────────────────────────────────────────────────── */
+.gk-tabs {
+  display: flex;
+  gap: var(--gk-space-1);
+  background: var(--gk-card-bg);
+  border: 1px solid var(--gk-border);
+  border-radius: var(--gk-radius-md);
+  padding: 4px;
+  margin-bottom: var(--gk-space-4);
+  box-shadow: var(--gk-shadow-sm);
+}
+
+.gk-tab-btn {
+  flex: 1;
+  padding: 8px 16px;
+  border-radius: var(--gk-radius);
+  border: 1px solid transparent;
+  background: transparent;
+  font-family: var(--gk-font-sans);
+  font-size: var(--gk-text-sm);
+  font-weight: var(--gk-weight-semibold);
+  color: var(--gk-ink-2);
+  cursor: pointer;
+  transition: all var(--gk-transition-fast);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gk-space-2);
+  text-decoration: none;
+}
+
+.gk-tab-btn:hover {
+  background: var(--gk-grey-50);
+  color: var(--gk-ink);
+}
+
+.gk-tab-btn.active {
+  background: var(--gk-primary-muted);
+  color: var(--gk-primary);
+  border-color: #b5ccfb;
+  font-weight: var(--gk-weight-bold);
+  box-shadow: 0 1px 2px rgba(26, 107, 255, 0.08);
+}
+
+
+
 /* ══════════════════════════════════════════════════════════════════════════
    §5 · UTILITY HELPERS  (gk- namespace)
    ══════════════════════════════════════════════════════════════════════════ */
