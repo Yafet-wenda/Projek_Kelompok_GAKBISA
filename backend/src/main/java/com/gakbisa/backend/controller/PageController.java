@@ -1,5 +1,7 @@
 package com.gakbisa.backend.controller;
 
+import com.gakbisa.backend.dto.PortfolioCreateDto;
+import com.gakbisa.backend.dto.ProfileUpdateDto;
 import com.gakbisa.backend.dto.RegisterRequest;
 import com.gakbisa.backend.repository.UserRepository;
 import com.gakbisa.backend.service.AuthService;
@@ -12,8 +14,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 public class PageController {
@@ -61,17 +61,18 @@ public class PageController {
 
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
-        model.addAttribute("user", CurrentUser.id());
         model.addAttribute("pendingBarters", 0);
         model.addAttribute("activeSessions", 0);
         model.addAttribute("unreadNotifications", 0);
         model.addAttribute("topMatches", Collections.emptyList());
+        model.addAttribute("recentNotifications", Collections.emptyList());
         return "dashboard";
     }
 
     @GetMapping("/matching")
     public String matching(Model model) {
         model.addAttribute("matches", Collections.emptyList());
+        model.addAttribute("keyword", "");
         return "matching/results";
     }
 
@@ -96,11 +97,7 @@ public class PageController {
 
     @GetMapping("/portfolio/upload")
     public String portfolioUpload(Model model) {
-        Map<String, Object> dto = new HashMap<>();
-        dto.put("title", "");
-        dto.put("description", "");
-        dto.put("visibility", "PUBLIC");
-        model.addAttribute("portfolioDto", dto);
+        model.addAttribute("portfolioDto", new PortfolioCreateDto());
         return "portfolio/upload";
     }
 
@@ -132,11 +129,12 @@ public class PageController {
     @GetMapping("/profile/edit")
     public String profileEdit(Model model) {
         var user = userRepository.findById(CurrentUser.id()).orElse(null);
-        Map<String, Object> profileDto = new HashMap<>();
-        profileDto.put("fullName", user != null ? user.getFullName() : "");
-        profileDto.put("bio", user != null ? user.getBio() : "");
-        profileDto.put("campus", user != null ? user.getCampus() : "");
-        model.addAttribute("profileUpdateDto", profileDto);
+        ProfileUpdateDto dto = new ProfileUpdateDto(
+            user != null ? user.getFullName() : "",
+            user != null ? user.getBio() : "",
+            user != null ? user.getCampus() : ""
+        );
+        model.addAttribute("profileUpdateDto", dto);
         return "profile/edit";
     }
 
