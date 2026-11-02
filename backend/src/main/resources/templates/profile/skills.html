@@ -96,10 +96,10 @@
                         <label class="fb-form-label">Keahlian <span style="color:#c62828;">*</span></label>
                         <select th:field="*{skillId}" id="skillSelect" class="form-select" required>
                             <option value="">Pilih Keahlian</option>
-                            <option th:each="cat : ${categories}"
-                                    th:each.var="cat"
-                                    disabled
-                                    th:text="'─── ' + ${cat.name}">Kategori</option>
+                            <option th:each="s : ${skills}"
+                                    th:value="${s.id}"
+                                    th:attr="data-cat=${s.category?.id}"
+                                    th:text="${s.name} + (${s.category != null} ? ' (' + ${s.category.name} + ')' : '')">Keahlian</option>
                         </select>
                         <!-- We build the skill options dynamically based on category filter via JS,
                              but we also output all options with data-cat attribute -->
