@@ -88,23 +88,27 @@
                                           th:action="@{'/admin/users/' + ${user.id} + '/suspend'}"
                                           method="post" class="m-0">
                                         <button type="submit" class="gk-btn gk-btn--danger gk-btn--sm"
+                                                aria-label="Suspend akun pengguna ini"
                                                 data-confirm="Suspend pengguna ini? Pengguna tidak akan bisa login sementara."
                                                 title="Suspend Akun" style="padding: 4px 8px;">
-                                            <i class="bi bi-pause-circle"></i>
+                                            <i class="bi bi-pause-circle" aria-hidden="true"></i>
                                         </button>
                                     </form>
                                     <form th:if="${user.status != 'ACTIVE'}"
                                           th:action="@{'/admin/users/' + ${user.id} + '/activate'}"
                                           method="post" class="m-0">
                                         <button type="submit" class="gk-btn gk-btn--sm text-white"
+                                                aria-label="Aktifkan akun pengguna ini"
                                                 style="background: var(--gk-success); border-color: var(--gk-success); padding: 4px 8px;"
                                                 title="Aktifkan Akun">
-                                            <i class="bi bi-play-circle"></i>
+                                            <i class="bi bi-play-circle" aria-hidden="true"></i>
                                         </button>
                                     </form>
                                     <a th:href="@{'/profile/' + ${user.id}}"
-                                       class="gk-btn gk-btn--secondary gk-btn--sm" title="Lihat Profil" style="padding: 4px 8px;">
-                                        <i class="bi bi-eye"></i>
+                                       class="gk-btn gk-btn--secondary gk-btn--sm"
+                                       aria-label="Lihat profil pengguna ini"
+                                       title="Lihat Profil" style="padding: 4px 8px;">
+                                        <i class="bi bi-eye" aria-hidden="true"></i>
                                     </a>
                                 </div>
                             </td>

@@ -102,7 +102,36 @@
     });
   }
 
-  /* ── 4. Bootstrap tooltip init ───────────────────────────────────────────
+  /* ── 4. Theme Toggle (Light / Dark mode) ──────────────────────────────── */
+  function initThemeToggle() {
+    function updateIcons(isDark) {
+      document.querySelectorAll('.gk-theme-icon').forEach(function (icon) {
+        if (isDark) {
+          icon.classList.remove('bi-moon-stars-fill');
+          icon.classList.add('bi-sun-fill');
+        } else {
+          icon.classList.remove('bi-sun-fill');
+          icon.classList.add('bi-moon-stars-fill');
+        }
+      });
+    }
+
+    var currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    updateIcons(currentTheme === 'dark');
+
+    document.querySelectorAll('.gk-theme-toggle').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', theme);
+        try {
+          localStorage.setItem('gk-theme', theme);
+        } catch (e) {}
+        updateIcons(theme === 'dark');
+      });
+    });
+  }
+
+  /* ── 5. Bootstrap tooltip init ───────────────────────────────────────────
      Tooltip muncul pada hover .gk-nav-tab (data-bs-toggle="tooltip").
      Diinisialisasi setelah Bootstrap dimuat.
   ─────────────────────────────────────────────────────────────────────────── */
@@ -122,6 +151,7 @@
     markActive();
     loadNotifBadge();
     initMobileSearch();
+    initThemeToggle();
     initTooltips();
   }
 

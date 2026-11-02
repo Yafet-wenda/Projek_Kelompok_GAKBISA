@@ -120,9 +120,20 @@
       <!-- Tombol search mobile (ikon, collapse ≤768px) -->
       <button class="gk-navbar__mobile-search-btn gk-icon-btn d-md-none"
               type="button"
-              aria-label="Cari"
+              aria-label="Cari partner keahlian"
               id="gk-mobile-search-toggle">
         <i class="bi bi-search" aria-hidden="true"></i>
+      </button>
+
+      <!-- Theme toggle (Dark/Light mode) -->
+      <button class="gk-icon-btn gk-theme-toggle"
+              id="gk-theme-toggle"
+              type="button"
+              aria-label="Ganti tema gelap atau terang"
+              data-bs-toggle="tooltip"
+              data-bs-placement="bottom"
+              title="Ganti Tema">
+        <i class="bi bi-moon-stars-fill gk-theme-icon" aria-hidden="true"></i>
       </button>
 
       <!-- Notifikasi -->
@@ -233,6 +244,12 @@
 
     <!-- ─── Not authenticated ──────────────────────────────────────── -->
     <div sec:authorize="!isAuthenticated()" class="d-flex align-items-center gap-2">
+      <button class="gk-icon-btn gk-theme-toggle"
+              type="button"
+              aria-label="Ganti tema gelap atau terang"
+              title="Ganti Tema">
+        <i class="bi bi-moon-stars-fill gk-theme-icon" aria-hidden="true"></i>
+      </button>
       <a th:href="@{/login}"
          class="gk-btn gk-btn--ghost gk-btn--sm">Masuk</a>
       <a th:href="@{/register}"

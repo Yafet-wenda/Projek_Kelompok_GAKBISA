@@ -298,49 +298,63 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   §6 · DARK MODE SUPPORT (.fb-dashboard)
+   §6 · DARK MODE SUPPORT ([data-theme="dark"] & .fb-dashboard)
    ═══════════════════════════════════════════════════════════════════════════ */
 
+[data-theme="dark"] .gk-sidebar-profile,
 .fb-dashboard .gk-sidebar-profile {
-  background: #242526;
-  border-color: #3e4042;
-  color: #e4e6eb;
+  background: var(--gk-card-bg);
+  border-color: var(--gk-border);
+  color: var(--gk-ink);
 }
+[data-theme="dark"] .gk-sidebar-profile:hover,
 .fb-dashboard .gk-sidebar-profile:hover {
-  background: #3a3b3c;
-  border-color: #4e5052;
+  background: var(--gk-grey-100);
+  border-color: var(--gk-border-strong);
 }
-.fb-dashboard .gk-sidebar-profile__name { color: #e4e6eb; }
-.fb-dashboard .gk-sidebar-profile__email { color: #b0b3b8; }
-.fb-dashboard .gk-sidebar-item { color: #b0b3b8; }
+[data-theme="dark"] .gk-sidebar-profile__name,
+.fb-dashboard .gk-sidebar-profile__name { color: var(--gk-ink); }
+[data-theme="dark"] .gk-sidebar-profile__email,
+.fb-dashboard .gk-sidebar-profile__email { color: var(--gk-ink-3); }
+[data-theme="dark"] .gk-sidebar-item,
+.fb-dashboard .gk-sidebar-item { color: var(--gk-ink-2); }
+[data-theme="dark"] .gk-sidebar-item:hover,
 .fb-dashboard .gk-sidebar-item:hover {
-  background: #3a3b3c;
-  color: #e4e6eb;
+  background: var(--gk-grey-100);
+  color: var(--gk-ink);
 }
+[data-theme="dark"] .gk-sidebar-item:hover .gk-sidebar-item__icon,
 .fb-dashboard .gk-sidebar-item:hover .gk-sidebar-item__icon {
-  color: #e4e6eb;
+  color: var(--gk-ink);
 }
+[data-theme="dark"] .gk-sidebar-item.active,
 .fb-dashboard .gk-sidebar-item.active {
-  background: rgba(26, 107, 255, 0.15);
-  color: #5c9cff;
+  background: var(--gk-primary-muted);
+  color: var(--gk-primary);
 }
+[data-theme="dark"] .gk-sidebar-item.active .gk-sidebar-item__icon,
 .fb-dashboard .gk-sidebar-item.active .gk-sidebar-item__icon {
   color: var(--gk-primary);
 }
+[data-theme="dark"] .gk-sidebar-divider,
 .fb-dashboard .gk-sidebar-divider {
-  border-top-color: #3e4042;
+  border-top-color: var(--gk-border);
 }
+[data-theme="dark"] .gk-sidebar-section-title,
 .fb-dashboard .gk-sidebar-section-title {
-  color: #8a8d91;
+  color: var(--gk-ink-3);
 }
+[data-theme="dark"] .gk-sidebar,
 .fb-dashboard .gk-sidebar {
-  background: #18191a;
+  background: var(--gk-page-bg);
 }
+[data-theme="dark"] .gk-sidebar__drawer-header,
 .fb-dashboard .gk-sidebar__drawer-header {
-  border-bottom-color: #3e4042;
+  border-bottom-color: var(--gk-border);
 }
+[data-theme="dark"] .gk-sidebar__close-btn,
 .fb-dashboard .gk-sidebar__close-btn {
-  background: #3a3b3c;
-  color: #e4e6eb;
+  background: var(--gk-grey-100);
+  color: var(--gk-ink);
 }
 

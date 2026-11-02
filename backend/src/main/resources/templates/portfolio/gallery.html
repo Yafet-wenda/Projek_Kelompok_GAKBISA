@@ -97,8 +97,9 @@
                             </a>
                             <form th:action="@{'/portfolio/' + ${p.id} + '/delete'}" method="post" class="m-0">
                                 <button type="submit" class="gk-btn gk-btn--danger gk-btn--sm"
+                                        aria-label="Hapus portofolio"
                                         data-confirm="Hapus portofolio ini? Tindakan ini tidak bisa dibatalkan.">
-                                    <i class="bi bi-trash3"></i>
+                                    <i class="bi bi-trash3" aria-hidden="true"></i>
                                 </button>
                             </form>
                         </div>

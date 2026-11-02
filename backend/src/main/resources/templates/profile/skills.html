@@ -57,8 +57,9 @@
                     <span th:if="${us.skill.category}" style="opacity:.7;font-size:11px;" th:text="'· ' + ${us.skill.category.name}"></span>
                     <form th:action="@{/profile/skills/{id}/delete(id=${us.id})}" method="post" style="margin:0;display:inline;">
                         <button type="submit" class="btn btn-link btn-sm p-0 text-danger ms-1"
+                                aria-label="Hapus keahlian yang ditawarkan"
                                 title="Hapus keahlian" data-confirm="Hapus keahlian ini?">
-                            <i class="bi bi-x-circle-fill" style="font-size:14px;"></i>
+                            <i class="bi bi-x-circle-fill" style="font-size:14px;" aria-hidden="true"></i>
                         </button>
                     </form>
                 </div>
@@ -88,8 +89,9 @@
                     <span th:if="${us.level}" style="opacity:.8;font-weight:400;" th:text="'(' + ${us.level} + ')'"></span>
                     <form th:action="@{/profile/skills/{id}/delete(id=${us.id})}" method="post" style="margin:0;display:inline;">
                         <button type="submit" class="btn btn-link btn-sm p-0 text-danger ms-1"
+                                aria-label="Hapus keahlian yang ditawarkan"
                                 title="Hapus keahlian" data-confirm="Hapus keahlian ini?">
-                            <i class="bi bi-x-circle-fill" style="font-size:14px;"></i>
+                            <i class="bi bi-x-circle-fill" style="font-size:14px;" aria-hidden="true"></i>
                         </button>
                     </form>
                 </div>

@@ -148,6 +148,141 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
+   §1.1 · DARK MODE TOKENS ([data-theme="dark"])
+   ═══════════════════════════════════════════════════════════════════════════ */
+[data-theme="dark"] {
+  --gk-page-bg:       #0B0F19;
+  --gk-card-bg:       #131B2E;
+  --gk-border:        #232F48;
+  --gk-border-strong: #334466;
+  --gk-grey-0:        #131B2E;
+  --gk-grey-50:       #0B0F19;
+  --gk-grey-100:      #1B2640;
+  --gk-grey-200:      #232F48;
+  --gk-grey-300:      #334466;
+  --gk-grey-500:      #94A3B8;
+  --gk-grey-700:      #CBD5E1;
+  --gk-grey-900:      #F8FAFC;
+  --gk-ink:           #F8FAFC;
+  --gk-ink-2:         #E2E8F0;
+  --gk-ink-3:         #94A3B8;
+
+  --gk-primary-muted: rgba(26, 107, 255, 0.22);
+  --gk-success-muted: rgba(27, 126, 74, 0.22);
+  --gk-warning-muted: rgba(137, 92, 0, 0.25);
+  --gk-danger-muted:  rgba(192, 40, 30, 0.25);
+  --gk-info-muted:    rgba(26, 95, 173, 0.25);
+
+  --gk-shadow-sm:     0 1px 3px rgba(0, 0, 0, 0.45);
+  --gk-shadow-md:     0 4px 10px rgba(0, 0, 0, 0.55);
+  --gk-shadow-lg:     0 12px 24px rgba(0, 0, 0, 0.65);
+
+  --bs-body-bg:       #0B0F19;
+  --bs-body-color:    #F8FAFC;
+  --bs-border-color:  #232F48;
+
+  --fb-white:         #131B2E;
+  --fb-bg:            #0B0F19;
+  --fb-border:        #232F48;
+  --fb-card-shadow:   0 1px 3px rgba(0, 0, 0, 0.45);
+  --fb-text:          #F8FAFC;
+  --fb-text-secondary:#94A3B8;
+  --fb-hover:         rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] body {
+  background-color: var(--gk-page-bg) !important;
+  color: var(--gk-ink) !important;
+}
+
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+  background-color: #131B2E !important;
+  color: #F8FAFC !important;
+  border-color: #232F48 !important;
+}
+
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+  background-color: #131B2E !important;
+  color: #F8FAFC !important;
+  border-color: var(--gk-primary) !important;
+  box-shadow: var(--gk-ring) !important;
+}
+
+[data-theme="dark"] .dropdown-menu {
+  background-color: #131B2E !important;
+  border-color: #232F48 !important;
+  color: #F8FAFC !important;
+  box-shadow: var(--gk-shadow-lg) !important;
+}
+
+[data-theme="dark"] .table {
+  --bs-table-bg: transparent;
+  --bs-table-color: #F8FAFC;
+  --bs-table-hover-bg: rgba(255, 255, 255, 0.04);
+  border-color: #232F48 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §1.2 · ACCESSIBILITY FOCUS RING & MOTION
+   ═══════════════════════════════════════════════════════════════════════════ */
+:focus-visible {
+  outline: 2px solid var(--gk-primary) !important;
+  outline-offset: 2px !important;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--gk-primary) !important;
+  outline-offset: 2px !important;
+}
+
+/* Smooth Entrance Micro-animations */
+@keyframes gk-fade-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.gk-card,
+.gk-page-header,
+.gk-stat {
+  animation: gk-fade-slide-up 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gk-btn {
+  transition: all 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gk-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.gk-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* prefers-reduced-motion: matikan animasi bila user minta */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
    §2 · FONT IMPORT  (Plus Jakarta Sans via Google Fonts)
    — Hanya dimuat sekali; browser cache-kan untuk semua halaman.
    ═══════════════════════════════════════════════════════════════════════════ */

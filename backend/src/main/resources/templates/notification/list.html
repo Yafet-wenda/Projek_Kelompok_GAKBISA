@@ -79,8 +79,9 @@
                     <div th:if="${!notif.isRead}" class="flex-shrink-0">
                         <form th:action="@{'/notifications/' + ${notif.id} + '/read'}" method="post" class="m-0">
                             <button type="submit" class="gk-btn gk-btn--ghost gk-btn--sm"
+                                    aria-label="Tandai notifikasi ini telah dibaca"
                                     title="Tandai telah dibaca" style="padding: 4px 8px;">
-                                <i class="bi bi-check2 text-primary"></i>
+                                <i class="bi bi-check2 text-primary" aria-hidden="true"></i>
                             </button>
                         </form>
                     </div>
