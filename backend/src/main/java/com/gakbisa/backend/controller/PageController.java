@@ -1,6 +1,7 @@
 package com.gakbisa.backend.controller;
 
 import com.gakbisa.backend.dto.RegisterRequest;
+import com.gakbisa.backend.repository.UserRepository;
 import com.gakbisa.backend.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -10,13 +11,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 @Controller
 public class PageController {
 
     private final AuthService auth;
+    private final UserRepository userRepository;
 
-    public PageController(AuthService auth) {
+    public PageController(AuthService auth, UserRepository userRepository) {
         this.auth = auth;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/")
@@ -55,7 +62,82 @@ public class PageController {
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
         model.addAttribute("user", CurrentUser.id());
+        model.addAttribute("pendingBarters", 0);
+        model.addAttribute("activeSessions", 0);
+        model.addAttribute("unreadNotifications", 0);
+        model.addAttribute("topMatches", Collections.emptyList());
         return "dashboard";
+    }
+
+    @GetMapping("/matching")
+    public String matching(Model model) {
+        model.addAttribute("matches", Collections.emptyList());
+        return "matching/results";
+    }
+
+    @GetMapping("/barter")
+    public String barter(Model model) {
+        model.addAttribute("receivedBarters", Collections.emptyList());
+        model.addAttribute("sentBarters", Collections.emptyList());
+        return "barter/list";
+    }
+
+    @GetMapping("/sessions")
+    public String sessions(Model model) {
+        model.addAttribute("sessions", Collections.emptyList());
+        return "session/list";
+    }
+
+    @GetMapping("/portfolio")
+    public String portfolio(Model model) {
+        model.addAttribute("portfolios", Collections.emptyList());
+        return "portfolio/gallery";
+    }
+
+    @GetMapping("/portfolio/upload")
+    public String portfolioUpload(Model model) {
+        Map<String, Object> dto = new HashMap<>();
+        dto.put("title", "");
+        dto.put("description", "");
+        dto.put("visibility", "PUBLIC");
+        model.addAttribute("portfolioDto", dto);
+        return "portfolio/upload";
+    }
+
+    @GetMapping("/notifications")
+    public String notifications(Model model) {
+        model.addAttribute("notifications", Collections.emptyList());
+        return "notification/list";
+    }
+
+    @GetMapping("/profile")
+    public String profile(Model model) {
+        var user = userRepository.findById(CurrentUser.id()).orElse(null);
+        model.addAttribute("user", user);
+        model.addAttribute("offerSkills", Collections.emptyList());
+        model.addAttribute("wantSkills", Collections.emptyList());
+        model.addAttribute("portfolios", Collections.emptyList());
+        model.addAttribute("reviews", Collections.emptyList());
+        return "profile/view";
+    }
+
+    @GetMapping("/profile/skills")
+    public String profileSkills(Model model) {
+        model.addAttribute("offerSkills", Collections.emptyList());
+        model.addAttribute("wantSkills", Collections.emptyList());
+        model.addAttribute("categories", Collections.emptyList());
+        return "profile/skills";
+    }
+
+    @GetMapping("/profile/edit")
+    public String profileEdit(Model model) {
+        var user = userRepository.findById(CurrentUser.id()).orElse(null);
+        Map<String, Object> profileDto = new HashMap<>();
+        profileDto.put("fullName", user != null ? user.getFullName() : "");
+        profileDto.put("bio", user != null ? user.getBio() : "");
+        profileDto.put("campus", user != null ? user.getCampus() : "");
+        model.addAttribute("profileUpdateDto", profileDto);
+        return "profile/edit";
     }
 
     @GetMapping("/access-denied")

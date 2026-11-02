@@ -8,7 +8,7 @@ spring:
 
   datasource:
     # Nilainya diambil dari .env (lihat .env.example). DB_SSL_MODE: require untuk Supabase, disable untuk lokal.
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:gakbisa}?sslmode=${DB_SSL_MODE:disable}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:gakbisa}?sslmode=${DB_SSL_MODE:disable}&preparedStatementCacheQueries=0
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:}
     hikari:
