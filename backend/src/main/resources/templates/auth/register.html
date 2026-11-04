@@ -27,7 +27,7 @@
                 </div>
                 <div class="mb-3">
                     <input type="email" th:field="*{email}" class="form-control form-control-lg"
-                           placeholder="Email" required>
+                           placeholder="Email" autocomplete="email" required>
                     <div th:if="${#fields.hasErrors('email')}" class="text-danger small mt-1"
                          th:errors="*{email}"></div>
                 </div>
