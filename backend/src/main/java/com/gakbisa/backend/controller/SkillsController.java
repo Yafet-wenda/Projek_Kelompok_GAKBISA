@@ -26,7 +26,7 @@ public class SkillsController {
         }
     }
 
-    public record AddSkillRequest(UUID skillId, SkillType type, SkillLevel level, String notes) {}
+    public record AddSkillRequest(UUID skillId, String skillName, SkillType type, SkillLevel level, String notes) {}
 
     private final UserService userService;
     private final SkillRepository skills;
@@ -72,7 +72,8 @@ public class SkillsController {
     @PostMapping("/me/skills")
     public UserSkillDto addSkill(@RequestBody AddSkillRequest req) {
         if (req.type() == null) throw new com.gakbisa.backend.config.AppExceptions.ValidationException("type wajib OFFER/WANT");
-        return UserSkillDto.from(userService.addSkill(CurrentUser.id(), req.skillId(), req.type(), req.level(), req.notes()));
+        return UserSkillDto.from(userService.addSkill(
+            CurrentUser.id(), req.skillId(), req.skillName(), req.type(), req.level(), req.notes()));
     }
 
     @DeleteMapping("/me/skills/{id}")

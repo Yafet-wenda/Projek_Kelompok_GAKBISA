@@ -153,11 +153,11 @@
     };
     isi("daftar-offer", state.offers, "OFFER");
     isi("daftar-want", state.wants, "WANT");
-    isiSelectSkill();
+    isiSaranSkill();
   }
 
-  async function isiSelectSkill() {
-    const sel = $("skill-pilih");
+  async function isiSaranSkill() {
+    const saran = $("skill-saran");
     if (!state.daftarSkill.length) {
       try {
         const halaman = await api.get("/api/skills?size=50");
@@ -165,10 +165,8 @@
       } catch { state.daftarSkill = []; }
     }
     const ada = new Set([...state.offers, ...state.wants].map((s) => s.skillId));
-    const sisa = state.daftarSkill.filter((s) => !ada.has(s.id));
-    sel.innerHTML = sisa.length
-      ? sisa.map((s) => html`<option value="${s.id}">${s.name} · ${s.category}</option>`).join("")
-      : html`<option value="">Semua keahlian sudah kamu pilih</option>`;
+    saran.innerHTML = state.daftarSkill.filter((s) => !ada.has(s.id))
+      .map((s) => html`<option value="${s.name}">${s.category}</option>`).join("");
   }
 
   function renderBarter() {
@@ -607,11 +605,11 @@
     e.preventDefault();
     const btn = e.submitter || e.target.querySelector("button");
     const body = {
-      skillId: $("skill-pilih").value,
+      skillName: $("skill-pilih").value.trim(),
       type: $("skill-type").value,
       level: $("skill-level").value,
     };
-    if (!body.skillId) { toast("Pilih keahlian dulu.", "err"); return; }
+    if (!body.skillName) { toast("Tulis nama keahliannya dulu.", "err"); return; }
     aksi(btn, async () => {
       await api.post("/api/me/skills", body);
       await muatSkillSaya();
@@ -752,7 +750,7 @@
       });
       $("form-ahli").reset();
       state.daftarSkill = [];
-      await isiSelectSkill();
+      await isiSaranSkill();
       await muatAdmin();
     }, "Keahlian disimpan.");
   });

@@ -24,14 +24,23 @@ cd "F:/wenda/Projek GAKBISA/backend"
 
 ## Menjalankan
 
-```bash
-cd "F:/wenda/Projek GAKBISA/backend"
+Satu perintah, dari terminal VS Code apa pun (posisinya di folder proyek, bukan di `backend`):
+
+```powershell
+.\run.cmd            # PostgreSQL lokal (backend\.env); cluster dev ikut dinyalakan
+.\run.cmd supa       # database Supabase milik Nando (backend\.env.supabase)
+```
+
+`run.cmd` hanya memanggil `backend\start.ps1`, dan script itu menjalankan
+`mvnw.cmd spring-boot:run` seperti biasa. Berhenti dengan `Ctrl+C`.
+Kalau lebih suka tombol, Spring Boot Dashboard di VS Code juga bisa: klik play pada
+`gakbisa-backend`.
+
+Setup sekali di mesin baru:
+
+```powershell
+cd "F:\wenda\Projek GAKBISA\backend"
 cp .env.example .env   # lalu isi kredensial database
-
-# Jika JDK 25 belum terinstall global, arahkan JAVA_HOME ke JDK 25 (contoh: JDK portabel)
-export JAVA_HOME="C:/Users/Mahasiswa/tools/jdk-25.0.4.1+1"
-
-./mvnw.cmd spring-boot:run
 ```
 
 ### Database lokal (Opsi B — dipakai sementara)
@@ -46,7 +55,13 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\setup-local-db.ps1
 ```
 
 Tabel dibuat otomatis oleh Flyway saat aplikasi start (`V1__init_schema.sql`).
-Pindah ke Supabase nanti cukup ganti nilai `DB_*` di `.env`, tanpa mengubah kode.
+Script `setup-local-db.ps1` di atas mengasumsikan PostgreSQL di port **5432**; cluster dev
+yang dipakai sekarang ada di 5433, jadi jalankan script itu hanya saat menyiapkan mesin baru.
+
+Pindah ke database Supabase milik Nando tinggal isi `backend\.env.supabase` (berkas ini tidak
+ikut di-commit) lalu `.\run.cmd supa`. Berkas `.env` lokal dibiarkan utuh sebagai cadangan
+kalau sedang tidak ada internet.
+
 Upload portofolio baru berfungsi kalau `SUPABASE_URL` + `SUPABASE_SERVICE_KEY` terisi;
 kalau kosong, aplikasi tetap jalan dan hanya fitur itu yang menampilkan pesan
 "ruang penyimpanan berkas belum aktif".
@@ -66,14 +81,9 @@ jadi `ddl-auto: validate` aman.
 
 Aplikasi jalan di **http://localhost:8080** (sengaja bukan port 8000 agar tidak bentrok).
 
-Akun seed awal (dibuat otomatis saat `SEED_DATA=true`):
-
-| Email | Password | Role |
-|---|---|---|
-| admin@gakbisa.test | admin123 | ADMIN |
-| yafet@gakbisa.test | yafet123 | STUDENT |
-| faiz@gakbisa.test | faiz123 | STUDENT |
-| haudajun@gakbisa.test | haudajun123 | STUDENT |
+Database start dalam keadaan kosong. Aturan pengisiannya: pendaftar **pertama** otomatis
+menjadi ADMIN (akun berikutnya STUDENT), dan keahlian yang diketik pengguna di dasbor langsung
+masuk katalog di kategori `Lainnya` — admin yang memindahkannya ke kategori yang tepat.
 
 ## Konfigurasi environment (`.env`)
 
@@ -88,7 +98,6 @@ Akun seed awal (dibuat otomatis saat `SEED_DATA=true`):
 | `SUPABASE_URL` | `https://xxxx.supabase.co` | Basis URL project |
 | `SUPABASE_SERVICE_KEY` | `eyJ...` | Service role key untuk Storage API — **hanya di backend, jangan pernah dikirim ke browser** |
 | `STORAGE_BUCKET` | `portfolio-files` | Nama bucket portofolio |
-| `SEED_DATA` | `true` | Isi data awal (kategori, skill, akun demo) |
 
 > **Keamanan:** `.env` sudah ada di `.gitignore`. Jangan pernah commit kunci service.
 
@@ -96,7 +105,7 @@ Akun seed awal (dibuat otomatis saat `SEED_DATA=true`):
 
 ```
 src/main/java/com/gakbisa/backend/
-  config/      konfigurasi Beans, seed data
+  config/      konfigurasi Beans
   domain/      entity JPA + enum (10 tabel sesuai ERD proposal)
   repository/  Spring Data JPA repositories
   service/     logika bisnis: auth, profil, keahlian, matching, barter, sesi, ulasan, storage, admin

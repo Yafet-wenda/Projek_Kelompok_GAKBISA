@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="id">
+<head th:replace="~{fragments/layout :: head(${status == 404 ? 'Halaman tidak ditemukan' : status == 403 ? 'Akses ditolak' : 'Ada masalah'} + ' · GAKBISA')}"></head>
+<body>
+<th:block th:replace="~{fragments/layout :: skip}"></th:block>
+<header th:replace="~{fragments/layout :: topbar('')}"></header>
+
+<main id="isi" class="shell section">
+  <div class="card card--narrow">
+    <p class="num muted code-note">HTTP <span th:text="${status}">404</span></p>
+
+    <h1 th:text="${status == 404} ? 'Halaman tidak ditemukan'
+                        : (${status == 403} ? 'Akses ditolak' : 'Ada masalah di server')">Halaman tidak ditemukan</h1>
+
+    <p class="lede" th:switch="${status}">
+      <span th:case="404">Alamat <code th:text="${path}">/</code> tidak dikenali. Mungkin salah ketik,
+        atau halamannya memang sudah pindah.</span>
+      <span th:case="403">Akun yang sedang dipakai belum punya hak untuk masuk ke sana.
+        Kalau kamu yakin seharusnya bisa, kirim tangkapan layar ini ke tim backend.</span>
+      <span th:case="*">Permintaanmu gagal diproses. Muat ulang satu kali; kalau tetap sama,
+        kami cek lewat log server.</span>
+    </p>
+
+    <hr class="rule">
+    <div class="btn-group">
+      <a class="btn btn--leaf" th:href="@{/}">Ke beranda</a>
+      <a class="btn btn--ghost" th:href="@{/catalog}">Lihat katalog</a>
+      <a class="btn btn--ghost" sec:authorize="isAuthenticated()" th:href="@{/dashboard}">Kembali ke dasbor</a>
+      <a class="btn btn--ghost" sec:authorize="!isAuthenticated()" th:href="@{/login}">Masuk</a>
+    </div>
+  </div>
+</main>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

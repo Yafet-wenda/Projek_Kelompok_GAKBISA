@@ -32,7 +32,7 @@
           <div>
             <span class="tag tag--offer">Menawarkan</span>
             <p class="skill">Java</p>
-            <span class="lvl">Level menengah · Yafet</span>
+            <span class="lvl">Level menengah</span>
           </div>
           <span class="to" aria-hidden="true">⇄</span>
           <div class="r">
@@ -51,13 +51,12 @@
           <div class="r">
             <span class="tag tag--offer">Menawarkan</span>
             <p class="skill">UI/UX</p>
-            <span class="lvl">Level mahir · Faiz</span>
+            <span class="lvl">Level mahir</span>
           </div>
         </div>
         <p class="swapcard__foot">Kecocokan 93 dari 100: Java dan UI/UX saling dibutuhkan,
           levelnya berimbang, portofolio lengkap.</p>
       </div>
-      <p class="tiny muted">Kartu di atas contoh dari data seed kelompok, bukan akun asli.</p>
     </aside>
   </section>
 
@@ -120,34 +119,6 @@
     </div>
   </section>
 
-  <!-- ===== catatan ===== -->
-  <section class="shell section">
-    <h2>Yang perlu dicatat sebelum mulai</h2>
-    <dl class="spec">
-      <div class="spec__row">
-        <dt>Skor kecocokan</dt>
-        <dd>Bobotnya sama untuk semua akun: 50% kebutuhanmu terpenuhi, 30% timbal balik,
-          10% kesesuaian level, 5% reputasi, 5% kelengkapan portofolio. Di dasbor, tiap skor
-          ditemani daftar alasannya.</dd>
-      </div>
-      <div class="spec__row">
-        <dt>Ruang sesi</dt>
-        <dd>Nama ruang video dibuat acak di server ketika sesi dijadwalkan. Hanya pesertanya
-          yang melihat tautan itu, jadi orang luar tidak bisa ikut masuk.</dd>
-      </div>
-      <div class="spec__row">
-        <dt>Berkas portofolio</dt>
-        <dd>Unggahan berjalan lewat backend dan kunci penyimpanan hanya hidup di server.
-          Login memakai CSRF, kata sandi tersimpan sebagai hash BCrypt.</dd>
-      </div>
-      <div class="spec__row">
-        <dt>Katalog publik</dt>
-        <dd>Portofolio yang visibilitasnya publik bisa dibuka tanpa login, jadi kamu tahu dengan
-          siapa kamu akan belajar sebelum mengirim permintaan.</dd>
-      </div>
-    </dl>
-  </section>
-
   <!-- ===== penutup ===== -->
   <section class="shell section--tight section--end">
     <hr class="rule">
@@ -157,15 +128,13 @@
         dasbor. Kalau masih ingin lihat-lihat, katalog dan galeri karya bisa dibuka tanpa akun.</p>
       <p class="start__aksi">
         <a class="btn btn--leaf" th:href="@{/register}">Buat akun</a>
-        <span class="tiny muted">sudah punya akun? <a th:href="@{/login}">Masuk</a>, daftar akun
-          demo ada di halaman itu.</span>
+        <span class="tiny muted">sudah punya akun? <a th:href="@{/login}">Masuk</a>.</span>
       </p>
     </div>
   </section>
 
 </main>
 
-<footer th:replace="~{fragments/layout :: foot}"></footer>
 <script th:src="@{/js/app.js}"></script>
 <script th:src="@{/js/home.js}"></script>
 </body>

@@ -64,7 +64,7 @@ a:hover { text-decoration-thickness: 1px; }
 ul, ol { margin: 0 0 1em; padding-left: 20px; }
 li { margin: .2em 0; }
 
-code, .mono {
+code {
   font: 500 .88em/1.5 "IBM Plex Mono", ui-monospace, Consolas, monospace;
   background: var(--bg-2);
   border: 1px solid var(--line);
@@ -424,18 +424,6 @@ dialog.modal::backdrop { background: rgba(16, 24, 32, .45); }
 .flow h3 { margin-bottom: 4px; font-size: 1rem; }
 .flow p { margin: 0; color: var(--ink-2); font-size: .94rem; max-width: 66ch; }
 
-/* Istilah di kiri, penjelasannya di kanan; dipakai untuk catatan teknis beranda. */
-.spec { margin: 0; border-top: 1px solid var(--line); }
-.spec__row {
-  display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 24px;
-  padding: 14px 0; border-bottom: 1px solid var(--line);
-}
-.spec dt {
-  font: 600 .76rem/1.7 "IBM Plex Mono", ui-monospace, monospace;
-  letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3);
-}
-.spec dd { margin: 0; color: var(--ink-2); font-size: .95rem; max-width: 68ch; }
-
 .start { max-width: 68ch; }
 .start h2 { margin-bottom: 8px; }
 .start__aksi { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 16px; }
@@ -501,33 +489,9 @@ dialog.modal::backdrop { background: rgba(16, 24, 32, .45); }
 .card--narrow > .tiny { margin-top: 16px; }
 .code-note { font-size: 1rem; margin-bottom: 2px; }
 
-.demokeys { margin-top: 22px; padding: 14px 16px; border: 1px dashed var(--line-strong); border-radius: var(--r-lg); background: var(--bg); }
-.demokeys table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-.demokeys td { padding: 4px 8px 4px 0; font-size: .86rem; border-bottom: 1px solid var(--line); }
-.demokeys tr:last-child td { border-bottom: 0; }
-.demokeys td:first-child { width: 1%; white-space: nowrap; color: var(--ink-3); font: 600 .74rem/1.5 "IBM Plex Mono", monospace; letter-spacing: .04em; }
-
-/* ---------- kaki halaman ---------- */
-.foot { border-top: 1px solid var(--line); margin-top: 48px; }
-.foot__in {
-  display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 32px;
-  padding-block: 26px; font-size: .86rem; color: var(--ink-3);
-}
-.foot p { margin: 0 0 8px; max-width: 62ch; }
-.foot p:last-child { margin-bottom: 0; }
-.foot a { color: var(--ink-2); }
-.foot__tugas { margin: 0; }
-.foot__tugas > div {
-  display: flex; justify-content: space-between; gap: 16px;
-  padding: 6px 0; border-bottom: 1px solid var(--line);
-}
-.foot__tugas > div:last-child { border-bottom: 0; }
-.foot__tugas dt { color: var(--ink-2); }
-.foot__tugas dd { margin: 0; white-space: nowrap; }
-
 /* ---------- responsif ---------- */
 @media (max-width: 900px) {
-  .hero, .auth, .two, .spec__row, .foot__in { grid-template-columns: minmax(0, 1fr); }
+  .hero, .auth, .two { grid-template-columns: minmax(0, 1fr); }
   .two > div > p { max-width: 46ch; }
   .grid--3, .grid--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .worktop { grid-template-columns: minmax(0, 1fr); align-items: start; }
@@ -535,10 +499,7 @@ dialog.modal::backdrop { background: rgba(16, 24, 32, .45); }
 @media (max-width: 620px) {
   .grid--2, .grid--3, .grid--4 { grid-template-columns: minmax(0, 1fr); }
   .flow li { gap: 12px; padding: 14px 0; }
-  .spec dt { margin-bottom: 2px; }
   .index__kat { margin-inline-start: 0; }
-  .foot__tugas > div { flex-direction: column; gap: 2px; }
-  .foot__tugas dd { white-space: normal; }
   .row { flex-direction: column; align-items: stretch; }
   .row__side { justify-content: flex-start; }
   /* Nav yang melilit tiga baris memakan hampir seperempat layar kecil, jadi dijadikan satu baris geser. */
@@ -569,5 +530,5 @@ dialog.modal::backdrop { background: rgba(16, 24, 32, .45); }
 }
 
 @media print {
-  .topbar, .foot, .toasts, .btn { display: none !important; }
+  .topbar, .toasts, .btn { display: none !important; }
 }

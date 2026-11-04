@@ -75,7 +75,9 @@
       <form id="form-skill" class="grid grid--4">
         <div class="field">
           <label for="skill-pilih">Keahlian</label>
-          <select id="skill-pilih" required></select>
+          <input id="skill-pilih" type="text" list="skill-saran" required
+                 placeholder="ketik, mis. Figma" autocomplete="off">
+          <datalist id="skill-saran"></datalist>
         </div>
         <div class="field">
           <label for="skill-type">Peran</label>
@@ -94,7 +96,8 @@
         </div>
         <button class="btn btn--leaf" type="submit">Tambahkan</button>
       </form>
-      <p class="tiny">Belum ada keahliannya? Minta admin menambahkannya di tab Admin.</p>
+      <p class="tiny">Namanya bebas diketik. Yang belum ada di katalog langsung masuk kategori
+        Lainnya, nanti admin yang memindahkan.</p>
     </div>
   </section>
 
@@ -308,7 +311,6 @@
   </div>
 </dialog>
 
-<footer th:replace="~{fragments/layout :: foot}"></footer>
 <script th:src="@{/js/app.js}"></script>
 <script th:src="@{/js/dashboard.js}"></script>
 </body>

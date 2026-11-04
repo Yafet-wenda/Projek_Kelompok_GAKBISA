@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       lang="id">
 <!--
-  Fragment bersama: <head>, bilah atas, dan kaki halaman.
+  Fragment bersama: <head> dan bilah atas.
   Pemakaian: th:replace="~{fragments/layout :: head('Judul halaman')}"
 -->
 <head th:fragment="head(title)">
@@ -58,37 +58,6 @@
     </nav>
   </div>
 </header>
-
-<!--
-  Kaki halaman: identitas kelompok dan lingkup proyek.
-  Diambil dari halaman judul proposal; sesuaikan kalau ada perubahan nama atau NIM.
--->
-<footer th:fragment="foot" class="foot">
-  <div class="shell foot__in">
-    <div class="stack">
-      <p>GAKBISA dibangun untuk Praktikum Pemrograman Berorientasi Objek, 2026.
-        Program Studi D3 Teknik Informatika PSDKU Lamongan,
-        Politeknik Elektronika Negeri Surabaya.
-        Dosen pengampu: Yunia Ikawati S.ST, M.Tr.Kom.</p>
-      <p class="tiny">Katalog, partner, dan akun demo di server ini masih data seed
-        buatan kelompok untuk keperluan uji, bukan data pengguna sungguhan.</p>
-    </div>
-    <dl class="foot__tugas">
-      <div>
-        <dt>Yafet Wenda <span class="num">3125521058</span></dt>
-        <dd>Analisis, backend, keamanan</dd>
-      </div>
-      <div>
-        <dt>Moh. Faiz Khoiru Izzuddin <span class="num">3125521049</span></dt>
-        <dd>Antarmuka, sesi video</dd>
-      </div>
-      <div>
-        <dt>Muhammad Haudajun Nando Kusnanto <span class="num">3125521053</span></dt>
-        <dd>Basis data, penyimpanan, pengujian</dd>
-      </div>
-    </dl>
-  </div>
-</footer>
 
 </body>
 </html>

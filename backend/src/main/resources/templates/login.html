@@ -42,7 +42,7 @@
       <div class="field">
         <label for="username">Email</label>
         <input id="username" type="email" name="username" required
-               autocomplete="username" placeholder="nama@gakbisa.test" autofocus>
+               autocomplete="username" placeholder="nama@student.pens.ac.id" autofocus>
       </div>
 
       <div class="field">
@@ -58,21 +58,10 @@
     <p class="tiny auth__foot">
       Belum punya akun? <a th:href="@{/register}">Daftar di sini</a>, isinya nama, email, dan password.
     </p>
-
-    <div class="demokeys">
-      <span class="tag">Akun demo</span>
-      <table>
-        <tr><td>MAHASISWA</td><td><code>yafet@gakbisa.test</code></td></tr>
-        <tr><td>ADMIN</td><td><code>admin@gakbisa.test</code></td></tr>
-      </table>
-      <p>Kata sandi tiap akun demo ada di tabel “Akun seed awal” pada
-        <code>backend/README.md</code>.</p>
-    </div>
   </section>
 
 </main>
 
-<footer th:replace="~{fragments/layout :: foot}"></footer>
 <script th:src="@{/js/app.js}"></script>
 </body>
 </html>
