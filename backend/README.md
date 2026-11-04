@@ -147,7 +147,7 @@ Postman: import koleksi manual dari `docs/api-examples.md` (endpoint REST `/api/
 - Halaman Thymeleaf mengonsumsi model dari `PageController`; data juga tersedia sebagai JSON di `/api/**`.
 - CSRF aktif: form POST wajib menyertakan `_csrf` (Thymeleaf hidden input). Untuk `fetch`,
   baca dari `<meta name="_csrf">` + `<meta name="_csrf_header">` yang sudah dipasang di
-  `templates/fragments/layout.html :: head`, jangan hardcode.
+  `templates/fragments/head.html :: head`, jangan hardcode.
 - Token CSRF **berganti setelah login**. Ambil ulang token dari halaman sesudah login,
   kalau tidak semua POST balasannya 403.
 - Meeting: `GET /api/sessions/{id}` mengembalikan `meetingUrl` **dan** `meetingRoom`
@@ -156,12 +156,19 @@ Postman: import koleksi manual dari `docs/api-examples.md` (endpoint REST `/api/
 
 ### Berkas tampilan yang sudah ada
 
+Tampilan dipakai bersama di atas Bootstrap 5 + design system kelompok; jangan menambah
+stylesheet sendiri tanpa alasan.
+
 | Berkas | Isi |
 |---|---|
-| `static/css/gakbisa.css` | design system: token warna, tipografi, kartu, tab, dialog, toast |
-| `templates/fragments/layout.html` | fragment `head`, `skip`, `topbar`, `foot` — dipakai semua halaman |
+| `static/css/design-system.css` | token warna & tipografi, komponen `gk-*` (kartu, tombol, badge, tab, toast, skeleton, empty state) |
+| `static/css/style.css` | gaya lama ala Facebook yang masih dipakai halaman auth |
+| `static/css/gk-navbar.css` / `gk-sidebar.css` / `gk-layout.css` | bilah atas, sidebar, dan kerangka tiga kolom |
+| `templates/fragments/head.html` | `<head>` bersama: Bootstrap CDN, CSS di atas, favicon, dan meta CSRF |
+| `templates/fragments/navbar.html` / `sidebar.html` / `footer.html` | navigasi (sudah menangani tamu), menu samping, dan kaki halaman |
 | `static/js/app.js` | `window.Gakbisa`: `api` (fetch + CSRF), `html` (auto-escape), `toast`, label & format tanggal |
-| `static/js/home.js` / `catalog.js` / `dashboard.js` / `forms.js` | logika tiap halaman |
+| `static/js/gk-navbar.js` / `gk-sidebar.js` / `forms.js` | perilaku bilah atas, drawer sidebar, dan konfirmasi form |
+| `static/js/catalog.js` | halaman `/catalog`: kategori, pencarian keahlian, galeri karya |
 
 `Gakbisa.html` mengembalikan string yang sudah di-escape, jadi aman langsung dipakai untuk
 `innerHTML` dan `.map(...).join("")`; nilai biasa tetap di-escape, jadi tidak perlu `esc()` manual.

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<!--
+  ╔══════════════════════════════════════════════════════════════════════╗
+  ║  GAKBISA Sidebar Component & Drawer Fragment                         ║
+  ║  - Komponen reusable `sidebarItem`                                   ║
+  ║  - Header profil lengkap (avatar, email ellipsis, badge role)        ║
+  ║  - Ikon monokrom terpadu (abu-abu saat idle, biru primer saat aktif) ║
+  ║  - Indikator aktif di sisi kiri & highlight halus                    ║
+  ║  - Bagian Admin terpisah dengan divider & section title              ║
+  ║  - Mobile/tablet drawer support                                      ║
+  ╚══════════════════════════════════════════════════════════════════════╝
+-->
+
+<!-- Reusable Sidebar Item Component -->
+<th:block th:fragment="sidebarItem(path, icon, label)">
+    <a th:href="@{${path}}" class="gk-sidebar-item" th:data-path="${path}" th:aria-label="${label}">
+        <span class="gk-sidebar-item__icon"><i th:class="'bi ' + ${icon}" aria-hidden="true"></i></span>
+        <span class="gk-sidebar-item__label" th:text="${label}">Menu</span>
+    </a>
+</th:block>
+
+<!-- Sidebar Drawer Aside -->
+<aside th:fragment="sidebar" class="gk-sidebar" id="gkSidebar" aria-label="Menu navigasi samping">
+
+    <!-- Mobile Drawer Header (close button, hanya muncul di <= 992px) -->
+    <div class="gk-sidebar__drawer-header d-lg-none">
+        <div class="d-flex align-items-center gap-2">
+            <span class="gk-navbar__brand-mark" style="width:28px;height:28px;font-size:14px;" aria-hidden="true">G</span>
+            <span class="fw-bold" style="font-size:15px;color:var(--gk-ink);">Menu Navigasi</span>
+        </div>
+        <button type="button" class="gk-sidebar__close-btn" id="gkSidebarClose" aria-label="Tutup menu samping">
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </button>
+    </div>
+
+    <!-- User Profile Header -->
+    <a th:href="@{/profile}" class="gk-sidebar-profile" sec:authorize="isAuthenticated()" title="Lihat Profil Saya">
+        <div class="gk-avatar gk-avatar--md gk-sidebar-profile__avatar"
+             th:text="${#strings.toUpperCase(#strings.substring(#authentication.principal.user.fullName, 0, 1))}"
+             aria-hidden="true">U</div>
+        <div class="gk-sidebar-profile__info">
+            <div class="gk-sidebar-profile__name" th:text="${#authentication.principal.user.fullName}">Nama Pengguna</div>
+            <div class="gk-sidebar-profile__email" th:text="${#authentication.principal.user.email}">user@gakbisa.test</div>
+            <div class="mt-1">
+                <span class="gk-badge gk-badge--sm"
+                      th:classappend="${#authentication.principal.user.role.name() == 'ADMIN'} ? 'gk-badge--danger' : 'gk-badge--primary'"
+                      th:text="${#authentication.principal.user.role.name()}">STUDENT</span>
+            </div>
+        </div>
+    </a>
+
+    <!-- Navigasi Utama -->
+    <div class="gk-sidebar__nav">
+        <th:block th:replace="~{fragments/sidebar :: sidebarItem('/dashboard', 'bi-house-fill', 'Dashboard')}"></th:block>
+        <th:block th:replace="~{fragments/sidebar :: sidebarItem('/profile', 'bi-person-fill', 'Profil Saya')}"></th:block>
+        <th:block th:replace="~{fragments/sidebar :: sidebarItem('/profile/skills', 'bi-stars', 'Keahlian Saya')}"></th:block>
+    </div>
+
+    <hr class="gk-sidebar-divider">
+
+    <!-- Aktivitas Belajar & Barter -->
+    <div class="gk-sidebar-section-title">Aktivitas Belajar</div>
+    <div class="gk-sidebar__nav">
+        <th:block th:replace="~{fragments/sidebar :: sidebarItem('/matching', 'bi-people-fill', 'Cari Partner')}"></th:block>
+        <th:block th:replace="~{fragments/sidebar :: sidebarItem('/barter', 'bi-arrow-left-right', 'Permintaan Barter')}"></th:block>
+        <th:block th:replace="~{fragments/sidebar :: sidebarItem('/sessions', 'bi-calendar-event-fill', 'Sesi Belajar')}"></th:block>
+        <th:block th:replace="~{fragments/sidebar :: sidebarItem('/portfolio', 'bi-collection-fill', 'Portofolio')}"></th:block>
+        <th:block th:replace="~{fragments/sidebar :: sidebarItem('/notifications', 'bi-bell-fill', 'Notifikasi')}"></th:block>
+    </div>
+
+    <!-- Bagian Admin (Khusus Role ADMIN) -->
+    <div sec:authorize="hasRole('ADMIN')">
+        <hr class="gk-sidebar-divider">
+        <div class="gk-sidebar-section-title">Admin</div>
+        <div class="gk-sidebar__nav">
+            <th:block th:replace="~{fragments/sidebar :: sidebarItem('/admin', 'bi-speedometer2', 'Admin Dashboard')}"></th:block>
+            <th:block th:replace="~{fragments/sidebar :: sidebarItem('/admin/users', 'bi-people', 'Kelola Pengguna')}"></th:block>
+            <th:block th:replace="~{fragments/sidebar :: sidebarItem('/admin/categories', 'bi-tags', 'Kategori Keahlian')}"></th:block>
+            <th:block th:replace="~{fragments/sidebar :: sidebarItem('/admin/reports', 'bi-flag', 'Laporan')}"></th:block>
+        </div>
+    </div>
+
+    <!-- Footer Identitas -->
+    <div class="gk-sidebar__footer mt-auto pt-3 px-2">
+        <hr class="gk-sidebar-divider my-2">
+        <p class="m-0" style="font-size:11px;color:var(--gk-ink-3);line-height:1.4;">
+            <strong>GAKBISA</strong> &copy; 2026<br>
+            Pertukaran keahlian antarmahasiswa
+        </p>
+    </div>
+
+</aside>
+
+<!-- Backdrop Overlay for Mobile/Tablet Drawer -->
+<div class="gk-sidebar-backdrop" id="gkSidebarBackdrop" aria-hidden="true"></div>
+
+</body>
+</html>

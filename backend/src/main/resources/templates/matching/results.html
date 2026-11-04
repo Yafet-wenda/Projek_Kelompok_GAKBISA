@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Cari Partner')}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<div class="gk-layout container-fluid">
+    <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
+
+    <main class="gk-main">
+
+        <!-- Page Header -->
+        <div class="gk-page-header">
+            <div class="gk-page-header__text">
+                <span class="gk-page-header__eyebrow">Sistem Rekomendasi 100 Poin</span>
+                <h1 class="gk-page-header__title d-flex align-items-center gap-2">
+                    <i class="bi bi-people-fill text-primary" aria-hidden="true"></i>
+                    <span>Cari Rekan Belajar</span>
+                </h1>
+                <p class="gk-page-header__desc">
+                    Temukan rekan mahasiswa dengan kecocokan timbal balik antara keahlian yang kamu tawarkan dan butuhkan.
+                </p>
+            </div>
+        </div>
+
+        <!-- Search input box -->
+        <div class="gk-card p-3 mb-4">
+            <form th:action="@{/matching}" method="get" class="d-flex gap-2 align-items-center">
+                <div class="d-flex align-items-center gap-2 flex-grow-1 px-3 py-2 rounded-pill border"
+                     style="background:var(--gk-grey-50);border-color:var(--gk-border);">
+                    <i class="bi bi-search text-muted"></i>
+                    <input type="search" name="keyword" th:value="${keyword}"
+                           placeholder="Cari berdasarkan nama rekan atau keahlian..."
+                           class="border-0 bg-transparent flex-grow-1"
+                           style="outline:none;font-size:14px;color:var(--gk-ink);">
+                </div>
+                <button type="submit" class="gk-btn gk-btn--primary">
+                    <i class="bi bi-search me-1"></i>Cari
+                </button>
+            </form>
+        </div>
+
+        <!-- Results meta bar -->
+        <div class="d-flex align-items-center justify-content-between mb-3 px-1">
+            <div class="fw-bold" style="font-size:16px;color:var(--gk-ink);">
+                Rekomendasi Terbaik
+                <span th:if="${keyword}" class="fw-normal text-muted" style="font-size:13px;"
+                      th:text="'· Hasil pencarian: &quot;' + ${keyword} + '&quot;'"></span>
+            </div>
+            <span class="text-muted" style="font-size:13px;" th:text="${matches.size()} + ' partner ditemukan'">0 partner</span>
+        </div>
+
+        <!-- Empty state -->
+        <div th:if="${#lists.isEmpty(matches)}" class="session-empty-card">
+            <div class="session-empty-icon">
+                <i class="bi bi-people" aria-hidden="true"></i>
+            </div>
+            <h3 class="session-empty-title">Tidak Ada Partner Ditemukan</h3>
+            <p class="session-empty-desc">
+                Coba lengkapi keahlian OFFER dan WANT di profil Anda, atau coba kata kunci pencarian yang lain.
+            </p>
+            <a th:href="@{/profile/skills}" class="gk-btn gk-btn--primary session-btn-barter">
+                <i class="bi bi-plus-lg me-1"></i>Kelola Keahlian
+            </a>
+        </div>
+
+        <!-- Match cards grid -->
+        <div th:if="${!#lists.isEmpty(matches)}" class="row g-3">
+            <div class="col-sm-6" th:each="match : ${matches}">
+                <div class="gk-card h-100 d-flex flex-column p-3">
+                    <div class="d-flex align-items-start gap-3 mb-3">
+                        <img th:if="${match.candidate.avatarPath != null}"
+                             th:src="${match.candidate.avatarPath}"
+                             class="rounded-circle border"
+                             style="width:52px;height:52px;object-fit:cover;" alt="Avatar">
+                        <div th:if="${match.candidate.avatarPath == null}"
+                             class="gk-avatar gk-avatar--lg flex-shrink-0"
+                             th:text="${#strings.toUpperCase(#strings.substring(match.candidate.fullName,0,1))}">A</div>
+
+                        <div class="min-w-0 flex-grow-1">
+                            <a th:href="@{'/profile/' + ${match.candidate.id}}"
+                               class="fw-bold text-truncate d-block text-decoration-none"
+                               style="font-size:15px;color:var(--gk-ink);"
+                               th:text="${match.candidate.fullName}">Nama</a>
+                            <div class="text-truncate text-muted" style="font-size:12px;"
+                                 th:text="${match.candidate.campus ?: 'Mahasiswa GAKBISA'}">Kampus</div>
+
+                            <!-- Score bar -->
+                            <div class="d-flex align-items-center gap-2 mt-2">
+                                <div class="gk-score-bar flex-grow-1">
+                                    <div class="gk-score-bar__fill" th:style="'--pct:' + ${match.score} + '%;'"></div>
+                                </div>
+                                <span class="gk-badge gk-badge--primary gk-badge--sm"
+                                      th:text="${match.score} + ' poin'">0 poin</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bio preview -->
+                    <p th:if="${match.candidate.bio}" class="text-muted mb-2 text-truncate"
+                       style="font-size:12px;line-height:1.4;"
+                       th:text="${match.candidate.bio}"></p>
+
+                    <!-- Reasons badges -->
+                    <div class="d-flex flex-wrap gap-1 mb-3" th:if="${!#lists.isEmpty(match.reasons)}">
+                        <span class="gk-badge gk-badge--neutral gk-badge--sm"
+                              th:each="reason : ${match.reasons}"
+                              th:text="${reason}"></span>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-flex gap-2 mt-auto pt-2 border-top" style="border-color:var(--gk-border) !important;">
+                        <a th:href="@{'/barter/request/' + ${match.candidate.id}}"
+                           class="gk-btn gk-btn--primary gk-btn--sm flex-grow-1">
+                            <i class="bi bi-arrow-left-right me-1"></i>Ajak Barter
+                        </a>
+                        <a th:href="@{'/profile/' + ${match.candidate.id}}"
+                           class="gk-btn gk-btn--ghost gk-btn--sm">
+                            Profil
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Right Sidebar Panel (~320px) -->
+    <aside class="gk-sidebar-right">
+        <!-- Algoritma 100 Poin Card -->
+        <div class="gk-card">
+            <div class="gk-card__header mb-2 pb-2">
+                <h3 class="gk-card__title d-flex align-items-center gap-2" style="font-size:15px;">
+                    <i class="bi bi-cpu text-primary" aria-hidden="true"></i>
+                    <span>Aturan Skor 100 Poin</span>
+                </h3>
+            </div>
+            <div class="d-flex flex-column gap-2" style="font-size:13px;line-height:1.6;">
+                <div class="d-flex justify-content-between align-items-center pb-1 border-bottom" style="border-color:var(--gk-border) !important;">
+                    <span class="text-muted">Kecocokan Dua Arah</span>
+                    <strong class="text-primary">60 poin</strong>
+                </div>
+                <div class="d-flex justify-content-between align-items-center pb-1 border-bottom" style="border-color:var(--gk-border) !important;">
+                    <span class="text-muted">Kategori Serupa</span>
+                    <strong class="text-primary">20 poin</strong>
+                </div>
+                <div class="d-flex justify-content-between align-items-center pb-1 border-bottom" style="border-color:var(--gk-border) !important;">
+                    <span class="text-muted">Kesesuaian Level</span>
+                    <strong class="text-primary">15 poin</strong>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted">Rating Reputasi</span>
+                    <strong class="text-primary">5 poin</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="gk-card">
+            <div class="d-flex flex-column gap-2">
+                <a th:href="@{/profile/skills}" class="gk-btn gk-btn--primary gk-btn--block gk-btn--sm">
+                    <i class="bi bi-plus-lg me-1"></i>Tambah Keahlian
+                </a>
+                <a th:href="@{/profile/edit}" class="gk-btn gk-btn--ghost gk-btn--block gk-btn--sm">
+                    <i class="bi bi-pencil me-1"></i>Lengkapi Profil
+                </a>
+            </div>
+        </div>
+    </aside>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

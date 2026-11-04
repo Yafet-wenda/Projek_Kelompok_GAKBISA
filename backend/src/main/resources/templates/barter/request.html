@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Kirim Permintaan Barter')}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<div class="gk-layout container-fluid">
+    <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
+
+    <main class="gk-main">
+
+        <!-- Target Partner Summary Card -->
+        <div class="gk-card p-4 mb-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="gk-avatar gk-avatar--xl flex-shrink-0">
+                    <span th:text="${#strings.substring(targetUser.fullName,0,1)}">A</span>
+                </div>
+                <div>
+                    <div class="text-uppercase mb-1" style="font-size: 0.6875rem; font-weight: 700; color: var(--gk-primary); letter-spacing: 0.05em;">Partner Tujuan</div>
+                    <h2 class="fw-bold m-0" style="font-size: var(--gk-text-xl); color: var(--gk-ink);" th:text="${targetUser.fullName}">Nama Partner</h2>
+                    <p class="text-muted small mb-1" th:text="${targetUser.campus ?: 'Mahasiswa GAKBISA'}">Kampus</p>
+                    <p class="text-muted small m-0" th:if="${targetUser.bio}"
+                       th:text="${#strings.abbreviate(targetUser.bio, 120)}"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Barter Request Form Card -->
+        <div class="gk-card p-4">
+            <div class="gk-page-header mb-4">
+                <div class="gk-page-header__icon">
+                    <i class="bi bi-arrow-left-right"></i>
+                </div>
+                <div>
+                    <h1 class="gk-page-header__title" style="font-size: var(--gk-text-lg);">Kirim Permintaan Barter</h1>
+                    <p class="gk-page-header__subtitle">Pilih keahlian yang ingin kamu tawarkan dan yang ingin kamu pelajari dari rekanmu</p>
+                </div>
+            </div>
+
+            <!-- Warning if user has no OFFER skills -->
+            <div th:if="${#lists.isEmpty(myOfferSkills)}" class="gk-alert gk-alert--warning mb-4">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <div>
+                    Kamu belum memiliki keahlian yang ditawarkan (OFFER).
+                    <a th:href="@{/profile/skills}" class="fw-bold text-decoration-underline ms-1">Tambahkan keahlian sekarang</a>
+                </div>
+            </div>
+
+            <form th:action="@{'/barter/request/' + ${targetUser.id}}" method="post"
+                  th:object="${barterRequestDto}">
+
+                <!-- My Offered Skill -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-muted text-uppercase mb-1" style="letter-spacing: 0.05em;">
+                        <i class="bi bi-award-fill text-primary me-1"></i>
+                        Keahlian yang Kamu Tawarkan <span class="text-danger">*</span>
+                    </label>
+                    <select th:field="*{offeredUserSkillId}" class="form-select form-select-lg" required
+                            style="border-radius: var(--gk-radius); border-color: var(--gk-border); font-size: var(--gk-text-sm);">
+                        <option value="">-- Pilih keahlian yang akan kamu ajarkan --</option>
+                        <option th:each="us : ${myOfferSkills}"
+                                th:value="${us.id}"
+                                th:text="${us.skill.name} + (${us.level != null} ? ' (' + ${us.level} + ')' : '')">Keahlian</option>
+                    </select>
+                    <div th:if="${#fields.hasErrors('offeredUserSkillId')}" class="text-danger small mt-1"
+                         th:errors="*{offeredUserSkillId}"></div>
+                </div>
+
+                <!-- Wanted Skill -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-muted text-uppercase mb-1" style="letter-spacing: 0.05em;">
+                        <i class="bi bi-book-fill text-danger me-1"></i>
+                        Keahlian yang Ingin Kamu Pelajari <span class="text-danger">*</span>
+                    </label>
+                    <select th:field="*{wantedUserSkillId}" class="form-select form-select-lg" required
+                            style="border-radius: var(--gk-radius); border-color: var(--gk-border); font-size: var(--gk-text-sm);">
+                        <option value="">-- Pilih keahlian yang ingin kamu pelajari --</option>
+                        <option th:each="us : ${myWantSkills}"
+                                th:value="${us.id}"
+                                th:text="${us.skill.name} + (${us.level != null} ? ' (' + ${us.level} + ')' : '')">Keahlian</option>
+                    </select>
+                    <div th:if="${#fields.hasErrors('wantedUserSkillId')}" class="text-danger small mt-1"
+                         th:errors="*{wantedUserSkillId}"></div>
+                </div>
+
+                <!-- Message -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold small text-muted text-uppercase mb-1" style="letter-spacing: 0.05em;">
+                        <i class="bi bi-chat-text-fill text-secondary me-1"></i>
+                        Pesan Pengantar (Opsional)
+                    </label>
+                    <textarea th:field="*{message}" class="form-control" rows="4"
+                              style="border-radius: var(--gk-radius); border-color: var(--gk-border); font-size: var(--gk-text-sm);"
+                              placeholder="Perkenalkan dirimu, jelaskan ekspektasi barter, jadwal senggangmu, atau topik spesifik yang ingin dibahas..."></textarea>
+                </div>
+
+                <!-- Live Exchange Preview -->
+                <div class="p-3 rounded-3 mb-4" style="background: var(--gk-grey-50); border: 1px solid var(--gk-border);">
+                    <div class="text-uppercase mb-2 text-center" style="font-size: 0.6875rem; font-weight: 700; color: var(--gk-ink-3); letter-spacing: 0.05em;">
+                        Ilustrasi Skema Barter
+                    </div>
+                    <div class="row align-items-center g-2 text-center">
+                        <div class="col">
+                            <div class="text-muted small" style="font-size: 0.75rem;">KAMU AJARKAN</div>
+                            <div class="fw-bold mt-1" style="color: var(--gk-primary); font-size: var(--gk-text-sm);">Pilihan Keahlianmu ↑</div>
+                        </div>
+                        <div class="col-auto px-2">
+                            <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--gk-primary-muted); color: var(--gk-primary); display: flex; align-items: center; justify-content: center; font-size: 15px; margin: 0 auto;">
+                                <i class="bi bi-arrow-left-right"></i>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="text-muted small" style="font-size: 0.75rem;">KAMU PELAJARI DARI</div>
+                            <div class="fw-bold mt-1" style="color: var(--gk-ink); font-size: var(--gk-text-sm);" th:text="${targetUser.fullName}">Nama Partner</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center gap-3">
+                    <button type="submit" class="gk-btn gk-btn--primary">
+                        <i class="bi bi-send-fill me-1"></i>Kirim Permintaan Barter
+                    </button>
+                    <a th:href="@{'/profile/' + ${targetUser.id}}" class="gk-btn gk-btn--secondary">
+                        Batal
+                    </a>
+                </div>
+            </form>
+        </div>
+
+    </main>
+
+    <!-- RIGHT PANEL: TIPS -->
+    <aside class="gk-sidebar-right">
+        <div class="gk-card p-3 mb-3">
+            <h6 class="fw-bold mb-3 d-flex align-items-center gap-2" style="font-size: var(--gk-text-sm); color: var(--gk-ink);">
+                <i class="bi bi-lightbulb-fill text-warning"></i>
+                Tips Mengirim Tawaran
+            </h6>
+            <ul class="d-flex flex-column gap-2 p-0 m-0 list-unstyled text-muted" style="font-size: var(--gk-text-xs); line-height: 1.6;">
+                <li class="d-flex align-items-start gap-2">
+                    <i class="bi bi-check-circle text-success mt-1"></i>
+                    <span>Tawarkan keahlian yang benar-benar siap kamu ajarkan kepada rekanmu.</span>
+                </li>
+                <li class="d-flex align-items-start gap-2">
+                    <i class="bi bi-check-circle text-success mt-1"></i>
+                    <span>Tulis pesan pengantar yang sopan dan cantumkan ketersediaan waktu luangmu.</span>
+                </li>
+                <li class="d-flex align-items-start gap-2">
+                    <i class="bi bi-check-circle text-success mt-1"></i>
+                    <span>Setelah tawaran diterima, kalian bisa langsung menjadwalkan sesi belajar via Jitsi Meet.</span>
+                </li>
+            </ul>
+        </div>
+    </aside>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

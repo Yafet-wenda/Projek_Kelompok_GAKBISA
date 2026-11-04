@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Sesi Belajar')}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<div class="gk-layout container-fluid">
+    <!-- Left Sidebar -->
+    <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
+
+    <!-- Main Content -->
+    <main class="gk-main">
+
+        <!-- Header Sesi Belajar -->
+        <div class="gk-page-header">
+            <div class="gk-page-header__text">
+                <span class="gk-page-header__eyebrow">Aktivitas Belajar</span>
+                <h1 class="gk-page-header__title d-flex align-items-center gap-2">
+                    <i class="bi bi-calendar-event-fill text-primary" aria-hidden="true"></i>
+                    <span>Sesi Belajar</span>
+                </h1>
+                <p class="gk-page-header__desc">
+                    Jadwal tatap muka daring dan ruang video call bersama partner barter keahlianmu.
+                </p>
+            </div>
+        </div>
+
+        <!-- Flash Alert Messages -->
+        <div th:if="${success}" class="gk-alert gk-alert--success">
+            <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+            <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="gk-alert gk-alert--danger">
+            <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+            <div>
+                <strong>Gagal memuat sesi: </strong>
+                <span th:text="${error}">Terjadi kesalahan saat memproses data sesi.</span>
+            </div>
+        </div>
+
+        <!-- Skeleton Loading Container (untuk transisi/state loading) -->
+        <div id="session-skeleton" class="d-none" aria-hidden="true">
+            <div class="gk-card mb-3 p-3">
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="gk-skeleton" style="width: 140px; height: 18px;"></div>
+                    <div class="gk-skeleton" style="width: 80px; height: 22px; border-radius: 9999px;"></div>
+                </div>
+                <div class="gk-skeleton mb-2" style="width: 70%; height: 22px;"></div>
+                <div class="gk-skeleton mb-3" style="width: 40%; height: 14px;"></div>
+                <div class="row g-2 mb-3">
+                    <div class="col-6"><div class="gk-skeleton" style="height: 36px;"></div></div>
+                    <div class="col-6"><div class="gk-skeleton" style="height: 36px;"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State "Belum Ada Sesi Belajar" -->
+        <div th:if="${#lists.isEmpty(sessions)}" class="session-empty-card">
+            <div class="session-empty-icon">
+                <i class="bi bi-calendar2-x" aria-hidden="true"></i>
+            </div>
+            <h3 class="session-empty-title">Belum Ada Sesi Belajar</h3>
+            <p class="session-empty-desc">
+                Terima permintaan barter terlebih dahulu, lalu jadwalkan sesi tatap muka online pertamamu bersama partner!
+            </p>
+            <a th:href="@{/barter}" class="session-btn-barter">
+                <i class="bi bi-arrow-left-right" style="font-size: 16px;" aria-hidden="true"></i>
+                <span>Lihat Permintaan Barter</span>
+            </a>
+        </div>
+
+        <!-- Session List Cards -->
+        <div th:each="session : ${sessions}" class="gk-session-card">
+            <div class="gk-session-card__header">
+                <div>
+                    <div style="font-size:11px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--gk-ink-3);">
+                        Pertukaran Keahlian
+                    </div>
+                    <div class="d-flex align-items-center gap-2 mt-1">
+                        <span class="fw-bold" style="font-size:16px;color:var(--gk-ink);"
+                              th:text="${session.barterRequest.offeredUserSkill?.skill?.name ?: '-'}">Skill A</span>
+                        <i class="bi bi-arrow-left-right text-primary" style="font-size:13px;" aria-hidden="true"></i>
+                        <span class="fw-bold" style="font-size:16px;color:var(--gk-ink);"
+                              th:text="${session.barterRequest.wantedUserSkill?.skill?.name ?: '-'}">Skill B</span>
+                    </div>
+                </div>
+                <span class="gk-badge status-badge-pill"
+                      style="width:auto;min-width:96px;"
+                      th:classappend="'gk-badge--' + ${session.status}"
+                      th:text="${session.status}">STATUS</span>
+            </div>
+            <div class="gk-session-card__body">
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-6 col-md-3">
+                        <div class="gk-session-card__meta-label">Partner</div>
+                        <div class="gk-session-card__meta-val" th:text="${session.barterRequest.requester.fullName}">Nama</div>
+                    </div>
+                    <div class="col-sm-6 col-md-3" th:if="${session.scheduledAt}">
+                        <div class="gk-session-card__meta-label">Waktu</div>
+                        <div class="gk-session-card__meta-val"
+                             th:text="${#temporals.format(session.scheduledAt, 'dd MMM yyyy HH:mm')}">Waktu</div>
+                    </div>
+                    <div class="col-sm-6 col-md-3" th:if="${session.durationMinutes}">
+                        <div class="gk-session-card__meta-label">Durasi</div>
+                        <div class="gk-session-card__meta-val"
+                             th:text="${session.durationMinutes} + ' menit'">60 menit</div>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <div class="gk-session-card__meta-label">Platform</div>
+                        <div class="gk-session-card__meta-val" th:text="${session.meetingProvider ?: 'JITSI'}">JITSI</div>
+                    </div>
+                </div>
+                <div class="d-flex gap-2 flex-wrap">
+                    <a th:href="@{'/sessions/' + ${session.id}}" class="gk-btn gk-btn--ghost gk-btn--sm">
+                        <i class="bi bi-eye" aria-hidden="true"></i>
+                        <span>Lihat Detail</span>
+                    </a>
+                    <a th:if="${session.status == 'SCHEDULED' or session.status == 'ONGOING'}"
+                       th:href="${session.meetingProvider == 'JITSI'} ? 'https://meet.jit.si/' + ${session.meetingRoom} : ${session.meetingUrl}"
+                       class="gk-btn gk-btn--success gk-btn--sm" target="_blank" rel="noopener noreferrer">
+                        <i class="bi bi-camera-video-fill" aria-hidden="true"></i>
+                        <span>Gabung Meeting</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Right Sidebar Panel (~320px) -->
+    <aside class="gk-sidebar-right">
+        <!-- Card Status Sesi Grid 2 Kolom -->
+        <div class="gk-card">
+            <div class="gk-card__header mb-3 pb-2">
+                <h3 class="gk-card__title d-flex align-items-center gap-2" style="font-size: 15px;">
+                    <i class="bi bi-info-circle-fill text-primary" aria-hidden="true"></i>
+                    <span>Status Sesi</span>
+                </h3>
+            </div>
+            
+            <div class="session-status-grid">
+                <div class="status-grid-item">
+                    <span class="gk-badge gk-badge--SCHEDULED status-badge-pill">SCHEDULED</span>
+                    <span class="status-desc">Terjadwal</span>
+                </div>
+                <div class="status-grid-item">
+                    <span class="gk-badge gk-badge--ONGOING status-badge-pill">ONGOING</span>
+                    <span class="status-desc">Berlangsung</span>
+                </div>
+                <div class="status-grid-item">
+                    <span class="gk-badge gk-badge--COMPLETED status-badge-pill">COMPLETED</span>
+                    <span class="status-desc">Selesai</span>
+                </div>
+                <div class="status-grid-item">
+                    <span class="gk-badge gk-badge--CANCELLED status-badge-pill">CANCELLED</span>
+                    <span class="status-desc">Dibatalkan</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Tatap Muka Virtual Info -->
+        <div class="gk-card">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="bi bi-camera-video text-primary" style="font-size: 18px;" aria-hidden="true"></i>
+                <h4 class="m-0 fw-bold" style="font-size: 14px; color: var(--gk-ink);">Tatap Muka Virtual</h4>
+            </div>
+            <p style="font-size: 13px; color: var(--gk-ink-3); margin-bottom: 0; line-height: 1.5;">
+                Ruang video online terintegrasi langsung dengan <strong>Jitsi Meet</strong> anti-tebak tanpa perlu registrasi aplikasi luar.
+            </p>
+        </div>
+    </aside>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

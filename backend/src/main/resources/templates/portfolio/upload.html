@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Upload Portofolio')}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<div class="gk-layout container-fluid">
+    <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
+
+    <main class="gk-main">
+        <div class="gk-card p-4">
+            <div class="gk-page-header mb-4">
+                <div class="gk-page-header__icon">
+                    <i class="bi bi-upload"></i>
+                </div>
+                <div>
+                    <h1 class="gk-page-header__title" style="font-size: var(--gk-text-lg);">Upload Portofolio</h1>
+                    <p class="gk-page-header__subtitle">Tunjukkan bukti hasil karya atau proyek untuk mendukung profil keahlianmu</p>
+                </div>
+            </div>
+
+            <form th:action="@{/portfolio/upload}" method="post" enctype="multipart/form-data"
+                  th:object="${portfolioDto}">
+
+                <!-- Upload Zone -->
+                <div class="p-4 mb-4 text-center rounded-3"
+                     onclick="document.getElementById('portfolioFile').click();"
+                     style="border: 2px dashed var(--gk-border); background: var(--gk-grey-50); cursor: pointer; transition: all var(--gk-transition-fast);">
+                    <i class="bi bi-cloud-arrow-up-fill d-block mb-2" style="font-size: 40px; color: var(--gk-primary);"></i>
+                    <h6 class="fw-bold mb-1" style="font-size: var(--gk-text-base); color: var(--gk-ink);">Klik untuk memilih atau seret file ke sini</h6>
+                    <p class="text-muted small m-0">Format didukung: JPG, PNG, WEBP, PDF · Maksimum 10 MB</p>
+                    <input type="file" id="portfolioFile" name="file"
+                           accept=".jpg,.jpeg,.png,.webp,.pdf"
+                           style="display:none;" required onchange="previewFile(this)">
+                </div>
+
+                <!-- Live file preview container -->
+                <div id="filePreview" class="mb-3"></div>
+
+                <!-- Title input -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-muted text-uppercase mb-1" style="letter-spacing: 0.05em;">
+                        Judul Karya <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" th:field="*{title}" class="form-control"
+                           style="border-radius: var(--gk-radius); border-color: var(--gk-border);"
+                           placeholder="Contoh: Desain Landing Page Aplikasi Finansial" required>
+                    <div th:if="${#fields.hasErrors('title')}" class="text-danger small mt-1"
+                         th:errors="*{title}"></div>
+                </div>
+
+                <!-- Description textarea -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-muted text-uppercase mb-1" style="letter-spacing: 0.05em;">
+                        Deskripsi Karya
+                    </label>
+                    <textarea th:field="*{description}" class="form-control" rows="4"
+                              style="border-radius: var(--gk-radius); border-color: var(--gk-border);"
+                              placeholder="Ceritakan peranmu, masalah yang dipecahkan, atau teknologi & tools yang digunakan..."></textarea>
+                </div>
+
+                <!-- Visibility options -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold small text-muted text-uppercase mb-2" style="letter-spacing: 0.05em;">
+                        Visibilitas Portofolio
+                    </label>
+                    <div class="d-flex flex-column flex-sm-row gap-3">
+                        <label class="p-3 rounded-3 flex-grow-1 d-flex align-items-center gap-3 cursor-pointer"
+                               style="border: 1px solid var(--gk-border); background: var(--gk-grey-50); cursor: pointer;">
+                            <input class="form-check-input mt-0" type="radio" th:field="*{visibility}"
+                                   value="PUBLIC" id="visPublic" checked>
+                            <div>
+                                <div class="fw-bold small d-flex align-items-center gap-1" style="color: var(--gk-ink);">
+                                    <i class="bi bi-globe2 text-success"></i>
+                                    Publik
+                                </div>
+                                <div class="text-muted" style="font-size: 0.75rem;">Dapat dilihat oleh semua pengguna platform</div>
+                            </div>
+                        </label>
+                        <label class="p-3 rounded-3 flex-grow-1 d-flex align-items-center gap-3 cursor-pointer"
+                               style="border: 1px solid var(--gk-border); background: var(--gk-grey-50); cursor: pointer;">
+                            <input class="form-check-input mt-0" type="radio" th:field="*{visibility}"
+                                   value="PRIVATE" id="visPrivate">
+                            <div>
+                                <div class="fw-bold small d-flex align-items-center gap-1" style="color: var(--gk-ink);">
+                                    <i class="bi bi-lock-fill text-secondary"></i>
+                                    Privat
+                                </div>
+                                <div class="text-muted" style="font-size: 0.75rem;">Hanya kamu yang bisa melihat karya ini</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Form actions -->
+                <div class="d-flex align-items-center gap-3">
+                    <button type="submit" class="gk-btn gk-btn--primary">
+                        <i class="bi bi-cloud-arrow-up-fill me-1"></i>Unggah Karya
+                    </button>
+                    <a th:href="@{/portfolio}" class="gk-btn gk-btn--secondary">
+                        Batal
+                    </a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- RIGHT PANEL: GUIDELINES -->
+    <aside class="gk-sidebar-right">
+        <div class="gk-card p-3 mb-3">
+            <h6 class="fw-bold mb-3 d-flex align-items-center gap-2" style="font-size: var(--gk-text-sm); color: var(--gk-ink);">
+                <i class="bi bi-shield-check text-primary"></i>
+                Ketentuan Berkas
+            </h6>
+            <ul class="d-flex flex-column gap-2 p-0 m-0 list-unstyled text-muted" style="font-size: var(--gk-text-xs); line-height: 1.6;">
+                <li class="d-flex align-items-start gap-2">
+                    <i class="bi bi-check2 text-primary mt-1"></i>
+                    <span>Format yang didukung: JPG, PNG, WEBP, atau PDF.</span>
+                </li>
+                <li class="d-flex align-items-start gap-2">
+                    <i class="bi bi-check2 text-primary mt-1"></i>
+                    <span>Ukuran maksimal berkas adalah <strong>10 Megabyte (MB)</strong>.</span>
+                </li>
+                <li class="d-flex align-items-start gap-2">
+                    <i class="bi bi-check2 text-primary mt-1"></i>
+                    <span>Pastikan gambar memiliki rasio yang jelas dan teks yang terbaca.</span>
+                </li>
+                <li class="d-flex align-items-start gap-2">
+                    <i class="bi bi-check2 text-primary mt-1"></i>
+                    <span>Dilarang mengunggah konten yang mengandung plagiarisme atau melanggar hak cipta.</span>
+                </li>
+            </ul>
+        </div>
+    </aside>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/app.js}"></script>
+<script>
+function previewFile(input) {
+    var file = input.files[0];
+    var preview = document.getElementById('filePreview');
+    if (!file) return;
+    if (file.type.startsWith('image/')) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            preview.innerHTML = '<div class="p-2 border rounded-3 bg-white mb-3 text-center"><img src="' + e.target.result + '" class="img-fluid rounded" style="max-height: 220px; object-fit: contain;"></div>';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.innerHTML = '<div class="d-flex align-items-center gap-3 p-3 rounded-3 mb-3" style="background: var(--gk-grey-50); border: 1px solid var(--gk-border);"><i class="bi bi-file-pdf fs-1 text-danger"></i><div><div class="fw-semibold">' + file.name + '</div><div class="text-muted small">' + (file.size / 1024 / 1024).toFixed(2) + ' MB</div></div></div>';
+    }
+}
+</script>
+</body>
+</html>

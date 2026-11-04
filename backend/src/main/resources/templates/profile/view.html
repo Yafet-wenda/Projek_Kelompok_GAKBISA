@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/head :: head('Profil')}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<div class="gk-layout container-fluid">
+    <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
+
+    <main class="gk-main">
+
+        <!-- Profile Hero Card -->
+        <div class="gk-card p-0 mb-4 overflow-hidden">
+            <div style="height:140px;background:linear-gradient(135deg,var(--gk-primary) 0%,#0D4ED8 100%);position:relative;"></div>
+            <div class="p-4" style="margin-top:-60px;">
+                <div class="d-flex align-items-end gap-3 flex-wrap">
+                    <img th:if="${user.avatarPath != null}" th:src="${user.avatarPath}" alt="Avatar"
+                         class="rounded-circle border border-4 border-white shadow-sm"
+                         style="width:110px;height:110px;object-fit:cover;background:#fff;">
+                    <div th:if="${user.avatarPath == null}"
+                         class="gk-avatar gk-avatar--xxl border border-4 border-white shadow-sm"
+                         style="width:110px;height:110px;font-size:44px;background:var(--gk-primary-muted);color:var(--gk-primary-dark);"
+                         th:text="${#strings.toUpperCase(#strings.substring(user.fullName,0,1))}">A</div>
+
+                    <div class="flex-grow-1 min-w-0 mb-2">
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <h1 class="m-0 fw-bold" style="font-size:24px;color:var(--gk-ink);" th:text="${user.fullName}">Nama Pengguna</h1>
+                            <span class="gk-badge gk-badge--sm"
+                                  th:classappend="${user.status == 'ACTIVE'} ? 'gk-badge--success' : 'gk-badge--danger'"
+                                  th:text="${user.status}">ACTIVE</span>
+                        </div>
+                        <p class="m-0 text-muted" style="font-size:14px;" th:text="${user.bio ?: 'Mahasiswa GAKBISA'}"></p>
+                    </div>
+
+                    <div class="d-flex gap-2 mb-2">
+                        <a th:href="@{/barter/request/{id}(id=${user.id})}"
+                           sec:authorize="isAuthenticated()"
+                           class="gk-btn gk-btn--primary gk-btn--sm">
+                            <i class="bi bi-arrow-left-right" aria-hidden="true"></i> Ajak Barter
+                        </a>
+                        <a th:href="@{/profile/edit}"
+                           class="gk-btn gk-btn--ghost gk-btn--sm">
+                            <i class="bi bi-pencil-fill" aria-hidden="true"></i> Edit Profil
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Meta Badges -->
+                <div class="d-flex gap-3 flex-wrap mt-3 pt-3 border-top" style="font-size:13px;color:var(--gk-ink-2);border-color:var(--gk-border) !important;">
+                    <div th:if="${user.campus}" class="d-flex align-items-center gap-1">
+                        <i class="bi bi-building text-primary"></i>
+                        <span th:text="${user.campus}">Kampus</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-1">
+                        <i class="bi bi-envelope text-primary"></i>
+                        <span th:text="${user.email}">email@example.com</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-1">
+                        <i class="bi bi-calendar3 text-primary"></i>
+                        <span>Bergabung <span th:text="${#temporals.format(user.createdAt, 'MMM yyyy')}">2026</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Keahlian Ditawarkan (Offer) -->
+        <div class="gk-card mb-4">
+            <div class="gk-card__header">
+                <h2 class="gk-card__title d-flex align-items-center gap-2">
+                    <i class="bi bi-hand-thumbs-up-fill text-primary" aria-hidden="true"></i>
+                    <span>Keahlian Ditawarkan</span>
+                </h2>
+                <a th:href="@{/profile/skills}" class="gk-btn gk-btn--ghost gk-btn--sm">
+                    <i class="bi bi-pencil" aria-hidden="true"></i> Kelola
+                </a>
+            </div>
+
+            <div th:if="${#lists.isEmpty(offerSkills)}" class="text-muted p-2" style="font-size:14px;">
+                Belum ada keahlian yang ditawarkan.
+                <a th:href="@{/profile/skills}" class="text-primary fw-semibold">Tambahkan sekarang</a>
+            </div>
+
+            <div th:if="${!#lists.isEmpty(offerSkills)}" class="d-flex flex-wrap gap-2 p-1">
+                <span class="gk-badge gk-badge--OFFER" style="padding:6px 12px;font-size:13px;" th:each="us : ${offerSkills}">
+                    <i class="bi bi-stars text-primary me-1"></i>
+                    <span th:text="${us.skill.name}">Skill</span>
+                    <span th:if="${us.level}" style="opacity:0.8;font-weight:400;" th:text="'(' + ${us.level} + ')'"></span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Keahlian Dicari (Want) -->
+        <div class="gk-card mb-4">
+            <div class="gk-card__header">
+                <h2 class="gk-card__title d-flex align-items-center gap-2">
+                    <i class="bi bi-book-fill text-danger" aria-hidden="true"></i>
+                    <span>Keahlian Dicari</span>
+                </h2>
+                <a th:href="@{/profile/skills}" class="gk-btn gk-btn--ghost gk-btn--sm">
+                    <i class="bi bi-pencil" aria-hidden="true"></i> Kelola
+                </a>
+            </div>
+
+            <div th:if="${#lists.isEmpty(wantSkills)}" class="text-muted p-2" style="font-size:14px;">
+                Belum ada keahlian yang dicari.
+                <a th:href="@{/profile/skills}" class="text-primary fw-semibold">Tambahkan sekarang</a>
+            </div>
+
+            <div th:if="${!#lists.isEmpty(wantSkills)}" class="d-flex flex-wrap gap-2 p-1">
+                <span class="gk-badge gk-badge--WANT" style="padding:6px 12px;font-size:13px;" th:each="us : ${wantSkills}">
+                    <i class="bi bi-book me-1"></i>
+                    <span th:text="${us.skill.name}">Skill</span>
+                    <span th:if="${us.level}" style="opacity:0.8;font-weight:400;" th:text="'(' + ${us.level} + ')'"></span>
+                </span>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Right Sidebar Panel (~320px) -->
+    <aside class="gk-sidebar-right">
+        <div class="gk-card">
+            <div class="gk-card__header">
+                <h3 class="gk-card__title" style="font-size:15px;">Statistik Keahlian</h3>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom" style="border-color:var(--gk-border) !important;">
+                <span class="text-muted" style="font-size:13px;">Keahlian Ditawarkan</span>
+                <span class="badge bg-primary rounded-pill px-2" th:text="${offerSkills.size()}">0</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom" style="border-color:var(--gk-border) !important;">
+                <span class="text-muted" style="font-size:13px;">Keahlian Dicari</span>
+                <span class="badge bg-danger rounded-pill px-2" th:text="${wantSkills.size()}">0</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted" style="font-size:13px;">Status Akun</span>
+                <span class="gk-badge gk-badge--sm"
+                      th:classappend="${user.status == 'ACTIVE'} ? 'gk-badge--success' : 'gk-badge--danger'"
+                      th:text="${user.status}">ACTIVE</span>
+            </div>
+            <div class="d-flex flex-column gap-2">
+                <a th:href="@{/portfolio/user/{id}(id=${user.id})}" class="gk-btn gk-btn--ghost gk-btn--block gk-btn--sm">
+                    <i class="bi bi-collection me-1"></i>Lihat Portofolio
+                </a>
+                <a th:href="@{/barter/request/{id}(id=${user.id})}" class="gk-btn gk-btn--primary gk-btn--block gk-btn--sm">
+                    <i class="bi bi-arrow-left-right me-1"></i>Ajak Barter
+                </a>
+            </div>
+        </div>
+    </aside>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

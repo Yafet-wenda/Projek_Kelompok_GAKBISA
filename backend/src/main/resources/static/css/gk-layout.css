@@ -1,0 +1,269 @@
+/*
+ * ╔══════════════════════════════════════════════════════════════════════════╗
+ * ║  GAKBISA Layout & Session Page Styles — gk-layout.css                     ║
+ * ║                                                                          ║
+ * ║  - Grid 3 Kolom: Sidebar kiri (270px), Main content fleksibel,           ║
+ * ║    Panel kanan (320px). Container max-width ~1360px terpusat (margin 0   ║
+ * ║    auto) dengan gap 24px. Tidak ada ruang kosong besar di kanan.         ║
+ * ║  - Tablet / Mobile: Panel kanan turun di bawah konten utama.             ║
+ * ║  - Halaman /sessions: Card, empty state, horizontal button, status grid  ║
+ * ║    skeleton loader, dan card list rapi.                                  ║
+ * ╚══════════════════════════════════════════════════════════════════════════╝
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §1 · 3-COLUMN LAYOUT GRID
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.gk-layout,
+.fb-layout {
+  display: flex !important;
+  width: 100% !important;
+  max-width: 1360px !important;
+  margin-inline: auto !important;
+  padding: 24px 20px 48px !important;
+  gap: 24px !important;
+  align-items: flex-start !important;
+  min-height: calc(100vh - var(--gk-navbar-height, 64px)) !important;
+  box-sizing: border-box !important;
+}
+
+/* Sidebar kiri tetap 270px */
+.gk-sidebar {
+  width: 270px !important;
+  min-width: 270px !important;
+  max-width: 270px !important;
+  flex-shrink: 0 !important;
+}
+
+/* Konten tengah fleksibel mengisi ruang proporsional */
+.gk-main,
+.fb-main {
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  padding: 0 !important;
+}
+
+/* Panel samping kanan (320px tetap) */
+.gk-sidebar-right,
+.fb-sidebar-right {
+  width: 320px !important;
+  min-width: 320px !important;
+  max-width: 320px !important;
+  padding: 0 !important;
+  position: sticky !important;
+  top: calc(var(--gk-navbar-height, 64px) + 8px) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+  flex-shrink: 0 !important;
+}
+
+/* ── Tablet & Mobile (<= 1080px): panel kanan turun ke bawah ── */
+@media (max-width: 1080px) {
+  .gk-layout,
+  .fb-layout {
+    flex-direction: column !important;
+    padding: 16px 14px 64px !important;
+    gap: 20px !important;
+  }
+
+  .gk-sidebar-right,
+  .fb-sidebar-right {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    position: static !important;
+    margin-top: 8px !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §2 · HALAMAN /sessions (SESI BELAJAR)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Empty State Card */
+.session-empty-card {
+  padding: 48px 24px !important;
+  text-align: center;
+  background: var(--gk-card-bg);
+  border: 1px solid var(--gk-border);
+  border-radius: var(--gk-radius-md, 12px);
+  box-shadow: var(--gk-shadow-sm);
+}
+
+.session-empty-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--gk-primary-muted);
+  color: var(--gk-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin-bottom: 16px;
+}
+
+.session-empty-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--gk-ink);
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.session-empty-desc {
+  max-width: 420px;
+  margin: 0 auto 24px auto;
+  font-size: 14px;
+  color: var(--gk-ink-3);
+  line-height: 1.5;
+  text-align: center;
+}
+
+/* Tombol horizontal utama */
+.session-btn-barter {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  padding: 0 24px !important;
+  border-radius: 12px !important;
+  background: var(--gk-primary) !important;
+  color: var(--gk-on-primary) !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  border: none !important;
+  text-decoration: none !important;
+  box-shadow: var(--gk-shadow-sm);
+  transition: background 180ms ease, transform 180ms ease, box-shadow 180ms ease !important;
+}
+.session-btn-barter:hover {
+  background: var(--gk-primary-dark) !important;
+  transform: translateY(-1px);
+  box-shadow: var(--gk-shadow-md);
+  color: var(--gk-on-primary) !important;
+}
+.session-btn-barter:active {
+  transform: translateY(1px);
+  box-shadow: var(--gk-shadow-sm);
+}
+.session-btn-barter:focus-visible {
+  outline: none;
+  box-shadow: var(--gk-ring);
+}
+
+/* ── Panel Status Sesi (Grid 2 Kolom Sejajar) ── */
+.session-status-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.status-grid-item {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-badge-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 26px !important;
+  min-height: 26px !important;
+  padding: 0 8px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.03em !important;
+  border-radius: 9999px !important;
+  width: 100% !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+}
+
+.status-desc {
+  font-size: 13px;
+  color: var(--gk-ink-2);
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+/* ── Session Cards ── */
+.gk-session-card {
+  background: var(--gk-card-bg);
+  border: 1px solid var(--gk-border);
+  border-radius: var(--gk-radius-md, 12px);
+  box-shadow: var(--gk-shadow-sm);
+  margin-bottom: 14px;
+  overflow: hidden;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+.gk-session-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--gk-shadow-md);
+  border-color: var(--gk-border-strong);
+}
+
+.gk-session-card__header {
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--gk-border);
+  background: var(--gk-grey-50);
+}
+
+.gk-session-card__body {
+  padding: 18px;
+}
+
+.gk-session-card__meta-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gk-ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 2px;
+}
+
+.gk-session-card__meta-val {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gk-ink);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §3 · DARK MODE SUPPORT (.fb-dashboard)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.fb-dashboard .session-empty-card {
+  background: #242526;
+  border-color: #3e4042;
+}
+.fb-dashboard .session-empty-title {
+  color: #e4e6eb;
+}
+.fb-dashboard .session-empty-desc {
+  color: #b0b3b8;
+}
+.fb-dashboard .status-desc {
+  color: #b0b3b8;
+}
+.fb-dashboard .gk-session-card {
+  background: #242526;
+  border-color: #3e4042;
+}
+.fb-dashboard .gk-session-card__header {
+  background: #1e1f20;
+  border-bottom-color: #3e4042;
+}
+.fb-dashboard .gk-session-card__meta-val {
+  color: #e4e6eb;
+}
+

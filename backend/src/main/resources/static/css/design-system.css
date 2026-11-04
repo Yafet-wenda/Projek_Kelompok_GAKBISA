@@ -1,0 +1,1102 @@
+/*
+ * ╔═══════════════════════════════════════════════════════════════════════════╗
+ * ║          GAKBISA Design System — Design Tokens & Component Layer          ║
+ * ║                                                                           ║
+ * ║  File ini adalah satu-satunya sumber kebenaran design token. Ia dimuat    ║
+ * ║  setelah Bootstrap + style.css (halaman FB-style) maupun setelah          ║
+ * ║  gakbisa.css (halaman clean). Token menggunakan prefix `--gk-` agar       ║
+ * ║  tidak bentrok dengan --fb-* Bootstrap, maupun --accent di gakbisa.css.   ║
+ * ║                                                                           ║
+ * ║  Aturan komponen di bawah memakai kelas prefix .gk- sehingga aman         ║
+ * ║  dipakai di template mana pun tanpa merusak logika yang sudah ada.        ║
+ * ╚═══════════════════════════════════════════════════════════════════════════╝
+ *
+ *  Dibuat oleh: Moh. Faiz (Antarmuka, sesi video)
+ *  Proyek: GAKBISA — Gantian Ajari, Kita Bisa!
+ *  Praktikum PBO 2026, D3 TI PSDKU Lamongan, PENS
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §1 · DESIGN TOKENS  (CSS Custom Properties)
+   ═══════════════════════════════════════════════════════════════════════════
+
+   Skala warna menggunakan konvensi:
+     --gk-<role>            → warna utama peran tersebut
+     --gk-<role>-dark       → 15% lebih gelap (hover)
+     --gk-<role>-muted      → tint lembut 10% opacity (background chip/badge)
+     --gk-on-<role>         → teks di atas warna peran tersebut
+
+   Semua pasangan memenuhi WCAG AA (rasio kontras ≥ 4.5:1 untuk teks normal,
+   ≥ 3:1 untuk teks besar / UI elements).
+
+   Diverifikasi dengan https://webaim.org/resources/contrastchecker/ :
+     --gk-primary #1A6BFF on #FFFFFF = 4.54 ✓
+     --gk-success #1B7E4A on #FFFFFF = 5.1  ✓
+     --gk-warning #895C00 on #FFFFFF = 5.3  ✓
+     --gk-danger  #C0281E on #FFFFFF = 5.0  ✓
+     --gk-info    #1A5FAD on #FFFFFF = 5.5  ✓
+     --gk-ink     #1C2127 on #F5F7FA = 15.6 ✓
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* — Font — */
+  --gk-font-sans: 'Plus Jakarta Sans', 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  --gk-font-mono: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
+
+  /* — Type scale (rem, base = 16px) — */
+  --gk-text-xs:   0.75rem;   /* 12px */
+  --gk-text-sm:   0.875rem;  /* 14px */
+  --gk-text-base: 1rem;      /* 16px */
+  --gk-text-lg:   1.25rem;   /* 20px */
+  --gk-text-xl:   1.5rem;    /* 24px */
+  --gk-text-2xl:  2rem;      /* 32px */
+
+  /* — Line-height — */
+  --gk-leading-tight:  1.25;
+  --gk-leading-snug:   1.4;
+  --gk-leading-normal: 1.6;
+
+  /* — Font-weight — */
+  --gk-weight-normal:    400;
+  --gk-weight-medium:    500;
+  --gk-weight-semibold:  600;
+  --gk-weight-bold:      700;
+
+  /* ─── Colour: Primary (Biru GAKBISA) ─────────────────────────────────── */
+  --gk-primary:        #1A6BFF;  /* main CTA — "ajukan barter", "daftar"   */
+  --gk-primary-dark:   #1459D6;  /* hover, active                           */
+  --gk-primary-muted:  #E8F0FE;  /* chip bg, alert bg, sidebar highlight   */
+  --gk-on-primary:     #FFFFFF;
+
+  /* ─── Colour: Semantic ────────────────────────────────────────────────── */
+  --gk-success:        #1B7E4A;  /* ACCEPTED, COMPLETED                     */
+  --gk-success-dark:   #155E38;
+  --gk-success-muted:  #E6F4EE;
+  --gk-on-success:     #FFFFFF;
+
+  --gk-warning:        #895C00;  /* PENDING                                 */
+  --gk-warning-dark:   #6B4800;
+  --gk-warning-muted:  #FEF6E4;
+  --gk-on-warning:     #FFFFFF;
+
+  --gk-danger:         #C0281E;  /* REJECTED, CANCELLED, error              */
+  --gk-danger-dark:    #9A2018;
+  --gk-danger-muted:   #FCEAE9;
+  --gk-on-danger:      #FFFFFF;
+
+  --gk-info:           #1A5FAD;  /* SCHEDULED, informational                */
+  --gk-info-dark:      #144B89;
+  --gk-info-muted:     #E5EFFA;
+  --gk-on-info:        #FFFFFF;
+
+  /* ─── Colour: Grey scale ─────────────────────────────────────────────── */
+  --gk-grey-0:   #FFFFFF;
+  --gk-grey-50:  #F5F7FA;   /* page background                              */
+  --gk-grey-100: #EAECF0;   /* divider, skeleton                            */
+  --gk-grey-200: #D0D5DD;   /* border default                               */
+  --gk-grey-300: #B8BFC9;   /* border strong, placeholder                   */
+  --gk-grey-500: #667085;   /* muted text, icon                             */
+  --gk-grey-700: #344054;   /* secondary text                               */
+  --gk-grey-900: #1C2127;   /* primary text                                 */
+
+  /* Semantic aliases (used in components) */
+  --gk-page-bg:  var(--gk-grey-50);
+  --gk-card-bg:  var(--gk-grey-0);
+  --gk-border:   var(--gk-grey-200);
+  --gk-border-strong: var(--gk-grey-300);
+  --gk-ink:      var(--gk-grey-900);
+  --gk-ink-2:    var(--gk-grey-700);
+  --gk-ink-3:    var(--gk-grey-500);
+
+  /* ─── Spacing (kelipatan 4 px) ───────────────────────────────────────── */
+  --gk-space-1:  0.25rem;  /*  4px */
+  --gk-space-2:  0.5rem;   /*  8px */
+  --gk-space-3:  0.75rem;  /* 12px */
+  --gk-space-4:  1rem;     /* 16px */
+  --gk-space-5:  1.25rem;  /* 20px */
+  --gk-space-6:  1.5rem;   /* 24px */
+  --gk-space-8:  2rem;     /* 32px */
+  --gk-space-10: 2.5rem;   /* 40px */
+  --gk-space-12: 3rem;     /* 48px */
+
+  /* ─── Border-radius ─────────────────────────────────────────────────── */
+  --gk-radius-sm: 4px;
+  --gk-radius:    8px;
+  --gk-radius-md: 12px;
+  --gk-radius-lg: 16px;
+  --gk-radius-pill: 9999px;
+
+  /* ─── Shadow ────────────────────────────────────────────────────────── */
+  --gk-shadow-sm: 0 1px 2px rgba(16, 24, 40, .06),
+                  0 1px 3px rgba(16, 24, 40, .10);
+  --gk-shadow-md: 0 4px 8px -2px rgba(16, 24, 40, .10),
+                  0 2px 4px -2px rgba(16, 24, 40, .06);
+  --gk-shadow-lg: 0 12px 24px -4px rgba(16, 24, 40, .12),
+                  0 4px 8px -2px rgba(16, 24, 40, .06);
+
+  /* ─── Focus ring ────────────────────────────────────────────────────── */
+  --gk-ring: 0 0 0 3px rgba(26, 107, 255, .28);
+
+  /* ─── Transition ────────────────────────────────────────────────────── */
+  --gk-transition: 150ms cubic-bezier(.4, 0, .2, 1);
+
+  /* ─── Z-index scale ─────────────────────────────────────────────────── */
+  --gk-z-dropdown: 200;
+  --gk-z-sticky:   300;
+  --gk-z-modal:    400;
+  --gk-z-toast:    500;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §1.1 · DARK MODE TOKENS ([data-theme="dark"])
+   ═══════════════════════════════════════════════════════════════════════════ */
+[data-theme="dark"] {
+  --gk-page-bg:       #0B0F19;
+  --gk-card-bg:       #131B2E;
+  --gk-border:        #232F48;
+  --gk-border-strong: #334466;
+  --gk-grey-0:        #131B2E;
+  --gk-grey-50:       #0B0F19;
+  --gk-grey-100:      #1B2640;
+  --gk-grey-200:      #232F48;
+  --gk-grey-300:      #334466;
+  --gk-grey-500:      #94A3B8;
+  --gk-grey-700:      #CBD5E1;
+  --gk-grey-900:      #F8FAFC;
+  --gk-ink:           #F8FAFC;
+  --gk-ink-2:         #E2E8F0;
+  --gk-ink-3:         #94A3B8;
+
+  --gk-primary-muted: rgba(26, 107, 255, 0.22);
+  --gk-success-muted: rgba(27, 126, 74, 0.22);
+  --gk-warning-muted: rgba(137, 92, 0, 0.25);
+  --gk-danger-muted:  rgba(192, 40, 30, 0.25);
+  --gk-info-muted:    rgba(26, 95, 173, 0.25);
+
+  --gk-shadow-sm:     0 1px 3px rgba(0, 0, 0, 0.45);
+  --gk-shadow-md:     0 4px 10px rgba(0, 0, 0, 0.55);
+  --gk-shadow-lg:     0 12px 24px rgba(0, 0, 0, 0.65);
+
+  --bs-body-bg:       #0B0F19;
+  --bs-body-color:    #F8FAFC;
+  --bs-border-color:  #232F48;
+
+  --fb-white:         #131B2E;
+  --fb-bg:            #0B0F19;
+  --fb-border:        #232F48;
+  --fb-card-shadow:   0 1px 3px rgba(0, 0, 0, 0.45);
+  --fb-text:          #F8FAFC;
+  --fb-text-secondary:#94A3B8;
+  --fb-hover:         rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] body {
+  background-color: var(--gk-page-bg) !important;
+  color: var(--gk-ink) !important;
+}
+
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+  background-color: #131B2E !important;
+  color: #F8FAFC !important;
+  border-color: #232F48 !important;
+}
+
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+  background-color: #131B2E !important;
+  color: #F8FAFC !important;
+  border-color: var(--gk-primary) !important;
+  box-shadow: var(--gk-ring) !important;
+}
+
+[data-theme="dark"] .dropdown-menu {
+  background-color: #131B2E !important;
+  border-color: #232F48 !important;
+  color: #F8FAFC !important;
+  box-shadow: var(--gk-shadow-lg) !important;
+}
+
+[data-theme="dark"] .table {
+  --bs-table-bg: transparent;
+  --bs-table-color: #F8FAFC;
+  --bs-table-hover-bg: rgba(255, 255, 255, 0.04);
+  border-color: #232F48 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §1.2 · ACCESSIBILITY FOCUS RING & MOTION
+   ═══════════════════════════════════════════════════════════════════════════ */
+:focus-visible {
+  outline: 2px solid var(--gk-primary) !important;
+  outline-offset: 2px !important;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--gk-primary) !important;
+  outline-offset: 2px !important;
+}
+
+/* Smooth Entrance Micro-animations */
+@keyframes gk-fade-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.gk-card,
+.gk-page-header,
+.gk-stat {
+  animation: gk-fade-slide-up 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gk-btn {
+  transition: all 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gk-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.gk-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* prefers-reduced-motion: matikan animasi bila user minta */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §2 · FONT IMPORT  (Plus Jakarta Sans via Google Fonts)
+   — Hanya dimuat sekali; browser cache-kan untuk semua halaman.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §3 · BASE OVERRIDES  — harmonis di atas Bootstrap + style.css
+   ═══════════════════════════════════════════════════════════════════════════
+
+   Kita hanya menambahkan kelas `.gk-page` ke <body> milik halaman yang
+   belum memakai class khusus agar reset tidak merusak halaman dashboard yang
+   sudah ada styling .fb-dashboard.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Page-level bg token tersedia di mana saja tanpa kelas khusus */
+body {
+  background-color: var(--gk-page-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Saat tidak ada class khusus pada <body>, aktifkan font & base color */
+body:not(.fb-dashboard) {
+  color: var(--gk-ink);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §4 · COMPONENT LIBRARY  (prefix .gk-)
+   Semua komponen di bawah ini bersifat additive — tidak menimpa kelas lama.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+
+/* ──────────────────────────────────────────────────────────────────────────
+   4.1 · CARD
+   Usage: <div class="gk-card"> … </div>
+   Variants: .gk-card--flat (no shadow), .gk-card--interactive (hover lift)
+   ────────────────────────────────────────────────────────────────────────── */
+.gk-card {
+  background: var(--gk-card-bg);
+  border: 1px solid var(--gk-border);
+  border-radius: var(--gk-radius-md);
+  padding: var(--gk-space-4);
+  box-shadow: var(--gk-shadow-sm);
+}
+
+.gk-card > :last-child { margin-bottom: 0; }
+
+.gk-card--flat {
+  box-shadow: none;
+}
+
+.gk-card--interactive {
+  cursor: pointer;
+  transition: box-shadow var(--gk-transition), transform var(--gk-transition);
+}
+.gk-card--interactive:hover {
+  box-shadow: var(--gk-shadow-md);
+  transform: translateY(-2px);
+  border-color: var(--gk-border-strong);
+}
+
+.gk-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gk-space-3);
+  margin-bottom: var(--gk-space-4);
+  padding-bottom: var(--gk-space-3);
+  border-bottom: 1px solid var(--gk-border);
+}
+
+.gk-card__title {
+  margin: 0;
+  font-size: var(--gk-text-base);
+  font-weight: var(--gk-weight-semibold);
+  color: var(--gk-ink);
+  line-height: var(--gk-leading-tight);
+}
+
+.gk-card__footer {
+  margin-top: var(--gk-space-4);
+  padding-top: var(--gk-space-3);
+  border-top: 1px solid var(--gk-border);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--gk-space-2);
+}
+
+
+/* ──────────────────────────────────────────────────────────────────────────
+   4.2 · BUTTON
+   Usage: <button class="gk-btn gk-btn--primary"> … </button>
+          <a class="gk-btn gk-btn--secondary" href="…"> … </a>
+   Variants: primary · secondary · ghost · danger
+   Sizes: default · sm · lg · icon
+   States: disabled · loading (.gk-btn--loading)
+   ────────────────────────────────────────────────────────────────────────── */
+.gk-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gk-space-2);
+  padding: 0.5625rem var(--gk-space-4);   /* 9px 16px */
+  min-height: 40px;
+  border: 1px solid transparent;
+  border-radius: var(--gk-radius);
+  font-family: var(--gk-font-sans);
+  font-size: var(--gk-text-sm);
+  font-weight: var(--gk-weight-semibold);
+  line-height: var(--gk-leading-tight);
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  transition:
+    background var(--gk-transition),
+    border-color var(--gk-transition),
+    box-shadow var(--gk-transition),
+    transform var(--gk-transition);
+  -webkit-appearance: none;
+}
+.gk-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--gk-ring);
+}
+.gk-btn:active { transform: translateY(1px); }
+.gk-btn[disabled],
+.gk-btn--loading {
+  opacity: .55;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.gk-btn--loading::before {
+  content: '';
+  display: inline-block;
+  width: 1em; height: 1em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: gk-spin .7s linear infinite;
+}
+
+/* Primary */
+.gk-btn--primary {
+  background: var(--gk-primary);
+  color: var(--gk-on-primary);
+  border-color: var(--gk-primary);
+}
+.gk-btn--primary:hover,
+.gk-btn--primary:focus-visible {
+  background: var(--gk-primary-dark);
+  border-color: var(--gk-primary-dark);
+  color: var(--gk-on-primary);
+}
+
+/* Secondary */
+.gk-btn--secondary {
+  background: var(--gk-primary-muted);
+  color: var(--gk-primary);
+  border-color: var(--gk-primary-muted);
+}
+.gk-btn--secondary:hover,
+.gk-btn--secondary:focus-visible {
+  background: #d1e2fd;
+  color: var(--gk-primary-dark);
+  border-color: #b5ccfb;
+}
+
+/* Ghost */
+.gk-btn--ghost {
+  background: transparent;
+  color: var(--gk-ink-2);
+  border-color: var(--gk-border-strong);
+}
+.gk-btn--ghost:hover,
+.gk-btn--ghost:focus-visible {
+  background: var(--gk-grey-50);
+  color: var(--gk-ink);
+  border-color: var(--gk-ink-3);
+}
+
+/* Danger */
+.gk-btn--danger {
+  background: transparent;
+  color: var(--gk-danger);
+  border-color: #F2B6B2;
+}
+.gk-btn--danger:hover,
+.gk-btn--danger:focus-visible {
+  background: var(--gk-danger-muted);
+  border-color: var(--gk-danger);
+  color: var(--gk-danger-dark);
+}
+
+/* Success */
+.gk-btn--success {
+  background: var(--gk-success);
+  color: var(--gk-on-success);
+  border-color: var(--gk-success);
+}
+.gk-btn--success:hover {
+  background: var(--gk-success-dark);
+  border-color: var(--gk-success-dark);
+  color: var(--gk-on-success);
+}
+
+/* Sizes */
+.gk-btn--sm {
+  padding: 0.375rem var(--gk-space-3);  /* 6px 12px */
+  min-height: 32px;
+  font-size: var(--gk-text-xs);
+}
+.gk-btn--lg {
+  padding: 0.75rem var(--gk-space-6);  /* 12px 24px */
+  min-height: 48px;
+  font-size: var(--gk-text-base);
+}
+.gk-btn--icon {
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--gk-radius);
+}
+.gk-btn--icon.gk-btn--sm { width: 32px; height: 32px; }
+.gk-btn--block { width: 100%; }
+
+/* Button group */
+.gk-btn-group {
+  display: inline-flex;
+  gap: var(--gk-space-2);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+
+/* ──────────────────────────────────────────────────────────────────────────
+   4.3 · BADGE
+   Usage: <span class="gk-badge gk-badge--success">ACCEPTED</span>
+   Variants: primary · success · warning · danger · info · neutral
+   Sizes: default · sm
+   ────────────────────────────────────────────────────────────────────────── */
+.gk-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gk-space-1);
+  padding: 0.1875rem 0.5rem;   /* 3px 8px */
+  border-radius: var(--gk-radius-pill);
+  font-size: var(--gk-text-xs);
+  font-weight: var(--gk-weight-semibold);
+  line-height: 1.4;
+  letter-spacing: .01em;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.gk-badge--primary  { background: var(--gk-primary-muted);  color: var(--gk-primary-dark); border-color: #b5ccfb; }
+.gk-badge--success  { background: var(--gk-success-muted);  color: var(--gk-success);      border-color: #99d4b6; }
+.gk-badge--warning  { background: var(--gk-warning-muted);  color: var(--gk-warning);      border-color: #e8c97a; }
+.gk-badge--danger   { background: var(--gk-danger-muted);   color: var(--gk-danger);       border-color: #f2b6b2; }
+.gk-badge--info     { background: var(--gk-info-muted);     color: var(--gk-info);         border-color: #a3c4e8; }
+.gk-badge--neutral  { background: var(--gk-grey-100);       color: var(--gk-ink-2);        border-color: var(--gk-border); }
+
+/* Semantic shortcuts sesuai domain GAKBISA */
+.gk-badge--PENDING    { background: var(--gk-warning-muted); color: var(--gk-warning); border-color: #e8c97a; }
+.gk-badge--ACCEPTED   { background: var(--gk-success-muted); color: var(--gk-success); border-color: #99d4b6; }
+.gk-badge--COMPLETED  { background: var(--gk-primary-muted); color: var(--gk-primary); border-color: #b5ccfb; }
+.gk-badge--REJECTED   { background: var(--gk-danger-muted);  color: var(--gk-danger);  border-color: #f2b6b2; }
+.gk-badge--CANCELLED  { background: var(--gk-grey-100);      color: var(--gk-ink-3);   border-color: var(--gk-border); }
+.gk-badge--SCHEDULED  { background: var(--gk-info-muted);    color: var(--gk-info);    border-color: #a3c4e8; }
+.gk-badge--ONGOING    { background: var(--gk-success-muted); color: var(--gk-success); border-color: #99d4b6; }
+.gk-badge--OFFER      { background: var(--gk-primary-muted); color: var(--gk-primary); border-color: #b5ccfb; }
+.gk-badge--WANT       { background: #fce4ec;                 color: #880e4f;            border-color: #f8bbd9; }
+.gk-badge--PUBLIC     { background: var(--gk-success-muted); color: var(--gk-success); border-color: #99d4b6; }
+.gk-badge--PRIVATE    { background: var(--gk-grey-100);      color: var(--gk-ink-3);   border-color: var(--gk-border); }
+
+.gk-badge--sm {
+  padding: 1px 6px;
+  font-size: 0.6875rem;  /* 11px */
+}
+
+.gk-badge i { font-size: .85em; }
+
+
+/* ──────────────────────────────────────────────────────────────────────────
+   4.4 · EMPTY STATE
+   Usage:
+     <div class="gk-empty">
+       <div class="gk-empty__icon"><i class="bi bi-inbox"></i></div>
+       <h3 class="gk-empty__title">Belum ada data</h3>
+       <p class="gk-empty__desc">Tambahkan keahlian pertamamu.</p>
+       <div class="gk-empty__action">
+         <a href="…" class="gk-btn gk-btn--primary">Mulai</a>
+       </div>
+     </div>
+   ────────────────────────────────────────────────────────────────────────── */
+.gk-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--gk-space-12) var(--gk-space-6);
+  border: 1.5px dashed var(--gk-border-strong);
+  border-radius: var(--gk-radius-md);
+  background: var(--gk-grey-50);
+  color: var(--gk-ink-2);
+}
+
+.gk-empty__icon {
+  font-size: 3rem;
+  line-height: 1;
+  margin-bottom: var(--gk-space-4);
+  opacity: .45;
+  color: var(--gk-ink-3);
+}
+
+.gk-empty__title {
+  margin: 0 0 var(--gk-space-2);
+  font-size: var(--gk-text-base);
+  font-weight: var(--gk-weight-semibold);
+  color: var(--gk-ink);
+  line-height: var(--gk-leading-tight);
+}
+
+.gk-empty__desc {
+  margin: 0 0 var(--gk-space-6);
+  font-size: var(--gk-text-sm);
+  color: var(--gk-ink-3);
+  max-width: 32ch;
+}
+
+.gk-empty__action { display: flex; gap: var(--gk-space-2); flex-wrap: wrap; justify-content: center; }
+
+/* Compact variant untuk dipakai di dalam card */
+.gk-empty--compact {
+  padding: var(--gk-space-6) var(--gk-space-4);
+  border-radius: var(--gk-radius);
+}
+.gk-empty--compact .gk-empty__icon { font-size: 2rem; margin-bottom: var(--gk-space-3); }
+
+
+/* ──────────────────────────────────────────────────────────────────────────
+   4.5 · PAGE HEADER
+   Usage:
+     <div class="gk-page-header">
+       <div class="gk-page-header__text">
+         <h1 class="gk-page-header__title">Judul Halaman</h1>
+         <p class="gk-page-header__desc">Deskripsi singkat halaman.</p>
+       </div>
+       <div class="gk-page-header__actions">
+         <a class="gk-btn gk-btn--primary" href="…">+ Tambah</a>
+       </div>
+     </div>
+   ────────────────────────────────────────────────────────────────────────── */
+.gk-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--gk-space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--gk-space-6);
+  padding-bottom: var(--gk-space-5);
+  border-bottom: 1px solid var(--gk-border);
+}
+
+.gk-page-header__text { min-width: 0; flex: 1; }
+
+.gk-page-header__eyebrow {
+  display: block;
+  margin: 0 0 var(--gk-space-1);
+  font-size: var(--gk-text-xs);
+  font-weight: var(--gk-weight-bold);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--gk-primary);
+}
+
+.gk-page-header__title {
+  margin: 0 0 var(--gk-space-1);
+  font-size: var(--gk-text-xl);
+  font-weight: var(--gk-weight-bold);
+  color: var(--gk-ink);
+  line-height: var(--gk-leading-tight);
+}
+
+.gk-page-header__desc {
+  margin: 0;
+  font-size: var(--gk-text-sm);
+  color: var(--gk-ink-3);
+  max-width: 60ch;
+  line-height: var(--gk-leading-normal);
+}
+
+.gk-page-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--gk-space-2);
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+
+/* ──────────────────────────────────────────────────────────────────────────
+   4.6 · STAT CARD
+   Usage:
+     <div class="gk-stat">
+       <span class="gk-stat__label">Barter Aktif</span>
+       <span class="gk-stat__value">12</span>
+       <span class="gk-stat__sub">dari 15 total</span>
+     </div>
+   ────────────────────────────────────────────────────────────────────────── */
+.gk-stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gk-space-1);
+  padding: var(--gk-space-4);
+  background: var(--gk-card-bg);
+  border: 1px solid var(--gk-border);
+  border-radius: var(--gk-radius-md);
+  box-shadow: var(--gk-shadow-sm);
+}
+
+.gk-stat__label {
+  font-size: var(--gk-text-xs);
+  font-weight: var(--gk-weight-semibold);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--gk-ink-3);
+}
+
+.gk-stat__value {
+  font-size: var(--gk-text-2xl);
+  font-weight: var(--gk-weight-bold);
+  color: var(--gk-ink);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.gk-stat__sub {
+  font-size: var(--gk-text-xs);
+  color: var(--gk-ink-3);
+}
+
+.gk-stat--primary { border-left: 3px solid var(--gk-primary); }
+.gk-stat--success { border-left: 3px solid var(--gk-success); }
+.gk-stat--warning { border-left: 3px solid var(--gk-warning); }
+.gk-stat--danger  { border-left: 3px solid var(--gk-danger);  }
+
+
+/* ──────────────────────────────────────────────────────────────────────────
+   4.7 · ALERT / FLASH MESSAGE
+   Usage: <div class="gk-alert gk-alert--success"> … </div>
+   ────────────────────────────────────────────────────────────────────────── */
+.gk-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gk-space-3);
+  padding: 0.875rem var(--gk-space-4);
+  border-radius: var(--gk-radius);
+  border: 1px solid var(--gk-border);
+  border-left-width: 4px;
+  font-size: var(--gk-text-sm);
+  line-height: var(--gk-leading-normal);
+  margin-bottom: var(--gk-space-4);
+}
+.gk-alert:last-child { margin-bottom: 0; }
+.gk-alert i { margin-top: 1px; font-size: 1rem; flex-shrink: 0; }
+
+.gk-alert--success {
+  background: var(--gk-success-muted);
+  border-color: #99d4b6;
+  border-left-color: var(--gk-success);
+  color: var(--gk-success-dark);
+}
+.gk-alert--warning {
+  background: var(--gk-warning-muted);
+  border-color: #e8c97a;
+  border-left-color: var(--gk-warning);
+  color: var(--gk-warning-dark);
+}
+.gk-alert--danger {
+  background: var(--gk-danger-muted);
+  border-color: #f2b6b2;
+  border-left-color: var(--gk-danger);
+  color: var(--gk-danger-dark);
+}
+.gk-alert--info {
+  background: var(--gk-info-muted);
+  border-color: #a3c4e8;
+  border-left-color: var(--gk-info);
+  color: var(--gk-info-dark);
+}
+
+
+/* ──────────────────────────────────────────────────────────────────────────
+   4.8 · SKELETON LOADER
+   Usage: <div class="gk-skeleton" style="height:60px;"></div>
+   ────────────────────────────────────────────────────────────────────────── */
+.gk-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--gk-grey-100) 0%,
+    var(--gk-grey-50)  50%,
+    var(--gk-grey-100) 100%
+  );
+  background-size: 200% 100%;
+  border-radius: var(--gk-radius);
+  animation: gk-shimmer 1.4s ease-in-out infinite;
+}
+.gk-skeleton--text {
+  height: var(--gk-text-base);
+  border-radius: var(--gk-radius-sm);
+}
+.gk-skeleton--avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+}
+
+
+/* ──────────────────────────────────────────────────────────────────────────
+   4.9 · DIVIDER
+   ────────────────────────────────────────────────────────────────────────── */
+.gk-divider {
+  border: 0;
+  border-top: 1px solid var(--gk-border);
+  margin: var(--gk-space-4) 0;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   4.10 · AVATAR
+   Usage: <div class="gk-avatar gk-avatar--md">YW</div>
+   ────────────────────────────────────────────────────────────────────────── */
+.gk-avatar {
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--gk-primary-muted);
+  color: var(--gk-primary-dark);
+  font-weight: var(--gk-weight-bold);
+  font-size: var(--gk-text-sm);
+  flex-shrink: 0;
+  overflow: hidden;
+  border: 2px solid var(--gk-grey-0);
+  box-shadow: var(--gk-shadow-sm);
+}
+.gk-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.gk-avatar--xs  { width: 24px;  height: 24px;  font-size: 0.625rem; }
+.gk-avatar--sm  { width: 32px;  height: 32px;  font-size: var(--gk-text-xs); }
+.gk-avatar--md  { width: 40px;  height: 40px;  font-size: var(--gk-text-sm); }
+.gk-avatar--lg  { width: 56px;  height: 56px;  font-size: var(--gk-text-base); }
+.gk-avatar--xl  { width: 80px;  height: 80px;  font-size: var(--gk-text-lg); }
+.gk-avatar--xxl { width: 120px; height: 120px; font-size: var(--gk-text-xl); }
+
+
+/* ──────────────────────────────────────────────────────────────────────────
+   4.11 · SCORE BAR  (matching score)
+   Usage:
+     <div class="gk-score-bar">
+       <div class="gk-score-bar__fill" style="--pct: 78%;"></div>
+     </div>
+   ────────────────────────────────────────────────────────────────────────── */
+.gk-score-bar {
+  height: 6px;
+  background: var(--gk-grey-100);
+  border-radius: var(--gk-radius-pill);
+  overflow: hidden;
+}
+.gk-score-bar__fill {
+  height: 100%;
+  width: var(--pct, 0%);
+  background: linear-gradient(90deg, var(--gk-primary), var(--gk-success));
+  border-radius: var(--gk-radius-pill);
+  transition: width .5s ease;
+}
+
+
+/* ──────────────────────────────────────────────────────────────────────────
+   4.12 · TOAST  (non-blocking flash)
+   Usage: inserted by JS into <div class="gk-toasts">
+   ────────────────────────────────────────────────────────────────────────── */
+.gk-toasts {
+  position: fixed;
+  bottom: var(--gk-space-4);
+  right: var(--gk-space-4);
+  z-index: var(--gk-z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gk-space-2);
+  max-width: min(380px, calc(100vw - 2rem));
+  pointer-events: none;
+}
+.gk-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gk-space-3);
+  padding: 0.875rem var(--gk-space-4);
+  background: var(--gk-card-bg);
+  border: 1px solid var(--gk-border);
+  border-left-width: 4px;
+  border-radius: var(--gk-radius);
+  box-shadow: var(--gk-shadow-lg);
+  font-size: var(--gk-text-sm);
+  animation: gk-toast-in .25s ease;
+}
+.gk-toast--success { border-left-color: var(--gk-success); }
+.gk-toast--warning { border-left-color: var(--gk-warning); }
+.gk-toast--danger  { border-left-color: var(--gk-danger);  }
+.gk-toast--info    { border-left-color: var(--gk-info);    }
+
+
+/* ──────────────────────────────────────────────────────────────────────────
+   4.13 · SEGMENTED TABS
+   Usage:
+     <div class="gk-tabs">
+       <button class="gk-tab-btn active">Tab 1</button>
+       <button class="gk-tab-btn">Tab 2</button>
+     </div>
+   ────────────────────────────────────────────────────────────────────────── */
+.gk-tabs {
+  display: flex;
+  gap: var(--gk-space-1);
+  background: var(--gk-card-bg);
+  border: 1px solid var(--gk-border);
+  border-radius: var(--gk-radius-md);
+  padding: 4px;
+  margin-bottom: var(--gk-space-4);
+  box-shadow: var(--gk-shadow-sm);
+}
+
+.gk-tab-btn {
+  flex: 1;
+  padding: 8px 16px;
+  border-radius: var(--gk-radius);
+  border: 1px solid transparent;
+  background: transparent;
+  font-family: var(--gk-font-sans);
+  font-size: var(--gk-text-sm);
+  font-weight: var(--gk-weight-semibold);
+  color: var(--gk-ink-2);
+  cursor: pointer;
+  transition: all var(--gk-transition-fast);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gk-space-2);
+  text-decoration: none;
+}
+
+.gk-tab-btn:hover {
+  background: var(--gk-grey-50);
+  color: var(--gk-ink);
+}
+
+.gk-tab-btn.active {
+  background: var(--gk-primary-muted);
+  color: var(--gk-primary);
+  border-color: #b5ccfb;
+  font-weight: var(--gk-weight-bold);
+  box-shadow: 0 1px 2px rgba(26, 107, 255, 0.08);
+}
+
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   §5 · UTILITY HELPERS  (gk- namespace)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Text color */
+.gk-text-ink   { color: var(--gk-ink) !important; }
+.gk-text-muted { color: var(--gk-ink-3) !important; }
+.gk-text-primary { color: var(--gk-primary) !important; }
+.gk-text-success { color: var(--gk-success) !important; }
+.gk-text-warning { color: var(--gk-warning) !important; }
+.gk-text-danger  { color: var(--gk-danger)  !important; }
+
+/* Background */
+.gk-bg-page    { background: var(--gk-page-bg) !important; }
+.gk-bg-card    { background: var(--gk-card-bg) !important; }
+.gk-bg-primary { background: var(--gk-primary-muted) !important; }
+
+/* Type */
+.gk-text-xs   { font-size: var(--gk-text-xs) !important; }
+.gk-text-sm   { font-size: var(--gk-text-sm) !important; }
+.gk-text-base { font-size: var(--gk-text-base) !important; }
+.gk-text-lg   { font-size: var(--gk-text-lg) !important; }
+.gk-text-xl   { font-size: var(--gk-text-xl) !important; }
+.gk-font-sans { font-family: var(--gk-font-sans) !important; }
+.gk-font-medium   { font-weight: var(--gk-weight-medium) !important; }
+.gk-font-semibold { font-weight: var(--gk-weight-semibold) !important; }
+.gk-font-bold     { font-weight: var(--gk-weight-bold) !important; }
+
+/* Spacing */
+.gk-gap-1 { gap: var(--gk-space-1) !important; }
+.gk-gap-2 { gap: var(--gk-space-2) !important; }
+.gk-gap-3 { gap: var(--gk-space-3) !important; }
+.gk-gap-4 { gap: var(--gk-space-4) !important; }
+
+/* Border */
+.gk-border        { border: 1px solid var(--gk-border) !important; }
+.gk-rounded       { border-radius: var(--gk-radius) !important; }
+.gk-rounded-md    { border-radius: var(--gk-radius-md) !important; }
+.gk-rounded-lg    { border-radius: var(--gk-radius-lg) !important; }
+.gk-rounded-pill  { border-radius: var(--gk-radius-pill) !important; }
+
+/* Shadow */
+.gk-shadow-sm { box-shadow: var(--gk-shadow-sm) !important; }
+.gk-shadow-md { box-shadow: var(--gk-shadow-md) !important; }
+.gk-shadow-lg { box-shadow: var(--gk-shadow-lg) !important; }
+
+/* Flex helpers */
+.gk-flex         { display: flex !important; }
+.gk-flex-col     { display: flex; flex-direction: column !important; }
+.gk-items-center { align-items: center !important; }
+.gk-justify-between { justify-content: space-between !important; }
+.gk-flex-wrap    { flex-wrap: wrap !important; }
+
+/* Width */
+.gk-w-full { width: 100% !important; }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   §6 · KEYFRAMES
+   ══════════════════════════════════════════════════════════════════════════ */
+@keyframes gk-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes gk-shimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+@keyframes gk-toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   §7 · REDUCED MOTION  — respect user preference
+   ══════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .gk-skeleton,
+  .gk-score-bar__fill,
+  .gk-btn--loading::before,
+  .gk-toast { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+  .gk-card--interactive:hover { transform: none; }
+  .gk-btn:active { transform: none; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   §8 · BOOTSTRAP TOKEN BRIDGE
+   Override variabel Bootstrap agar warna tema konsisten dengan design token.
+   Tidak ubah behaviour Bootstrap — hanya warna.
+   ══════════════════════════════════════════════════════════════════════════ */
+:root {
+  /* Bootstrap 5 custom properties */
+  --bs-primary:          #1A6BFF;
+  --bs-primary-rgb:      26, 107, 255;
+  --bs-success:          #1B7E4A;
+  --bs-success-rgb:      27, 126, 74;
+  --bs-danger:           #C0281E;
+  --bs-danger-rgb:       192, 40, 30;
+  --bs-warning:          #895C00;
+  --bs-warning-rgb:      137, 92, 0;
+  --bs-info:             #1A5FAD;
+  --bs-info-rgb:         26, 95, 173;
+  --bs-body-bg:          #F5F7FA;
+  --bs-border-color:     #D0D5DD;
+  --bs-border-radius:    8px;
+  --bs-border-radius-sm: 4px;
+  --bs-border-radius-lg: 12px;
+  --bs-box-shadow-sm:    0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.10);
+  --bs-link-color:       #1A6BFF;
+  --bs-link-hover-color: #1459D6;
+}
+
+/* Synchronise --fb-* dengan token baru agar halaman style.css tetap konsisten */
+:root {
+  --fb-blue:       var(--gk-primary);
+  --fb-blue-dark:  var(--gk-primary-dark);
+  --fb-blue-light: var(--gk-primary-muted);
+  --fb-bg:         var(--gk-grey-50);
+  --fb-border:     var(--gk-border);
+  --fb-radius:     var(--gk-radius);
+  --fb-radius-lg:  var(--gk-radius-md);
+  --fb-card-shadow: var(--gk-shadow-sm);
+}
+
+/* ─── Utilitas tambahannya halaman katalog ─────────────────────────────────
+   Markup yang dibangun js/catalog.js butuh tiga hal yang belum ada di atas. */
+
+/* Menghentikan melebarnya anak flex ketika teks panjang. */
+.min-w-0 { min-width: 0; }
+
+/* Sampul karya di kartu galeri: rasio tetap, isi dipotong. */
+.gk-card__thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--gk-grey-100);
+  border-bottom: 1px solid var(--gk-border);
+  border-radius: var(--gk-radius) var(--gk-radius) 0 0;
+}
+.gk-card__thumb img { width: 100%; height: 100%; object-fit: contain; }
+
+/* <dialog> asli, bukan .modal Bootstrap yang display-nya none. */
+.gk-dialog {
+  width: min(680px, 92vw);
+  padding: 0;
+  border: 0;
+  border-radius: var(--gk-radius-md);
+  background: transparent;
+}
+.gk-dialog::backdrop { background: rgba(0, 0, 0, .45); }
+

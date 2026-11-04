@@ -1,6 +1,5 @@
 package com.gakbisa.backend.controller;
 
-import com.gakbisa.backend.domain.Notification;
 import com.gakbisa.backend.service.NotificationService;
 import org.springframework.web.bind.annotation.*;
 

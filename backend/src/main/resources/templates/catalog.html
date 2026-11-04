@@ -1,78 +1,93 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="id">
-<head th:replace="~{fragments/layout :: head('Katalog · GAKBISA')}"></head>
-<body>
-<th:block th:replace="~{fragments/layout :: skip}"></th:block>
-<header th:replace="~{fragments/layout :: topbar('katalog')}"></header>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="id">
+<head th:replace="~{fragments/head :: head('Katalog')}"></head>
+<body class="gk-bg-page">
 
-<main id="isi">
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
-  <section class="shell section--tight">
-    <p class="tiny muted" sec:authorize="!isAuthenticated()">Halaman ini bisa dibuka tanpa login (aktor Tamu).</p>
-    <p class="tiny muted" sec:authorize="isAuthenticated()">Katalog publik: kamu bisa langsung mengajak barter.</p>
-    <div class="split split--end">
-      <h1 class="narrow">Keahlian &amp; karya yang beredar di kampus</h1>
-      <p class="tiny measure">Cari dulu partner yang kamu butuhkan, baru daftar
-        untuk mengajak barter.</p>
-    </div>
+    <main class="container py-4" id="isi">
 
-    <form class="search" id="form-cari" role="search">
-      <input type="search" id="cari" placeholder="Cari keahlian… mis. Excel, UI/UX, Inggris"
-             aria-label="Kata kunci keahlian">
-      <button class="btn btn--sm" type="submit">Cari</button>
-    </form>
+        <div class="gk-page-header">
+            <div class="gk-page-header__text">
+                <span class="gk-page-header__eyebrow">Katalog Publik</span>
+                <h1 class="gk-page-header__title">Keahlian &amp; karya yang beredar</h1>
+                <p class="gk-page-header__desc">
+                    Cari partner yang kamu butuhkan lebih dulu. Ajukan barter butuh akun.
+                </p>
+            </div>
+        </div>
 
-    <div class="chips" id="kategori-chips">
-      <button class="chip is-on" data-id="" type="button">Semua kategori</button>
-    </div>
-  </section>
+        <!-- Filter -->
+        <div class="gk-card p-3 mb-4">
+            <form class="d-flex gap-2 mb-3" id="form-cari" role="search">
+                <input type="search" id="cari" class="form-control"
+                       placeholder="Cari keahlian, mis. Excel, UI/UX, Inggris" aria-label="Kata kunci keahlian">
+                <button class="gk-btn gk-btn--primary gk-btn--sm text-nowrap" type="submit">Cari</button>
+            </form>
+            <div class="d-flex flex-wrap gap-2" id="kategori-chips">
+                <button class="btn btn-sm rounded-pill btn-outline-primary active" type="button" data-id="">
+                    Semua kategori
+                </button>
+            </div>
+        </div>
 
-  <!-- ===== keahlian ===== -->
-  <section class="shell section--tight">
-    <div class="split">
-      <h2 class="section-title">Daftar keahlian</h2>
-      <span class="tiny" id="hitung-keahlian">Memuat…</span>
-    </div>
-    <ul class="index" id="grid-keahlian">
-      <li class="skeleton"></li><li class="skeleton"></li><li class="skeleton"></li>
-    </ul>
-    <div class="pager">
-      <button class="btn btn--ghost btn--sm" id="muat-lagi" hidden type="button">Muat lebih banyak</button>
-    </div>
-  </section>
+        <!-- Keahlian -->
+        <div class="gk-card mb-4">
+            <div class="gk-card__header">
+                <h2 class="gk-card__title">Daftar keahlian</h2>
+                <span class="gk-badge gk-badge--neutral" id="hitung-keahlian">Memuat…</span>
+            </div>
+            <div class="list-group list-group-flush" id="grid-keahlian">
+                <div class="list-group-item"><div class="gk-skeleton" style="height:44px;"></div></div>
+                <div class="list-group-item"><div class="gk-skeleton" style="height:44px;"></div></div>
+            </div>
+            <div class="gk-card__footer text-center">
+                <button class="gk-btn gk-btn--ghost gk-btn--sm" id="muat-lagi" type="button" hidden>
+                    Muat lebih banyak
+                </button>
+            </div>
+        </div>
 
-  <div class="shell"><hr class="rule"></div>
+        <!-- Karya publik -->
+        <div class="gk-card">
+            <div class="gk-card__header">
+                <h2 class="gk-card__title">Karya publik</h2>
+                <span class="gk-badge gk-badge--neutral" id="hitung-karya">Memuat…</span>
+            </div>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3 p-3" id="grid-karya">
+                <div class="col"><div class="gk-skeleton" style="height:150px;"></div></div>
+                <div class="col"><div class="gk-skeleton" style="height:150px;"></div></div>
+            </div>
+            <div class="gk-empty" id="kosong-karya" hidden>
+                <i class="bi bi-images gk-empty__icon" aria-hidden="true"></i>
+                <h3 class="gk-empty__title">Belum ada karya publik</h3>
+                <p class="gk-empty__desc">
+                    Karya muncul di sini setelah ada yang mengunggahnya dari dasbor.
+                </p>
+                <p class="gk-empty__action">
+                    <a th:href="@{/register}" class="gk-btn gk-btn--primary gk-btn--sm">Buat akun</a>
+                </p>
+            </div>
+        </div>
 
-  <!-- ===== portofolio ===== -->
-  <section class="shell section--tight">
-    <div class="split">
-      <h2 class="section-title">Karya publik</h2>
-      <span class="tiny" id="hitung-karya">Memuat…</span>
-    </div>
-    <div class="grid grid--4" id="grid-karya">
-      <div class="skeleton"></div><div class="skeleton"></div>
-    </div>
-    <div class="empty" id="kosong-karya" hidden>
-      <h3>Belum ada karya publik</h3>
-      <p class="tiny">Karya muncul di sini setelah ada yang mengunggahnya dari dasbor.
-        Kamu bisa <a th:href="@{/register}">buat akun</a> dan jadi yang pertama.</p>
-    </div>
-  </section>
+    </main>
 
-</main>
+    <!-- dialog detail karya -->
+    <dialog class="gk-dialog" id="detail-karya">
+        <div class="gk-card mx-auto p-3" style="max-width:640px;">
+            <div class="gk-card__header">
+                <h3 class="gk-card__title" id="dlg-judul">Detail karya</h3>
+            </div>
+            <div class="py-3" id="dlg-isi"></div>
+            <div class="gk-card__footer d-flex justify-content-end gap-2">
+                <button class="gk-btn gk-btn--ghost gk-btn--sm" type="button" data-tutup>Tutup</button>
+            </div>
+        </div>
+    </dialog>
 
-<!-- dialog detail karya -->
-<dialog class="modal" id="detail-karya">
-  <div class="modal__head">
-    <h3 id="dlg-judul">Detail karya</h3>
-  </div>
-  <div class="modal__body" id="dlg-isi"></div>
-  <div class="modal__foot">
-    <button class="btn btn--ghost btn--sm" type="button" data-tutup>Tutup</button>
-  </div>
-</dialog>
-
-<script th:src="@{/js/app.js}"></script>
-<script th:src="@{/js/catalog.js}"></script>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/app.js}"></script>
+    <script th:src="@{/js/catalog.js}"></script>
 </body>
 </html>
