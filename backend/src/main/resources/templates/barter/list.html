@@ -130,7 +130,7 @@
                                class="gk-btn gk-btn--secondary gk-btn--sm">
                                 <i class="bi bi-eye me-1"></i>Detail
                             </a>
-                            <th:block th:if="${barter.status == 'PENDING'}">
+                            <th:block th:if="${barter.status.name() == 'PENDING'}">
                                 <form th:action="@{'/barter/' + ${barter.id} + '/accept'}" method="post" class="m-0">
                                     <button type="submit" class="gk-btn gk-btn--sm text-white" style="background: var(--gk-success); border-color: var(--gk-success);">
                                         <i class="bi bi-check-lg me-1"></i>Terima
@@ -226,7 +226,7 @@
                                class="gk-btn gk-btn--secondary gk-btn--sm">
                                 <i class="bi bi-eye me-1"></i>Detail
                             </a>
-                            <th:block th:if="${barter.status == 'PENDING'}">
+                            <th:block th:if="${barter.status.name() == 'PENDING'}">
                                 <form th:action="@{'/barter/' + ${barter.id} + '/cancel'}" method="post" class="m-0">
                                     <button type="submit" class="gk-btn gk-btn--danger gk-btn--sm"
                                             data-confirm="Batalkan permintaan barter ini?">

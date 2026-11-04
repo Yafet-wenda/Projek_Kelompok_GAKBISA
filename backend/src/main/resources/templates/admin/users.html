@@ -72,19 +72,19 @@
                             <td class="py-3 px-3 text-muted" th:text="${user.email}">user@gakbisa.test</td>
                             <td class="py-3 px-3">
                                 <span class="gk-badge gk-badge--sm"
-                                      th:classappend="${user.role == 'ADMIN'} ? 'gk-badge--primary' : 'gk-badge--neutral'"
+                                      th:classappend="${user.role.name() == 'ADMIN'} ? 'gk-badge--primary' : 'gk-badge--neutral'"
                                       th:text="${user.role}">STUDENT</span>
                             </td>
                             <td class="py-3 px-3">
                                 <span class="gk-badge gk-badge--sm"
-                                      th:classappend="${user.status == 'ACTIVE'} ? 'gk-badge--success' : 'gk-badge--danger'"
+                                      th:classappend="${user.status.name() == 'ACTIVE'} ? 'gk-badge--success' : 'gk-badge--danger'"
                                       th:text="${user.status}">ACTIVE</span>
                             </td>
                             <td class="py-3 px-3 text-muted small"
                                 th:text="${#temporals.format(user.createdAt, 'dd MMM yyyy')}">01 Jan 2026</td>
                             <td class="py-3 px-3 text-end">
                                 <div class="d-inline-flex gap-1">
-                                    <form th:if="${user.status == 'ACTIVE'}"
+                                    <form th:if="${user.status.name() == 'ACTIVE'}"
                                           th:action="@{'/admin/users/' + ${user.id} + '/suspend'}"
                                           method="post" class="m-0">
                                         <button type="submit" class="gk-btn gk-btn--danger gk-btn--sm"
@@ -94,7 +94,7 @@
                                             <i class="bi bi-pause-circle" aria-hidden="true"></i>
                                         </button>
                                     </form>
-                                    <form th:if="${user.status != 'ACTIVE'}"
+                                    <form th:if="${user.status.name() != 'ACTIVE'}"
                                           th:action="@{'/admin/users/' + ${user.id} + '/activate'}"
                                           method="post" class="m-0">
                                         <button type="submit" class="gk-btn gk-btn--sm text-white"

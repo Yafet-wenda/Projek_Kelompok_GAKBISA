@@ -72,12 +72,12 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public List<Review> forUser(UUID userId) {
-        return reviews.findByRevieweeIdOrderByCreatedAtDesc(userId);
+        return reviews.findReceivedBy(userId);
     }
 
     /** Daftar ulasan yang sudah ditulis actor — dipakai dasbor agar tidak meminta ulasan dua kali. */
     @Transactional(readOnly = true)
     public List<Review> writtenBy(UUID reviewerId) {
-        return reviews.findByReviewerIdOrderByCreatedAtDesc(reviewerId);
+        return reviews.findWrittenBy(reviewerId);
     }
 }

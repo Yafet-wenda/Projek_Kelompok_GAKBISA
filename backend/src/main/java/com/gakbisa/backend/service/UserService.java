@@ -125,14 +125,14 @@ public class UserService {
         userSkills.delete(us);
     }
 
-    /** Ringkasan reputasi untuk profil: rating rata-rata, jumlah ulasan, jumlah portofolio. */
+    /** Ringkasan reputasi untuk profil: rating rata-rata, jumlah ulasan yang diterima, jumlah portofolio. */
     @Transactional(readOnly = true)
     public ReputationDto reputation(UUID userId) {
         require(userId);
         Double avg = reviews.averageRatingFor(userId);
         return new ReputationDto(
             avg == null ? null : Math.round(avg * 10) / 10.0,
-            reviews.countByReviewerIdOrRevieweeId(userId, userId),
+            reviews.countByRevieweeId(userId),
             portfolios.countByUserId(userId)
         );
     }

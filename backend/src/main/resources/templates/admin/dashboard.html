@@ -9,6 +9,16 @@
 
     <main class="gk-main">
 
+        <!-- Flash alerts -->
+        <div th:if="${success}" class="gk-alert gk-alert--success">
+            <i class="bi bi-check-circle-fill"></i>
+            <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="gk-alert gk-alert--danger">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            <span th:text="${error}"></span>
+        </div>
+
         <!-- Page Header -->
         <div class="gk-page-header">
             <div class="gk-page-header__icon" style="background: var(--gk-warning-muted); color: var(--gk-warning);">
@@ -98,7 +108,7 @@
                 </div>
 
                 <div class="col-6 col-md-3">
-                    <a th:href="@{/catalog}"
+                    <a th:href="@{/admin/categories}"
                        class="d-flex flex-column align-items-center p-3 rounded-3 text-decoration-none transition-all h-100 text-center"
                        style="background: var(--gk-grey-50); border: 1px solid var(--gk-border);">
                         <div class="rounded-circle d-flex align-items-center justify-content-center mb-2"
@@ -135,6 +145,51 @@
                         <span class="text-muted small mt-1" style="font-size: 0.75rem;">Monitoring sesi barter</span>
                     </a>
                 </div>
+            </div>
+        </div>
+
+        <!-- Antrean Moderasi -->
+        <div class="gk-card p-0 mt-4" style="overflow: hidden;">
+            <div class="d-flex align-items-center justify-content-between gap-2 p-3" style="border-bottom: 1px solid var(--gk-border);">
+                <h2 class="fw-bold mb-0" style="font-size: var(--gk-text-base); color: var(--gk-ink);">
+                    <i class="bi bi-flag-fill me-1" style="color: var(--gk-danger);"></i>Laporan Menunggu Tindakan
+                </h2>
+                <a th:href="@{/admin/reports}" class="gk-btn gk-btn--secondary gk-btn--sm">Tinjau Semua</a>
+            </div>
+
+            <div th:if="${#lists.isEmpty(recentReports)}" class="p-4">
+                <div class="gk-empty">
+                    <div class="gk-empty__icon"><i class="bi bi-shield-check"></i></div>
+                    <h3 class="gk-empty__title">Tidak Ada Laporan Terbuka</h3>
+                    <p class="gk-empty__desc">Semua laporan sudah ditindak. Antrean moderasi akan muncul di sini begitu ada laporan masuk.</p>
+                </div>
+            </div>
+
+            <div th:unless="${#lists.isEmpty(recentReports)}" class="table-responsive m-0">
+                <table class="table table-hover align-middle mb-0" style="font-size: var(--gk-text-sm);">
+                    <thead style="background: var(--gk-grey-50); border-bottom: 1px solid var(--gk-border);">
+                        <tr>
+                            <th class="py-3 px-3 text-muted text-uppercase fw-bold" style="font-size: 0.6875rem; letter-spacing: 0.05em;">Alasan</th>
+                            <th class="py-3 px-3 text-muted text-uppercase fw-bold" style="font-size: 0.6875rem; letter-spacing: 0.05em;">Sasaran</th>
+                            <th class="py-3 px-3 text-muted text-uppercase fw-bold" style="font-size: 0.6875rem; letter-spacing: 0.05em;">Dilaporkan Oleh</th>
+                            <th class="py-3 px-3 text-muted text-uppercase fw-bold" style="font-size: 0.6875rem; letter-spacing: 0.05em;">Masuk</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="lap : ${recentReports}" style="border-bottom: 1px solid var(--gk-border);">
+                            <td class="py-3 px-3 text-dark" th:text="${lap.reason}">Alasan laporan</td>
+                            <td class="py-3 px-3">
+                                <span class="d-block text-muted" style="font-size: var(--gk-text-xs);" th:text="${lap.targetKind}">Pengguna</span>
+                                <a th:if="${lap.targetUrl != null}" th:href="@{${lap.targetUrl}}"
+                                   class="fw-bold text-dark text-decoration-none" th:text="${lap.targetName}">Nama</a>
+                                <span th:if="${lap.targetUrl == null}" class="fw-bold text-dark" th:text="${lap.targetName}">Judul</span>
+                            </td>
+                            <td class="py-3 px-3 text-muted" th:text="${lap.reporterName}">Pelapor</td>
+                            <td class="py-3 px-3 text-muted small"
+                                th:text="${#temporals.format(lap.createdAt, 'dd MMM yyyy')}">01 Jan 2026</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 

@@ -10,6 +10,7 @@ import com.gakbisa.backend.domain.Skill;
 import com.gakbisa.backend.domain.SkillCategory;
 import com.gakbisa.backend.domain.User;
 import com.gakbisa.backend.domain.UserRole;
+import com.gakbisa.backend.dto.CategoryRow;
 import com.gakbisa.backend.repository.BarterRequestRepository;
 import com.gakbisa.backend.repository.LearningSessionRepository;
 import com.gakbisa.backend.repository.PortfolioRepository;
@@ -20,6 +21,8 @@ import com.gakbisa.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,9 +78,13 @@ public class AdminService {
         return skills.save(s);
     }
 
+    /** Kategori beserta nama keahliannya, siap tampil di halaman kelola admin. */
     @Transactional(readOnly = true)
-    public List<SkillCategory> listCategories() {
-        return categories.findAll();
+    public List<CategoryRow> categoriesWithSkills() {
+        return categories.findAll().stream()
+            .map(c -> new CategoryRow(c.getId(), c.getName(), c.getDescription(),
+                skills.findByCategory_Id(c.getId()).stream().map(Skill::getName).toList()))
+            .toList();
     }
 
     // ---- Laporan ----
@@ -133,7 +140,20 @@ public class AdminService {
 
     @Transactional(readOnly = true)
     public List<Report> reportsByStatus(ReportStatus status) {
-        return reports.findByStatusOrderByCreatedAtDesc(status);
+        return reports.findByStatusWithReporter(status);
+    }
+
+    /**
+     * Laporan yang masih menunggu keputusan (OPEN + REVIEWING), terbaru duluan.
+     * Dua query lalu diurut di memori: daftar moderasi selalu kecil dan ini dipakai
+     * di dashboard, bukan di jalur transaksi.
+     */
+    @Transactional(readOnly = true)
+    public List<Report> pendingReports(int limit) {
+        List<Report> waiting = new ArrayList<>(reports.findByStatusWithReporter(ReportStatus.OPEN));
+        waiting.addAll(reports.findByStatusWithReporter(ReportStatus.REVIEWING));
+        waiting.sort(Comparator.comparing(Report::getCreatedAt).reversed());
+        return waiting.isEmpty() ? waiting : waiting.subList(0, Math.min(limit, waiting.size()));
     }
 
     // ---- Pengguna ----

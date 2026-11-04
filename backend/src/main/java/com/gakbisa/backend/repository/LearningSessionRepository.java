@@ -12,12 +12,18 @@ import java.util.UUID;
 
 public interface LearningSessionRepository extends JpaRepository<LearningSession, UUID> {
 
-    @EntityGraph(attributePaths = {"barterRequest", "barterRequest.requester", "barterRequest.targetUser"})
+    // Halaman sesi membaca partner dan nama keahlian lewat barterRequest. Semua mata
+    // rantai itu LAZY dan open-in-view dimatikan, jadi harus ikut termuat di sini.
+    @EntityGraph(attributePaths = {"barterRequest", "barterRequest.requester", "barterRequest.targetUser",
+        "barterRequest.offeredUserSkill", "barterRequest.offeredUserSkill.skill",
+        "barterRequest.wantedUserSkill", "barterRequest.wantedUserSkill.skill"})
     Optional<LearningSession> findById(UUID id);
 
     List<LearningSession> findByBarterRequestId(UUID barterRequestId);
 
-    @EntityGraph(attributePaths = {"barterRequest", "barterRequest.requester", "barterRequest.targetUser"})
+    @EntityGraph(attributePaths = {"barterRequest", "barterRequest.requester", "barterRequest.targetUser",
+        "barterRequest.offeredUserSkill", "barterRequest.offeredUserSkill.skill",
+        "barterRequest.wantedUserSkill", "barterRequest.wantedUserSkill.skill"})
     @Query("""
         select s from LearningSession s
         join s.barterRequest b
