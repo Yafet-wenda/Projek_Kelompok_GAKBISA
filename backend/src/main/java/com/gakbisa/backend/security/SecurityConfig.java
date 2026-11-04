@@ -52,8 +52,8 @@ public class SecurityConfig {
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
             )
-            // Untuk /api/** jawab 403 JSON; include halaman denied akan mengubah status menjadi
-            // 405 "Method Not Allowed" karena /access-denied hanya punya mapping GET (menyesatkan saat debug).
+            // /api/** dijawab 403 JSON. Halaman biasa di-include lewat /access-denied, yang
+            // dipetakan untuk semua metode supaya 403 dari form POST tetap punya tampilan.
             .exceptionHandling(ex -> ex.accessDeniedHandler((req, res, reason) -> {
                 HttpServletRequest request = (HttpServletRequest) req;
                 HttpServletResponse response = (HttpServletResponse) res;

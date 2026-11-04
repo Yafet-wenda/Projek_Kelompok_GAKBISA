@@ -1,74 +1,80 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head('Daftar Akun')}"></head>
-<body style="background:#F0F2F5;padding-top:0;min-height:100vh;display:flex;flex-direction:column;">
+<head th:replace="~{fragments/head :: head('Buat akun')}"></head>
+<body class="gk-auth">
 
-    <!-- Simple nav -->
-    <div style="background:#fff;padding:0 24px;height:56px;display:flex;align-items:center;box-shadow:0 2px 4px rgba(0,0,0,.08);">
-        <a th:href="@{/}" style="font-size:28px;font-weight:900;color:#1877F2;letter-spacing:-1px;text-decoration:none;">GAKBISA</a>
-    </div>
+    <main class="gk-auth__stage">
+        <div class="gk-auth__shell">
 
-    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;">
+            <a class="gk-auth__mark" th:href="@{/}">
+                <img th:src="@{/images/gakbisa-logo.png}" alt="" width="30" height="30">
+                <span>GAKBISA</span>
+            </a>
 
-        <!-- Brand tagline -->
-        <div class="text-center mb-4">
-            <p style="font-size:20px;color:#050505;margin:0;">
-                Buat akun baru · <span style="color:#65676B;">Gratis dan akan selalu gratis.</span>
-            </p>
-        </div>
-
-        <div style="background:#fff;border-radius:12px;padding:28px;box-shadow:0 2px 16px rgba(0,0,0,0.12);width:432px;max-width:100%;">
-            <form th:action="@{/register}" method="post" th:object="${registerForm}">
-                <div class="mb-3">
-                    <input type="text" th:field="*{fullName}" class="form-control form-control-lg"
-                           placeholder="Nama lengkap" autocomplete="name" required autofocus>
-                    <div th:if="${#fields.hasErrors('fullName')}" class="text-danger small mt-1"
-                         th:errors="*{fullName}"></div>
-                </div>
-                <div class="mb-3">
-                    <input type="email" th:field="*{email}" class="form-control form-control-lg"
-                           placeholder="Email" autocomplete="email" required>
-                    <div th:if="${#fields.hasErrors('email')}" class="text-danger small mt-1"
-                         th:errors="*{email}"></div>
-                </div>
-                <div class="mb-3">
-                    <input type="password" th:field="*{password}" class="form-control form-control-lg"
-                           placeholder="Password (min. 8 karakter)" autocomplete="new-password" required>
-                    <div th:if="${#fields.hasErrors('password')}" class="text-danger small mt-1"
-                         th:errors="*{password}"></div>
-                </div>
-                <div class="mb-4">
-                    <input type="text" th:field="*{campus}" class="form-control form-control-lg"
-                           placeholder="Kampus / prodi (opsional)" autocomplete="organization">
-                    <div th:if="${#fields.hasErrors('campus')}" class="text-danger small mt-1"
-                         th:errors="*{campus}"></div>
-                </div>
-
-                <p style="font-size:12px;color:#65676B;margin-bottom:16px;text-align:center;">
-                    Dengan mendaftar, kamu setuju dengan Ketentuan dan Kebijakan Privasi GAKBISA.
+            <div class="gk-auth__head">
+                <h1 class="gk-auth__title">Buat akun</h1>
+                <p class="gk-auth__sub">
+                    Email dipakai untuk masuk. Nama dan kampusmu tampil di profil yang
+                    dilihat calon partner.
                 </p>
+            </div>
 
-                <button type="submit" class="btn btn-success w-100 fw-bold" style="font-size:17px;padding:12px;">
-                    Daftar
-                </button>
+            <div th:if="${error}" class="gk-auth__alert gk-auth__alert--error" role="alert">
+                <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i>
+                <span th:text="${error}"></span>
+            </div>
+
+            <form class="gk-auth__fields" th:action="@{/register}" method="post" th:object="${registerForm}">
+                <div>
+                    <label class="gk-auth__label" for="fullName">Nama lengkap</label>
+                    <input class="gk-auth__input" type="text" th:field="*{fullName}"
+                           th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid'"
+                           autocomplete="name" required autofocus>
+                    <p th:if="${#fields.hasErrors('fullName')}" class="gk-auth__error"
+                       th:errors="*{fullName}"></p>
+                </div>
+                <div>
+                    <label class="gk-auth__label" for="email">Email</label>
+                    <input class="gk-auth__input" type="email" th:field="*{email}"
+                           th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
+                           placeholder="nama@kampus.ac.id" autocomplete="email" required>
+                    <p th:if="${#fields.hasErrors('email')}" class="gk-auth__error"
+                       th:errors="*{email}"></p>
+                </div>
+                <div class="gk-auth__pw">
+                    <label class="gk-auth__label" for="password">Password</label>
+                    <input class="gk-auth__input" type="password" th:field="*{password}"
+                           th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"
+                           autocomplete="new-password" required>
+                    <button class="gk-auth__toggle" type="button" aria-pressed="false"
+                            aria-controls="password">Lihat</button>
+                    <p th:if="${#fields.hasErrors('password')}" class="gk-auth__error"
+                       th:errors="*{password}"></p>
+                    <p class="gk-auth__hint" th:unless="${#fields.hasErrors('password')}">
+                        Minimal 8 karakter, maksimal 72.
+                    </p>
+                </div>
+                <div>
+                    <label class="gk-auth__label" for="campus">Kampus / prodi</label>
+                    <input class="gk-auth__input" type="text" th:field="*{campus}"
+                           th:classappend="${#fields.hasErrors('campus')} ? 'is-invalid'"
+                           autocomplete="organization">
+                    <p th:if="${#fields.hasErrors('campus')}" class="gk-auth__error"
+                       th:errors="*{campus}"></p>
+                    <p class="gk-auth__hint" th:unless="${#fields.hasErrors('campus')}">
+                        Boleh dikosongkan. Kalau diisi, tampil di profilmu.
+                    </p>
+                </div>
+                <button class="gk-auth__submit" type="submit">Daftar</button>
             </form>
 
-            <hr style="margin:16px 0;border-color:#CED0D4;">
+            <p class="gk-auth__switch">Sudah pernah daftar? <a th:href="@{/login}">Masuk</a>.</p>
 
-            <div class="text-center">
-                <a th:href="@{/login}" class="btn btn-outline-primary fw-bold" style="font-size:15px;">
-                    Sudah punya akun? Masuk
-                </a>
-            </div>
         </div>
 
-        <p class="mt-4" style="font-size:12px;color:#65676B;text-align:center;">
-            &copy; 2026 GAKBISA &middot; Gantian Ajari, Kita Bisa!
-        </p>
-    </div>
+        <p class="gk-auth__note">&copy; 2026 GAKBISA. Gantian Ajari, Kita Bisa!</p>
+    </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script th:src="@{/js/app.js}"></script>
+    <script th:src="@{/js/forms.js}"></script>
 </body>
 </html>
-

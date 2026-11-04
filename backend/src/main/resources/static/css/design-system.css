@@ -1100,3 +1100,355 @@ body:not(.fb-dashboard) {
 }
 .gk-dialog::backdrop { background: rgba(0, 0, 0, .45); }
 
+
+/* ══════════════════════════════════════════════════════════════════════════
+   §10 · HALAMAN MASUK & BUAT AKUN  (.gk-auth)
+   Dipakai hanya oleh templates/auth/login.html dan auth/register.html.
+
+   Input di sini tidak memakai .form-control: override dark mode di §1.1
+   memberi background/border `!important` pada .form-control sehingga warna
+   field tidak bisa disesuaikan tanpa ikut mengubah halaman lain.
+   Warna netral (isi field, border, ring merah/hijau, page-bg, muted) semuanya
+   token §1 supaya ikut otomatis di light dan dark. Yang dilokalkan hanya
+   aksen: halaman ini memegang identitas indigo sendiri, dan --gk-primary biru
+   tidak dipakai agar tidak menyatu dengan kulit halaman lain.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Ruang navbar/bottom-nav di gk-navbar.css dipasang dengan !important pada body;
+   halaman auth tidak punya kedua bilah itu, jadi harus dilepas di sini. */
+body.gk-auth {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  /* color-scheme membuat scrollbar, form widget, dan autofill native ikut
+     tema; tanpa ini halaman gelap menampilkan kolom putih sekejap saat load. */
+  color-scheme: light;
+}
+[data-theme="dark"] body.gk-auth { color-scheme: dark; }
+
+/* Cincin fokus global di §1.2 dipasang `!important` dengan --gk-primary, jadi
+   mengalahkan ring indigo di bawah dan membuat halaman ini tetap terbaca biru.
+   Outline-nya dilepas khusus di dalam .gk-auth; tiap aturan fokus di lapisan ini
+   sudah menggambar ring sendiri, jadi keyboard tetap punya indikator. */
+.gk-auth :focus-visible { outline: none !important; }
+
+/* Permukaan bawaan browser ikut ditata — halaman ini tidak boleh terlihat
+   seperti form HTML telanjang di dalam kulit yang sudah dirancang. */
+.gk-auth__stage ::selection { background: rgba(74, 95, 209, .18); }
+
+.gk-auth__stage {
+  --gk-auth-accent:      #4A5FD1;
+  --gk-auth-accent-dark: #3345CA;
+  --gk-auth-link:        #3345CA;
+  --gk-auth-ring:        0 0 0 3px rgba(74, 95, 209, .22);
+  /* Warna isi isian. Sendiri karena halaman tanpa kartu (§10.3) butuh isi
+     yang lebih terang dari foto di belakangnya. */
+  --gk-auth-field:       var(--gk-grey-50);
+
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: clamp(1rem, 4vw, 2.5rem);
+  /* Warna saja, bukan shorthand: `background:` akan menimpa foto yang dipasang
+     oleh blok §10.3 di layar lebar. */
+  background-color: var(--gk-page-bg);
+}
+
+/* Satu kolom, selebar kolom isinya. Kolom kanan yang berisi klaim produk
+   adalah alasan utama halaman ini terbaca sebagai hasil generate: tidak ada
+   satu baris pun di sana yang dibutuhkan orang untuk masuk. */
+.gk-auth__shell {
+  --gk-auth-band: 132px;
+  position: relative;
+  width: min(420px, 100%);
+  /* Auto margin dipakai supaya konten tetap terjangkau saat jendela lebih
+     pendek dari shell; justify-content: center akan memotong bagian atas. */
+  margin-block: auto;
+  padding: clamp(1.5rem, 5vw, 2rem);
+  /* Di layar sempit foto masuk sebagai ban di kepala kartu, bukan sebagai
+     latar: crop 390px dari foto 16:9 menebak-nebak posisi wajah, dan teks
+     di atasnya tidak pernah aman. */
+  padding-top: calc(clamp(1.5rem, 5vw, 2rem) + var(--gk-auth-band));
+  background: var(--gk-card-bg);
+  border: 1px solid var(--gk-border);
+  border-radius: var(--gk-radius-lg);
+}
+.gk-auth__shell::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: var(--gk-auth-band);
+  background-image: url('../images/auth-bg.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  /* 68% 20% menjatuhkan crop pada kelompok orangnya, bukan dindingnya. */
+  background-position: 68% 20%;
+  border-radius: calc(var(--gk-radius-lg) - 1px) calc(var(--gk-radius-lg) - 1px) 0 0;
+}
+
+.gk-auth__mark {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  margin-bottom: var(--gk-space-6);
+  color: var(--gk-ink);
+  font-size: var(--gk-text-sm);
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.gk-auth__mark:hover, .gk-auth__mark:focus-visible { color: var(--gk-ink); }
+.gk-auth__mark:focus-visible {
+  outline: none;
+  border-radius: var(--gk-radius-sm);
+  box-shadow: var(--gk-auth-ring);
+}
+/* Logo aslinya sudah lingkaran penuh dengan kuas di tepinya, jadi dipotong
+   bulat lagi supaya tidak terlihat seperti stiker kotak di atas kartu. */
+.gk-auth__mark img { width: 30px; height: 30px; border-radius: 50%; }
+
+.gk-auth__head { margin-bottom: var(--gk-space-6); }
+.gk-auth__title {
+  margin: 0;
+  font-size: clamp(1.375rem, 2.2vw, 1.625rem);
+  font-weight: 700;
+  letter-spacing: -.022em;
+  color: var(--gk-ink);
+}
+.gk-auth__sub {
+  margin: .375rem 0 0;
+  font-size: var(--gk-text-sm);
+  line-height: var(--gk-leading-snug);
+  color: var(--gk-ink-3);
+}
+
+.gk-auth__fields { display: grid; gap: var(--gk-space-4); }
+
+.gk-auth__label {
+  display: block;
+  margin-bottom: .375rem;
+  font-size: var(--gk-text-sm);
+  font-weight: 600;
+  color: var(--gk-ink-2);
+}
+
+.gk-auth__input {
+  display: block;
+  width: 100%;
+  height: 48px;
+  padding: 0 .875rem;
+  font: inherit;
+  font-size: var(--gk-text-base);
+  color: var(--gk-ink);
+  caret-color: var(--gk-auth-accent);
+  background: var(--gk-auth-field);
+  border: 1px solid var(--gk-grey-200);
+  border-radius: var(--gk-radius-md);
+  transition: border-color var(--gk-transition),
+              background-color var(--gk-transition),
+              box-shadow var(--gk-transition);
+}
+/* grey-300 sebagai placeholder hanya 2.1:1 di atas field; grey-500 masih
+   terbaca (4.6:1) dan tetap jelas beda dari teks yang diketik. */
+.gk-auth__input::placeholder { color: var(--gk-grey-500); opacity: 1; }
+.gk-auth__input:hover { border-color: var(--gk-grey-300); }
+.gk-auth__input:focus {
+  outline: none;
+  background: var(--gk-card-bg);
+  border-color: var(--gk-auth-accent);
+  box-shadow: var(--gk-auth-ring);
+}
+.gk-auth__input.is-invalid { border-color: var(--gk-danger); }
+/* Chrome menggambar kotak birunya sendiri saat autofill; ditimpa supaya
+   field tetap mengikuti kulit halaman, bukan warna bawaan browser. */
+.gk-auth__input:-webkit-autofill,
+.gk-auth__input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--gk-ink);
+  box-shadow: inset 0 0 0 1000px var(--gk-auth-field);
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* Tombol lihat/sembunyi duduk di dalam border kolom password. */
+.gk-auth__pw { position: relative; }
+.gk-auth__pw .gk-auth__input { padding-right: 4.5rem; }
+.gk-auth__toggle {
+  position: absolute;
+  top: 50%;
+  right: .5rem;
+  transform: translateY(-50%);
+  height: 34px;
+  padding: 0 .625rem;
+  border: 0;
+  border-radius: var(--gk-radius-sm);
+  background: transparent;
+  color: var(--gk-ink-2);
+  font: inherit;
+  font-size: var(--gk-text-xs);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--gk-transition), color var(--gk-transition);
+}
+.gk-auth__toggle:hover { background: var(--gk-grey-100); color: var(--gk-ink); }
+.gk-auth__toggle:focus-visible { outline: none; box-shadow: var(--gk-auth-ring); }
+@media (max-width: 560px) {
+  /* Jempol, bukan kursor: target sentuh dinaikkan ke 40x44. */
+  .gk-auth__toggle { height: 40px; min-width: 44px; }
+  .gk-auth__pw .gk-auth__input { padding-right: 5.25rem; }
+}
+
+.gk-auth__hint {
+  margin: .375rem 0 0;
+  font-size: var(--gk-text-xs);
+  line-height: var(--gk-leading-snug);
+  color: var(--gk-ink-3);
+}
+.gk-auth__error {
+  margin: .375rem 0 0;
+  font-size: var(--gk-text-xs);
+  font-weight: 500;
+  color: var(--gk-danger);
+}
+
+.gk-auth__alert {
+  display: flex;
+  align-items: flex-start;
+  gap: .625rem;
+  margin-bottom: var(--gk-space-4);
+  padding: .75rem .875rem;
+  border: 1px solid transparent;
+  border-radius: var(--gk-radius-md);
+  font-size: var(--gk-text-sm);
+  line-height: var(--gk-leading-snug);
+}
+.gk-auth__alert i { flex: none; margin-top: .15rem; }
+.gk-auth__alert--error  {
+  background: var(--gk-danger-muted);
+  border-color: rgba(192, 40, 30, .22);
+  color: var(--gk-danger-dark);
+}
+.gk-auth__alert--success {
+  background: var(--gk-success-muted);
+  border-color: rgba(27, 126, 74, .22);
+  color: var(--gk-success-dark);
+}
+
+.gk-auth__submit {
+  margin-top: var(--gk-space-2);
+  width: 100%;
+  height: 48px;
+  border: 0;
+  border-radius: var(--gk-radius-md);
+  background: var(--gk-auth-accent);
+  color: var(--gk-on-primary);
+  font: inherit;
+  font-size: var(--gk-text-base);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color var(--gk-transition),
+              box-shadow var(--gk-transition),
+              transform var(--gk-transition);
+}
+.gk-auth__submit:hover { background: var(--gk-auth-accent-dark); }
+.gk-auth__submit:active { transform: translateY(1px); }
+.gk-auth__submit:focus-visible {
+  outline: none;
+  box-shadow: var(--gk-auth-ring), inset 0 0 0 1px rgba(255, 255, 255, .55);
+}
+/* forms.js memakai ini saat request terkirim: klik ganda tidak boleh
+   menghasilkan dua percobaan masuk atau dua akun kembar. */
+.gk-auth__submit:disabled {
+  background: var(--gk-grey-300);
+  color: var(--gk-on-primary);
+  cursor: default;
+  transform: none;
+}
+
+/* Pindah akun cuma satu kalimat, bukan tombol kedua setinggi kolom isian:
+   dua tombol besar bertumpuk membuat halaman ini terlihat seperti mockup. */
+.gk-auth__switch {
+  margin: var(--gk-space-5) 0 0;
+  font-size: var(--gk-text-sm);
+  line-height: var(--gk-leading-snug);
+  color: var(--gk-ink-3);
+}
+.gk-auth__switch a {
+  color: var(--gk-auth-link);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--gk-transition);
+}
+.gk-auth__switch a:hover { border-bottom-color: currentColor; }
+.gk-auth__switch a:focus-visible {
+  outline: none;
+  border-radius: var(--gk-radius-sm);
+  box-shadow: var(--gk-auth-ring);
+}
+
+.gk-auth__note {
+  margin: var(--gk-space-5) 0 0;
+  text-align: center;
+  font-size: var(--gk-text-xs);
+  /* ink-3 di atas field terang hasilnya 4.4:1 — di bawah ambang AA untuk
+     ukuran ini, jadi footer halaman auth memakai ink-2. */
+  color: var(--gk-ink-2);
+}
+
+/* Dark mode: netral sudah ikut token §1 (field, border, page-bg, ink).
+   Yang ditimpa hanya aksen, karena indigo harus naik satu tingkat supaya
+   border fokus dan caret terlihat di atas field nyaris hitam. */
+[data-theme="dark"] .gk-auth__stage {
+  --gk-auth-accent: #6C82E8;
+  --gk-auth-link:   #8FA3F0;
+  --gk-auth-ring:   0 0 0 3px rgba(108, 130, 232, .34);
+}
+/* Nilai tengah, bukan accent dark mode: #6C82E8 membuat teks putih tombol
+   jatuh ke 3.5:1, sedangkan #3345CA hanya 2.3:1 terhadap kartu gelap.
+   #4A5FD1 lolos keduanya (5.5:1 teks, 3.1:1 pemisahan). */
+[data-theme="dark"] .gk-auth__submit { background: #4A5FD1; }
+[data-theme="dark"] .gk-auth__submit:disabled { background: var(--gk-grey-100); }
+
+/* §10.3 — Layar lebar: foto membentang di separuh kanan dan form ditempel
+   langsung ke sisi kirinya yang memang kosong (dinding krem). Tidak ada
+   kartu di sini; di bawah 1280px kartu + ban foto di kepalanya yang dipakai,
+   karena di sana tidak ada permukaan selebar 380px yang aman untuk teks.
+   Ambangnya 1280 juga: dengan `cover` pada 1024×768, form 380px jatuh tepat
+   di wajah orang pertama. */
+@media (min-width: 1280px) {
+  .gk-auth__stage {
+    background-image: url('../images/auth-bg.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: right center;
+  }
+  /* Batas antara krem dan foto sudah ada di gambar aslinya, jadi form cukup
+     berhenti sebelum garis itu. 11vw, bukan lebih besar: padding stage 40px
+     ikut dihitung dan tepi tajam foto ada di 50,5% lebarnya, sehingga pada
+     1280×800 batas itu jatuh di 576px sementara isian berhenti di 561px. */
+  .gk-auth__shell,
+  .gk-auth__note {
+    align-self: flex-start;
+    margin-left: clamp(2rem, 11vw, 240px);
+  }
+  .gk-auth__note { text-align: left; }
+  /* Ban di kepala kartu dimatikan: tanpa kartu, posisinya tidak lagi
+     berpatokan pada tepi kartu. */
+  .gk-auth__shell::before { display: none; }
+  .gk-auth__shell {
+    /* Isi isian naik ke warna kartu: grey-50 nyaris sama dengan krem foto,
+       jadi tanpa ini tepi kolom isian hilang ke dalam latar. */
+    --gk-auth-field: var(--gk-card-bg);
+    width: min(380px, 100%);
+    padding: 0;
+    background: none;
+    border-color: transparent;
+    box-shadow: none;
+  }
+  /* Foto terlalu terang untuk kulit gelap: ditutup scrim sewarna page-bg
+     supaya tetap jadi tekstur, bukan poster yang menempel di wajah. */
+  [data-theme="dark"] .gk-auth__stage {
+    background-image: linear-gradient(rgba(11, 15, 25, .82), rgba(11, 15, 25, .82)),
+                      url('../images/auth-bg.jpg');
+  }
+}
+

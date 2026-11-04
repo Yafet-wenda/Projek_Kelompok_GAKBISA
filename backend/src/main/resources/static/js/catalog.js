@@ -41,9 +41,9 @@
         <div class="d-flex justify-content-between align-items-start gap-3">
           <div class="min-w-0">
             <h3 class="h6 mb-1">${s.name}</h3>
-            <p class="text-muted small mb-0">${s.description || "Belum ada keterangan."}</p>
+            ${s.description ? html`<p class="text-muted small mb-0">${s.description}</p>` : ""}
           </div>
-          <span class="gk-badge gk-badge--neutral text-nowrap">${s.category || "umum"}</span>
+          ${s.category ? html`<span class="gk-badge gk-badge--neutral text-nowrap">${s.category}</span>` : ""}
         </div>
       </div>`;
   }
@@ -64,13 +64,15 @@
         : isi.map(kartuSkill).join("");
       if (!isi.length && !append) {
         gridSkill.innerHTML = html`
-          <div class="gk-empty gk-empty--compact">
-            <h3 class="gk-empty__title">Tidak ada keahlian yang cocok</h3>
-            <p class="gk-empty__desc">Coba kata kunci lain atau pilih kategori "Semua".</p>
+          <div class="list-group-item text-muted small py-4">
+            Tidak ada yang cocok. Hapus kata kunci atau kembali ke "Semua kategori".
           </div>`;
       }
+      const total = halaman.totalElements ?? isi.length;
+      const halamanIni = (halaman.number ?? 0) + 1;
+      const dari = (halaman.totalPages ?? 1);
       document.getElementById("hitung-keahlian").textContent =
-        `${halaman.totalElements ?? isi.length} keahlian · halaman ${(halaman.number ?? 0) + 1} dari ${halaman.totalPages ?? 1}`;
+        dari > 1 ? `${total} keahlian, halaman ${halamanIni} dari ${dari}` : `${total} keahlian`;
       document.getElementById("muat-lagi").hidden = state.halaman + 1 >= state.totalHalaman;
     } catch (e) {
       gridSkill.innerHTML = html`<div class="gk-alert gk-alert--danger">
@@ -104,7 +106,8 @@
     try {
       const halaman = await api.get("/api/portfolios?page=0&size=12");
       const isi = halaman.content || [];
-      document.getElementById("hitung-karya").textContent = `${halaman.totalElements ?? isi.length} karya`;
+      const totalKarya = halaman.totalElements ?? isi.length;
+      document.getElementById("hitung-karya").textContent = totalKarya ? `${totalKarya} karya` : "";
       if (!isi.length) {
         grid.hidden = true;
         kosong.hidden = false;
@@ -117,19 +120,18 @@
         return html`
           <div class="col">
             <article class="gk-card gk-card--interactive h-100">
-              <div class="gk-card__thumb">
+              <div class="gk-card__thumb d-flex align-items-center justify-content-center text-muted small">
                 ${gambar && state.login
                   ? html`<img src="/api/portfolios/${p.id}/content" alt="Pratinjau ${p.title}"
                               class="img-fluid" loading="lazy">`
-                  : html`<span class="gk-badge gk-badge--neutral">${(p.fileName || "").split(".").pop() || "karya"}</span>`}
+                  : html`<span><i class="bi bi-file-earmark me-1" aria-hidden="true"></i>${p.fileName}</span>`}
               </div>
               <div class="p-3">
                 <h3 class="h6 mb-1">${p.title}</h3>
-                <p class="text-muted small mb-1">${pemilik.fullName}
-                  ${pemilik.averageRating ? html` · ★ ${pemilik.averageRating}` : ""}</p>
-                <p class="text-muted mb-3" style="font-size:12px;">${p.fileName} · ${ukuran(p.fileSize)}</p>
+                <p class="text-muted small mb-3">oleh ${pemilik.fullName}
+                  ${pemilik.averageRating ? html` (★ ${pemilik.averageRating})` : ""}</p>
                 <button class="gk-btn gk-btn--ghost gk-btn--sm" type="button"
-                        data-karya="${p.id}">Detail</button>
+                        data-karya="${p.id}">Lihat detail</button>
               </div>
             </article>
           </div>`;
@@ -161,11 +163,14 @@
           <div class="text-muted small">Mengajarkan: ${(p.pemilikOffers || []).join(", ") || "belum dicantumkan"}</div>
         </div>
       </div>
-      <dl class="row row-cols-2 g-2 mt-3 mb-0 small">
-        <div class="col"><dt class="text-muted">Berkas</dt><dd class="mb-1">${p.fileName}</dd></div>
-        <div class="col"><dt class="text-muted">Ukuran</dt><dd class="mb-1">${ukuran(p.fileSize)}</dd></div>
-        <div class="col"><dt class="text-muted">Tipe</dt><dd class="mb-1">${p.mimeType}</dd></div>
-        <div class="col"><dt class="text-muted">Dibuat</dt><dd class="mb-1">${tanggal(p.createdAt)}</dd></div>
+      <dl class="small mt-3 mb-0">
+        ${[["Berkas", p.fileName], ["Ukuran", ukuran(p.fileSize)],
+           ["Tipe berkas", p.mimeType], ["Diunggah", tanggal(p.createdAt)]]
+          .map(([k, v]) => html`
+            <div class="d-flex justify-content-between gap-3 py-1 border-bottom">
+              <dt class="text-muted fw-normal">${k}</dt>
+              <dd class="mb-0 text-end" style="overflow-wrap:anywhere;">${v}</dd>
+            </div>`).join("")}
       </dl>
       ${/^image\//.test(p.mimeType || "") && bisaLihat
         ? html`<img class="img-fluid rounded mt-3" src="/api/portfolios/${p.id}/content"

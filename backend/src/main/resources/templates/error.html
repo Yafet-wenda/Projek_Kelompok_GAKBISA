@@ -7,26 +7,25 @@
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
 <main class="container py-5" id="isi">
-  <div class="gk-card mx-auto p-4" style="max-width:560px;">
-    <p class="text-muted small mb-2">HTTP <span th:text="${status}">500</span></p>
-
-    <h1 class="gk-card__title h3" th:switch="${status}">
+  <div class="mx-auto" style="max-width:600px;">
+    <h1 class="h4 mb-1" th:switch="${status}">
       <span th:case="404">Halaman tidak ditemukan</span>
       <span th:case="403">Akses ditolak</span>
-      <span th:case="*">Ada masalah di server</span>
+      <span th:case="*">Terjadi kesalahan</span>
     </h1>
+    <p class="text-muted small mb-3">HTTP <span th:text="${status}">500</span></p>
 
-    <p class="text-muted mt-3 mb-4" th:switch="${status}">
-      <span th:case="404">Alamat yang kamu buka tidak ada di GAKBISA. Mungkin tautannya lama
-        atau salah ketik.</span>
-      <span th:case="403">Halaman ini hanya untuk peran tertentu, atau sesi loginmu sudah
-        berakhir. Muat ulang lalu coba lagi.</span>
-      <span th:case="*">Sesuatu gagal di sisi kami. Coba lagi sebentar; kalau terus terjadi,
-        screenshot halaman ini dan kirim ke tim backend.</span>
+    <p class="text-muted" th:switch="${status}">
+      <span th:case="404">Alamat yang kamu buka tidak ada di GAKBISA. Biasanya tautannya sudah
+        lama atau salah ketik. Mulai lagi dari katalog saja.</span>
+      <span th:case="403">Akun yang sekarang masuk tidak punya hak untuk halaman ini. Muat ulang
+        halamannya dari menu, lalu coba lagi.</span>
+      <span th:case="*">Permintaanmu gagal diproses server. Coba lagi sebentar. Kalau terus
+        gagal, kami perlu lihat log-nya.</span>
     </p>
 
-    <p class="text-muted mb-4" style="font-size:12px;" th:if="${path}">
-      Alamat: <code th:text="${path}">/</code>
+    <p class="text-muted mb-4" style="font-size:13px;" th:if="${path}">
+      Alamat yang diminta: <code th:text="${path}">/</code>
     </p>
 
     <div class="d-flex flex-wrap gap-2">
@@ -35,6 +34,12 @@
       <a class="gk-btn gk-btn--ghost" sec:authorize="isAuthenticated()" th:href="@{/dashboard}">Ke dasbor</a>
       <a class="gk-btn gk-btn--ghost" sec:authorize="!isAuthenticated()" th:href="@{/login}">Masuk</a>
     </div>
+
+    <p class="text-muted mt-4 mb-0" style="font-size:13px;"
+       th:if="${status != null and status >= 500}" sec:authorize="isAuthenticated()">
+      Screenshot halaman ini dan kirim ke tim backend. Cantumkan alamat di atas supaya
+      kami bisa mencocokkannya dengan log.
+    </p>
   </div>
 </main>
 

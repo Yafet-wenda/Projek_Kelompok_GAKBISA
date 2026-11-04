@@ -75,7 +75,7 @@ public class UserService {
         Skill skill = resolveSkill(skillId, skillName);
         SkillLevel lv = level == null ? SkillLevel.BEGINNER : level;
         if (userSkills.existsByUserIdAndSkill_IdAndType(userId, skill.getId(), type)) {
-            throw new ValidationException("Keahlian ini sudah ada dalam daftar Anda");
+            throw new ValidationException("Keahlian itu sudah ada di daftar kamu");
         }
         UserSkill us = new UserSkill();
         us.setUser(u);
@@ -106,7 +106,7 @@ public class UserService {
         SkillCategory lain = categories.findByNameIgnoreCase("Lainnya").orElseGet(() -> {
             SkillCategory c = new SkillCategory();
             c.setName("Lainnya");
-            c.setDescription("Keahlian yang ditulis pengguna dan belum dikategorikan admin");
+            c.setDescription("Keahlian yang diketik sendiri oleh pengguna; kategorinya belum dirapikan admin");
             return categories.save(c);
         });
         Skill s = new Skill();
@@ -120,7 +120,7 @@ public class UserService {
         UserSkill us = userSkills.findById(userSkillId)
             .orElseThrow(() -> new NotFoundException("Keahlian pengguna tidak ditemukan"));
         if (!us.getUser().getId().equals(userId)) {
-            throw new ForbiddenException("Keahlian bukan milik Anda");
+            throw new ForbiddenException("Keahlian itu bukan milikmu");
         }
         userSkills.delete(us);
     }

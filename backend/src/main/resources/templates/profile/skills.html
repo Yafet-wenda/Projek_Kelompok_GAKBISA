@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head('Kelola Keahlian')}"></head>
+<head th:replace="~{fragments/head :: head('Keahlian kamu')}"></head>
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
@@ -9,16 +9,12 @@
 
     <main class="gk-main">
 
-        <!-- Page Header -->
         <div class="gk-page-header">
             <div class="gk-page-header__text">
-                <span class="gk-page-header__eyebrow">Profil & Portofolio</span>
-                <h1 class="gk-page-header__title d-flex align-items-center gap-2">
-                    <i class="bi bi-stars text-warning" aria-hidden="true"></i>
-                    <span>Kelola Keahlian</span>
-                </h1>
+                <h1 class="gk-page-header__title">Keahlian kamu</h1>
                 <p class="gk-page-header__desc">
-                    Tentukan keahlian yang dapat kamu ajarkan (OFFER) dan keahlian yang ingin kamu pelajari (WANT).
+                    Dua daftar ini yang dipakai sistem saat mencari partner barter. Satu untuk
+                    keahlian yang bisa kamu ajarkan, satu lagi untuk yang ingin kamu pelajari.
                 </p>
             </div>
         </div>
@@ -33,100 +29,91 @@
             <span th:text="${error}"></span>
         </div>
 
-        <!-- OFFER Skills Section -->
+        <!-- Keahlian yang diajarkan -->
         <div class="gk-card mb-4">
             <div class="gk-card__header">
-                <h2 class="gk-card__title d-flex align-items-center gap-2">
-                    <i class="bi bi-hand-thumbs-up-fill text-primary" aria-hidden="true"></i>
-                    <span>Keahlian yang Ditawarkan (OFFER)</span>
-                </h2>
-                <span class="gk-badge gk-badge--primary" th:text="${offerSkills.size()} + ' Keahlian'">0 Keahlian</span>
+                <h2 class="gk-card__title">Yang bisa kamu ajarkan</h2>
+                <span class="text-muted small" th:text="${offerSkills.size()} + ' keahlian'">0 keahlian</span>
             </div>
 
-            <div th:if="${#lists.isEmpty(offerSkills)}" class="text-muted p-3 text-center" style="font-size:14px;">
-                <i class="bi bi-plus-circle text-primary d-block mb-1" style="font-size:24px;"></i>
-                Belum ada keahlian yang ditawarkan. Tambahkan melalui form di bawah!
-            </div>
-
-            <div th:if="${!#lists.isEmpty(offerSkills)}" class="d-flex flex-wrap gap-2 p-1">
-                <div class="gk-badge gk-badge--OFFER d-inline-flex align-items-center gap-2 py-2 px-3"
-                     style="font-size:13px;" th:each="us : ${offerSkills}">
-                    <i class="bi bi-stars text-primary"></i>
-                    <strong th:text="${us.skill.name}">Skill</strong>
-                    <span th:if="${us.level}" style="opacity:.8;font-weight:400;" th:text="'(' + ${us.level} + ')'"></span>
-                    <span th:if="${us.skill.category}" style="opacity:.7;font-size:11px;" th:text="'· ' + ${us.skill.category.name}"></span>
-                    <form th:action="@{/profile/skills/{id}/delete(id=${us.id})}" method="post" style="margin:0;display:inline;">
-                        <button type="submit" class="btn btn-link btn-sm p-0 text-danger ms-1"
-                                aria-label="Hapus keahlian yang ditawarkan"
-                                title="Hapus keahlian" data-confirm="Hapus keahlian ini?">
-                            <i class="bi bi-x-circle-fill" style="font-size:14px;" aria-hidden="true"></i>
-                        </button>
-                    </form>
+            <div class="list-group list-group-flush m-3" th:unless="${#lists.isEmpty(offerSkills)}">
+                <div class="list-group-item d-flex justify-content-between align-items-center gap-3 px-0"
+                     th:each="us : ${offerSkills}">
+                    <div class="min-w-0">
+                        <div class="fw-semibold" th:text="${us.skill.name}">Skill</div>
+                        <div class="text-muted small" th:if="${us.notes}" th:text="${us.notes}">catatan</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-3 text-nowrap">
+                        <span class="text-muted small" th:if="${us.level}"
+                              th:text="${us.level.name() == 'BEGINNER' ? 'pemula'
+                                     : us.level.name() == 'INTERMEDIATE' ? 'menengah' : 'mahir'}">pemula</span>
+                        <form th:action="@{/profile/skills/{id}/delete(id=${us.id})}" method="post" class="m-0">
+                            <button type="submit" class="gk-btn gk-btn--ghost gk-btn--sm text-danger"
+                                    aria-label="Hapus keahlian ini" data-confirm="Hapus keahlian ini?">Hapus</button>
+                        </form>
+                    </div>
                 </div>
             </div>
+
+            <p class="text-muted small mx-0 mb-0" th:if="${#lists.isEmpty(offerSkills)}">
+                Masih kosong. Isi lewat form di bawah.
+            </p>
         </div>
 
-        <!-- WANT Skills Section -->
+        <!-- Keahlian yang dicari -->
         <div class="gk-card mb-4">
             <div class="gk-card__header">
-                <h2 class="gk-card__title d-flex align-items-center gap-2">
-                    <i class="bi bi-book-fill text-danger" aria-hidden="true"></i>
-                    <span>Keahlian yang Dicari (WANT)</span>
-                </h2>
-                <span class="gk-badge gk-badge--danger" th:text="${wantSkills.size()} + ' Keahlian'">0 Keahlian</span>
+                <h2 class="gk-card__title">Yang ingin kamu pelajari</h2>
+                <span class="text-muted small" th:text="${wantSkills.size()} + ' keahlian'">0 keahlian</span>
             </div>
 
-            <div th:if="${#lists.isEmpty(wantSkills)}" class="text-muted p-3 text-center" style="font-size:14px;">
-                <i class="bi bi-search text-danger d-block mb-1" style="font-size:24px;"></i>
-                Belum ada keahlian yang dicari. Tambahkan melalui form di bawah!
-            </div>
-
-            <div th:if="${!#lists.isEmpty(wantSkills)}" class="d-flex flex-wrap gap-2 p-1">
-                <div class="gk-badge gk-badge--WANT d-inline-flex align-items-center gap-2 py-2 px-3"
-                     style="font-size:13px;" th:each="us : ${wantSkills}">
-                    <i class="bi bi-book text-danger"></i>
-                    <strong th:text="${us.skill.name}">Skill</strong>
-                    <span th:if="${us.level}" style="opacity:.8;font-weight:400;" th:text="'(' + ${us.level} + ')'"></span>
-                    <form th:action="@{/profile/skills/{id}/delete(id=${us.id})}" method="post" style="margin:0;display:inline;">
-                        <button type="submit" class="btn btn-link btn-sm p-0 text-danger ms-1"
-                                aria-label="Hapus keahlian yang ditawarkan"
-                                title="Hapus keahlian" data-confirm="Hapus keahlian ini?">
-                            <i class="bi bi-x-circle-fill" style="font-size:14px;" aria-hidden="true"></i>
-                        </button>
-                    </form>
+            <div class="list-group list-group-flush m-3" th:unless="${#lists.isEmpty(wantSkills)}">
+                <div class="list-group-item d-flex justify-content-between align-items-center gap-3 px-0"
+                     th:each="us : ${wantSkills}">
+                    <div class="min-w-0">
+                        <div class="fw-semibold" th:text="${us.skill.name}">Skill</div>
+                        <div class="text-muted small" th:if="${us.notes}" th:text="${us.notes}">catatan</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-3 text-nowrap">
+                        <span class="text-muted small" th:if="${us.level}"
+                              th:text="${us.level.name() == 'BEGINNER' ? 'pemula'
+                                     : us.level.name() == 'INTERMEDIATE' ? 'menengah' : 'mahir'}">pemula</span>
+                        <form th:action="@{/profile/skills/{id}/delete(id=${us.id})}" method="post" class="m-0">
+                            <button type="submit" class="gk-btn gk-btn--ghost gk-btn--sm text-danger"
+                                    aria-label="Hapus keahlian ini" data-confirm="Hapus keahlian ini?">Hapus</button>
+                        </form>
+                    </div>
                 </div>
             </div>
+
+            <p class="text-muted small mx-0 mb-0" th:if="${#lists.isEmpty(wantSkills)}">
+                Masih kosong. Isi lewat form di bawah.
+            </p>
         </div>
 
-        <!-- Form Tambah Keahlian -->
+        <!-- Form tambah keahlian -->
         <div class="gk-card p-4">
             <div class="gk-card__header mb-3 pb-2">
-                <h2 class="gk-card__title d-flex align-items-center gap-2">
-                    <i class="bi bi-plus-circle-fill text-primary" aria-hidden="true"></i>
-                    <span>Tambah Keahlian Baru</span>
-                </h2>
+                <h2 class="gk-card__title">Tambah keahlian</h2>
             </div>
 
             <form th:action="@{/profile/skills}" method="post" th:object="${userSkillDto}">
                 <div class="row g-3">
-                    <!-- Kategori filter -->
+                    <!-- Penyaring katalog -->
                     <div class="col-md-6">
-                        <label class="form-label fw-bold" style="font-size:14px;color:var(--gk-ink);">Kategori Keahlian</label>
+                        <label class="form-label" for="categorySelect">Saring katalog</label>
                         <select id="categorySelect" class="form-select">
-                            <option value="">Semua Kategori</option>
+                            <option value="">Semua kategori</option>
                             <option th:each="cat : ${categories}"
                                     th:value="${cat.id}"
                                     th:text="${cat.name}">Kategori</option>
                         </select>
                     </div>
 
-                    <!-- Keahlian -->
                     <div class="col-md-6">
-                        <label class="form-label fw-bold" style="font-size:14px;color:var(--gk-ink);">
-                            Keahlian dari Katalog
-                        </label>
+                        <label class="form-label" for="skillSelect">Pilih dari katalog</label>
                         <select th:field="*{skillId}" id="skillSelect" class="form-select">
-                            <option value="">Belum ada di katalog / cari manual</option>
+                            <option value="">Tidak ketemu, ketik sendiri</option>
                             <option th:each="s : ${skills}"
                                     th:value="${s.id}"
                                     th:attr="data-cat=${s.category?.id}"
@@ -138,82 +125,69 @@
 
                     <!-- Nama bebas diketik: katalog kosong tidak lagi jadi jalan buntu. -->
                     <div class="col-md-6">
-                        <label class="form-label fw-bold" style="font-size:14px;color:var(--gk-ink);">
-                            Atau Ketik Nama Sendiri
-                        </label>
+                        <label class="form-label" for="skillName">Atau ketik namanya</label>
                         <input type="text" th:field="*{skillName}" class="form-control"
                                placeholder="mis. Blender" autocomplete="off">
                         <div class="form-text">
-                            Nama yang belum ada di katalog langsung dibuat di kategori Lainnya;
-                            admin yang memindahkan nanti. Satu isian saja: pilih di katalog atau ketik nama.
+                            Cukup salah satu: pilih di katalog atau ketik nama. Nama yang belum ada
+                            di katalog dibuatkan entri baru di kategori Lainnya, nanti admin yang
+                            memindahkan ke kategori yang pas.
                         </div>
                     </div>
 
-                    <!-- Tipe (OFFER / WANT) -->
                     <div class="col-md-4">
-                        <label class="form-label fw-bold d-block" style="font-size:14px;color:var(--gk-ink);">
-                            Tipe Keahlian <span class="text-danger">*</span>
-                        </label>
+                        <span class="form-label d-block">Untuk apa <span class="text-danger">*</span></span>
                         <div class="d-flex gap-3 mt-2">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" th:field="*{type}"
                                        value="OFFER" id="typeOffer">
-                                <label class="form-check-label fw-semibold text-primary" for="typeOffer">
-                                    <i class="bi bi-hand-thumbs-up-fill me-1"></i>OFFER
-                                </label>
+                                <label class="form-check-label" for="typeOffer">Kamu ajarkan</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" th:field="*{type}"
                                        value="WANT" id="typeWant">
-                                <label class="form-check-label fw-semibold text-danger" for="typeWant">
-                                    <i class="bi bi-book-fill me-1"></i>WANT
-                                </label>
+                                <label class="form-check-label" for="typeWant">Kamu pelajari</label>
                             </div>
                         </div>
                         <div th:if="${#fields.hasErrors('type')}" class="text-danger small mt-1"
                              th:errors="*{type}"></div>
                     </div>
 
-                    <!-- Level Kemahiran -->
                     <div class="col-md-4">
-                        <label class="form-label fw-bold" style="font-size:14px;color:var(--gk-ink);">Tingkat Kemahiran</label>
+                        <label class="form-label" for="level">Tingkat</label>
                         <select th:field="*{level}" class="form-select">
-                            <option value="BEGINNER">Beginner (Pemula)</option>
-                            <option value="INTERMEDIATE">Intermediate (Menengah)</option>
-                            <option value="ADVANCED">Advanced (Mahir)</option>
+                            <option value="BEGINNER">Pemula</option>
+                            <option value="INTERMEDIATE">Menengah</option>
+                            <option value="ADVANCED">Mahir</option>
                         </select>
                     </div>
 
-                    <!-- Catatan -->
                     <div class="col-md-4">
-                        <label class="form-label fw-bold" style="font-size:14px;color:var(--gk-ink);">Catatan Singkat</label>
+                        <label class="form-label" for="notes">Catatan</label>
                         <input type="text" th:field="*{notes}" class="form-control"
-                               placeholder="Contoh: Menguasai Spring Boot, Java 21">
+                               placeholder="mis. dipakai untuk tugas akhir">
                     </div>
                 </div>
 
-                <div class="mt-4 pt-2 border-top" style="border-color:var(--gk-border) !important;">
-                    <button type="submit" class="gk-btn gk-btn--primary">
-                        <i class="bi bi-plus-lg" aria-hidden="true"></i> Tambah Keahlian
-                    </button>
+                <div class="mt-4 pt-2 border-top">
+                    <button type="submit" class="gk-btn gk-btn--primary">Tambah</button>
                 </div>
             </form>
         </div>
 
     </main>
 
-    <!-- Right Sidebar Panel (~320px) -->
     <aside class="gk-sidebar-right">
         <div class="gk-card">
-            <div class="d-flex align-items-center gap-2 mb-2">
-                <i class="bi bi-lightbulb text-warning" style="font-size:18px;"></i>
-                <h4 class="m-0 fw-bold" style="font-size:14px;color:var(--gk-ink);">Panduan Keahlian</h4>
-            </div>
-            <ul style="font-size:13px;color:var(--gk-ink-2);padding-left:18px;margin-bottom:0;line-height:1.7;">
-                <li><strong>OFFER</strong>: Keahlian yang kamu kuasai dan siap kamu ajarkan kepada rekan lain.</li>
-                <li><strong>WANT</strong>: Keahlian yang ingin kamu pelajari dari orang lain.</li>
-                <li>Semakin lengkap datanya, semakin akurat algoritma matching 100-poin merekomendasikan partner belajar!</li>
-            </ul>
+            <h4 class="gk-card__title mb-2">Tingkat dan catatan</h4>
+            <p style="font-size:13px;color:var(--gk-ink-2);" class="mb-2">
+                Tingkat kemahiran ikut dipakai saat mencari partner, jadi isi yang sesuai
+                kondisi kamu, bukan yang tertinggi.
+            </p>
+            <p style="font-size:13px;color:var(--gk-ink-2);" class="mb-0">
+                Catatan tampil di dua daftar di atas. Tulis bagian yang benar-benar kamu kuasai,
+                mis. "pivot &amp; VLOOKUP".
+            </p>
         </div>
     </aside>
 </div>

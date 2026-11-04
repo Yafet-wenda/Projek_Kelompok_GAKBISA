@@ -41,6 +41,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -563,20 +564,33 @@ public class PageController {
     }
 
     @PostMapping("/profile/skills")
-    public String addSkill(@Valid @ModelAttribute("userSkillDto") UserSkillDto dto, BindingResult errors) {
+    public String addSkill(@Valid @ModelAttribute("userSkillDto") UserSkillDto dto, BindingResult errors,
+                           RedirectAttributes ra) {
         UUID uid = currentUserId();
         boolean adaPilihan = dto.getSkillId() != null;
         boolean adaNama = dto.getSkillName() != null && !dto.getSkillName().isBlank();
-        if (uid != null && (adaPilihan || adaNama)) {
+        if (!adaPilihan && !adaNama) {
+            // Id dari form bisa gagal terikat (bukan UUID), jadi dua-duanya kosong di sini.
+            ra.addFlashAttribute("error", "Pilih keahlian dari katalog atau tulis namanya");
+            return "redirect:/profile/skills";
+        }
+        if (uid != null) {
             try {
-                SkillType st = SkillType.valueOf(dto.getType());
+                SkillType st;
+                try {
+                    st = SkillType.valueOf(dto.getType());
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException("Tipe keahlian tidak dikenali");
+                }
                 SkillLevel sl = dto.getLevel() != null && !dto.getLevel().isBlank()
                     ? SkillLevel.valueOf(dto.getLevel())
                     : SkillLevel.BEGINNER;
                 userService.addSkill(uid, dto.getSkillId(), dto.getSkillName(), st, sl, dto.getNotes());
-                return "redirect:/profile/skills?success";
+                ra.addFlashAttribute("success", "Keahlian ditambahkan ke daftar kamu.");
+                return "redirect:/profile/skills";
             } catch (Exception e) {
-                return "redirect:/profile/skills?error=" + java.net.URLEncoder.encode(e.getMessage(), java.nio.charset.StandardCharsets.UTF_8);
+                ra.addFlashAttribute("error", e.getMessage());
+                return "redirect:/profile/skills";
             }
         }
         return "redirect:/profile/skills";
@@ -641,7 +655,11 @@ public class PageController {
         return "admin/users";
     }
 
-    @GetMapping("/access-denied")
+    /**
+     * Ditampilkan accessDeniedHandler lewat request dispatcher include, jadi harus menerima
+     * metode asal: 403 dari form POST kalau hanya dipetakan ke GET akan berakhir halaman kosong.
+     */
+    @RequestMapping("/access-denied")
     public String denied() {
         return "denied";
     }

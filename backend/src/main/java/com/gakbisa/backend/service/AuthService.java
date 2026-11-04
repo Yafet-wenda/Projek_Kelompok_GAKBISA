@@ -28,7 +28,7 @@ public class AuthService {
         String email = req.normalizedEmail();
         if (users.existsByEmail(email)) {
             // Pesan tidak membocorkan detail sensitif selain bahwa akun sudah ada (skenario uji #1)
-            throw new ValidationException("Email sudah terdaftar. Silakan login.");
+            throw new ValidationException("Email itu sudah terdaftar. Kalau ini akunmu, masuk dari tautan di bawah.");
         }
         User u = new User();
         u.setFullName(req.fullName().trim());
@@ -43,7 +43,7 @@ public class AuthService {
             return UserDto.from(users.save(u));
         } catch (DataIntegrityViolationException e) {
             // Balapan dua request registrasi email sama -> constraint unique email
-            throw new ValidationException("Email sudah terdaftar. Silakan login.");
+            throw new ValidationException("Email itu sudah terdaftar. Kalau ini akunmu, masuk dari tautan di bawah.");
         }
     }
 }
