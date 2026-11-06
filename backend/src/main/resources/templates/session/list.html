@@ -70,7 +70,7 @@
         </div>
 
         <!-- Session List Cards -->
-        <div th:each="session : ${sessions}" class="gk-session-card">
+        <div th:each="sesi : ${sessions}" class="gk-session-card">
             <div class="gk-session-card__header">
                 <div>
                     <div style="font-size:11px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--gk-ink-3);">
@@ -78,45 +78,45 @@
                     </div>
                     <div class="d-flex align-items-center gap-2 mt-1">
                         <span class="fw-bold" style="font-size:16px;color:var(--gk-ink);"
-                              th:text="${session.barterRequest.offeredUserSkill?.skill?.name ?: '-'}">Skill A</span>
+                              th:text="${sesi.barterRequest.offeredUserSkill?.skill?.name ?: '-'}">Skill A</span>
                         <i class="bi bi-arrow-left-right text-primary" style="font-size:13px;" aria-hidden="true"></i>
                         <span class="fw-bold" style="font-size:16px;color:var(--gk-ink);"
-                              th:text="${session.barterRequest.wantedUserSkill?.skill?.name ?: '-'}">Skill B</span>
+                              th:text="${sesi.barterRequest.wantedUserSkill?.skill?.name ?: '-'}">Skill B</span>
                     </div>
                 </div>
                 <span class="gk-badge status-badge-pill"
                       style="width:auto;min-width:96px;"
-                      th:classappend="'gk-badge--' + ${session.status}"
-                      th:text="${session.status}">STATUS</span>
+                      th:classappend="'gk-badge--' + ${sesi.status}"
+                      th:text="${sesi.status}">STATUS</span>
             </div>
             <div class="gk-session-card__body">
                 <div class="row g-3 mb-3">
                     <div class="col-sm-6 col-md-3">
                         <div class="gk-session-card__meta-label">Partner</div>
-                        <div class="gk-session-card__meta-val" th:text="${session.barterRequest.requester.fullName}">Nama</div>
+                        <div class="gk-session-card__meta-val" th:text="${sesi.barterRequest.requester.fullName}">Nama</div>
                     </div>
-                    <div class="col-sm-6 col-md-3" th:if="${session.scheduledAt}">
+                    <div class="col-sm-6 col-md-3" th:if="${sesi.scheduledAt}">
                         <div class="gk-session-card__meta-label">Waktu</div>
                         <div class="gk-session-card__meta-val"
-                             th:text="${#temporals.format(session.scheduledAt, 'dd MMM yyyy HH:mm')}">Waktu</div>
+                             th:text="${#temporals.format(sesi.scheduledAt, 'dd MMM yyyy HH:mm')}">Waktu</div>
                     </div>
-                    <div class="col-sm-6 col-md-3" th:if="${session.durationMinutes}">
+                    <div class="col-sm-6 col-md-3" th:if="${sesi.durationMinutes}">
                         <div class="gk-session-card__meta-label">Durasi</div>
                         <div class="gk-session-card__meta-val"
-                             th:text="${session.durationMinutes} + ' menit'">60 menit</div>
+                             th:text="${sesi.durationMinutes} + ' menit'">60 menit</div>
                     </div>
                     <div class="col-sm-6 col-md-3">
                         <div class="gk-session-card__meta-label">Platform</div>
-                        <div class="gk-session-card__meta-val" th:text="${session.meetingProvider ?: 'JITSI'}">JITSI</div>
+                        <div class="gk-session-card__meta-val" th:text="${sesi.meetingProvider ?: 'JITSI'}">JITSI</div>
                     </div>
                 </div>
                 <div class="d-flex gap-2 flex-wrap">
-                    <a th:href="@{'/sessions/' + ${session.id}}" class="gk-btn gk-btn--ghost gk-btn--sm">
+                    <a th:href="@{'/sessions/' + ${sesi.id}}" class="gk-btn gk-btn--ghost gk-btn--sm">
                         <i class="bi bi-eye" aria-hidden="true"></i>
                         <span>Lihat Detail</span>
                     </a>
-                    <a th:if="${session.status == 'SCHEDULED' or session.status == 'ONGOING'}"
-                       th:href="${session.meetingProvider == 'JITSI'} ? 'https://meet.jit.si/' + ${session.meetingRoom} : ${session.meetingUrl}"
+                    <a th:if="${sesi.status.name() == 'SCHEDULED' or sesi.status.name() == 'ONGOING'}"
+                       th:href="${sesi.meetingProvider.name() == 'JITSI'} ? 'https://meet.jit.si/' + ${sesi.meetingRoom} : ${sesi.meetingUrl}"
                        class="gk-btn gk-btn--success gk-btn--sm" target="_blank" rel="noopener noreferrer">
                         <i class="bi bi-camera-video-fill" aria-hidden="true"></i>
                         <span>Gabung Meeting</span>

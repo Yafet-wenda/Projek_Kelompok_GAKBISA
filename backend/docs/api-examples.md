@@ -24,7 +24,7 @@ Semua endpoint JSON di bawah memakai prefix `/api` dan memerlukan login (kecuali
 | GET | `/api/skills?q=java&page=0&size=20` | katalog publik, paginated |
 | GET | `/api/categories` | daftar kategori |
 | GET | `/api/me/skills?type=OFFER` | `type` opsional: OFFER/WANT |
-| POST | `/api/me/skills` | `{"skillId":"<uuid>","type":"OFFER","level":"INTERMEDIATE","notes":"opsional"}` |
+| POST | `/api/me/skills` | `{"skillId":"<uuid>","type":"OFFER","level":"INTERMEDIATE","notes":"opsional"}` atau `{"skillName":"Blender", ...}` — nama baru dibuatkan entri di kategori `Lainnya` |
 | DELETE | `/api/me/skills/{userSkillId}` | |
 
 ## Matching
@@ -124,7 +124,7 @@ JAR=cookies.txt
 # Halaman /login memuat dua input _csrf (form login Thymeleaf + th:csrfMetaTags) -> pakai head -1.
 TOKEN=$(curl -s -c $JAR $BASE/login | grep -o 'name="_csrf" value="[^"]*"' | head -1 | cut -d'"' -f4)
 curl -s -b $JAR -c $JAR -o /dev/null -w "login %{http_code}\n" \
-  --data-urlencode "username=yafet@gakbisa.test" --data-urlencode "password=yafet123" \
+  --data-urlencode "username=<email-akunmu>" --data-urlencode "password=<passwordmu>" \
   --data-urlencode "_csrf=$TOKEN" $BASE/login
 # PENTING: login mengaktifkan session fixation protection -> token CSRF sebelum login jadi tidak valid.
 # Ambil ulang token dari halaman mana pun SETELAH login, sebelum mengirim POST ke /api/**.

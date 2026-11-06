@@ -32,6 +32,7 @@ class AuthServiceTest {
     @Test
     void registrasiEmailBaruSuksesDanPasswordDiHash() {
         when(users.existsByEmail(anyString())).thenReturn(false);
+        when(users.count()).thenReturn(3L);
         when(users.save(any(User.class))).thenAnswer(inv -> {
             User u = inv.getArgument(0);
             u.setId(java.util.UUID.randomUUID());
@@ -43,6 +44,21 @@ class AuthServiceTest {
         assertEquals("yafet@example.com", dto.email(), "email harus dinormalisasi huruf kecil");
         assertEquals(UserRole.STUDENT.name(), dto.role());
         verify(users).save(argThat(u -> encoder.matches("rahasia123", u.getPasswordHash())));
+    }
+
+    @Test
+    void pendaftarPertamaNaikJadiAdmin() {
+        when(users.existsByEmail(anyString())).thenReturn(false);
+        when(users.count()).thenReturn(0L);
+        when(users.save(any(User.class))).thenAnswer(inv -> {
+            User u = inv.getArgument(0);
+            u.setId(java.util.UUID.randomUUID());
+            return u;
+        });
+
+        var dto = service.register(new RegisterRequest("Yafet", "yafet@example.com", "rahasia123", null));
+
+        assertEquals(UserRole.ADMIN.name(), dto.role());
     }
 
     @Test

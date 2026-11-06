@@ -1,30 +1,37 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="id">
-<head th:replace="~{fragments/layout :: head('Akses ditolak · GAKBISA')}"></head>
-<body>
-<th:block th:replace="~{fragments/layout :: skip}"></th:block>
-<header th:replace="~{fragments/layout :: topbar('')}"></header>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="id">
+<head th:replace="~{fragments/head :: head('Akses ditolak')}"></head>
+<body class="gk-bg-page">
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
-<main id="isi" class="shell section">
-  <div class="card card--narrow">
-    <p class="num muted code-note">HTTP 403</p>
-    <h1>Akses ditolak</h1>
-    <p class="lede">
-      Halaman ini hanya untuk peran tertentu, atau sesi loginmu sudah berakhir sehingga
-      token CSRF-nya tidak berlaku lagi. Kalau tab ini lama terbuka, muat ulang lalu coba lagi.
+<main class="container py-5" id="isi">
+  <div class="mx-auto" style="max-width:600px;">
+    <h1 class="h4 mb-1">Akses ditolak</h1>
+    <p class="text-muted small mb-3">HTTP 403</p>
+
+    <p class="text-muted">
+      Akun yang sekarang masuk tidak punya hak untuk halaman ini. Kalau barusan kamu mengirim
+      formulir dari tab yang sudah lama terbuka, kemungkinan sesi loginnya sudah lewat batas
+      waktu dan formulirnya dianggap bukan dari kamu.
     </p>
-    <hr class="rule">
-    <div class="btn-group">
-      <a class="btn btn--leaf" th:href="@{/dashboard}">Kembali ke dasbor</a>
-      <a class="btn btn--ghost" th:href="@{/}">Ke beranda</a>
+    <p class="text-muted">
+      Muat ulang halamannya dari menu, masuk lagi kalau diminta, lalu coba sekali lagi.
+    </p>
+
+    <div class="d-flex flex-wrap gap-2 mt-4">
+      <a class="gk-btn gk-btn--primary" th:href="@{/dashboard}">Kembali ke dasbor</a>
+      <a class="gk-btn gk-btn--ghost" th:href="@{/}">Ke beranda</a>
     </div>
-    <p class="tiny muted">
-      Yakin seharusnya boleh? Screenshot halaman ini dan kirim ke tim backend untuk dicek di log.
+
+    <p class="text-muted mt-4 mb-0" style="font-size:13px;" sec:authorize="isAuthenticated()">
+      Kalau seharusnya akunmu boleh masuk ke sini, kirim alamat halaman ini ke tim backend
+      supaya diperiksa di log server.
     </p>
   </div>
 </main>
 
-<footer th:replace="~{fragments/layout :: foot}"></footer>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 <script th:src="@{/js/app.js}"></script>
 </body>
 </html>

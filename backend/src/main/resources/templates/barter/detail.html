@@ -97,7 +97,7 @@
             </div>
 
             <!-- Actions based on status -->
-            <div class="d-flex gap-2 flex-wrap" th:if="${barter.status == 'PENDING'}">
+            <div class="d-flex gap-2 flex-wrap" th:if="${barter.status.name() == 'PENDING'}">
                 <form th:action="@{'/barter/' + ${barter.id} + '/accept'}" method="post" class="m-0">
                     <button type="submit" class="gk-btn text-white" style="background: var(--gk-success); border-color: var(--gk-success);">
                         <i class="bi bi-check-lg me-1"></i>Terima Barter
@@ -125,7 +125,7 @@
         </div>
 
         <!-- Schedule Session Form Card (Only visible if status is ACCEPTED) -->
-        <div th:if="${barter.status == 'ACCEPTED'}" class="gk-card p-4">
+        <div th:if="${barter.status.name() == 'ACCEPTED'}" class="gk-card p-4">
             <div class="gk-page-header mb-3" style="border-bottom: none; padding-bottom: 0;">
                 <div class="gk-page-header__icon" style="background: var(--gk-success-muted); color: var(--gk-success);">
                     <i class="bi bi-calendar-plus-fill"></i>
@@ -183,19 +183,19 @@
                 Status Barter Ini
             </h6>
             <div class="text-muted small mb-3" style="line-height: 1.6;">
-                <div th:if="${barter.status == 'PENDING'}">
+                <div th:if="${barter.status.name() == 'PENDING'}">
                     ⏳ <strong>Menunggu Konfirmasi:</strong> Permintaan sedang menunggu respon dari penerima.
                 </div>
-                <div th:if="${barter.status == 'ACCEPTED'}">
+                <div th:if="${barter.status.name() == 'ACCEPTED'}">
                     ✅ <strong>Disetujui:</strong> Barter sudah diterima! Silakan jadwalkan sesi belajar melalui formulir di samping.
                 </div>
-                <div th:if="${barter.status == 'REJECTED'}">
+                <div th:if="${barter.status.name() == 'REJECTED'}">
                     ❌ <strong>Ditolak:</strong> Permintaan barter tidak disetujui. Kamu dapat mencari partner lain.
                 </div>
-                <div th:if="${barter.status == 'CANCELLED'}">
+                <div th:if="${barter.status.name() == 'CANCELLED'}">
                     🚫 <strong>Dibatalkan:</strong> Permintaan telah dibatalkan.
                 </div>
-                <div th:if="${barter.status == 'COMPLETED'}">
+                <div th:if="${barter.status.name() == 'COMPLETED'}">
                     🏆 <strong>Selesai:</strong> Seluruh sesi barter telah tuntas dilakukan.
                 </div>
             </div>

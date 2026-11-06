@@ -232,7 +232,8 @@
                      th:text="${#strings.toUpperCase(#strings.substring(#authentication.principal.user.fullName, 0, 1))}">M</div>
                 <div class="min-w-0">
                     <div class="fw-bold text-truncate" style="font-size:15px;color:var(--gk-ink);" th:text="${#authentication.principal.user.fullName}">Nama</div>
-                    <div style="font-size:12px;color:var(--gk-ink-3);">Mahasiswa PENS</div>
+                    <div style="font-size:12px;color:var(--gk-ink-3);"
+                         th:text="${!#strings.isEmpty(#authentication.principal.user.campus)} ? ${#authentication.principal.user.campus} : 'Mahasiswa'">Mahasiswa</div>
                 </div>
             </div>
             <a th:href="@{/profile/edit}" class="gk-btn gk-btn--ghost gk-btn--block gk-btn--sm">

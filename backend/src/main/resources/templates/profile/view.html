@@ -39,7 +39,7 @@
                         <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
                             <h1 class="m-0 fw-bold" style="font-size: 22px; color: var(--gk-ink);" th:text="${user.fullName}">Nama Pengguna</h1>
                             <span class="gk-badge gk-badge--sm"
-                                  th:classappend="${user.status == 'ACTIVE'} ? 'gk-badge--success' : 'gk-badge--danger'"
+                                  th:classappend="${user.status.name() == 'ACTIVE'} ? 'gk-badge--success' : 'gk-badge--danger'"
                                   th:text="${user.status}">ACTIVE</span>
                             <span class="gk-badge gk-badge--neutral gk-badge--sm"
                                   th:if="${user.role != null}"
@@ -153,6 +153,46 @@
             </div>
         </div>
 
+        <!-- Ulasan yang Diterima -->
+        <div class="gk-card mb-4">
+            <div class="gk-card__header">
+                <h2 class="gk-card__title d-flex align-items-center gap-2">
+                    <i class="bi bi-star-fill text-warning" aria-hidden="true"></i>
+                    <span>Ulasan</span>
+                </h2>
+                <span th:if="${ratingAvg != null}" class="gk-badge gk-badge--warning"
+                      th:text="${ratingAvg} + ' / 5 · ' + ${ratingCount} + ' ulasan'">4.8 / 5 · 3 ulasan</span>
+            </div>
+
+            <p th:if="${#lists.isEmpty(reviews)}" class="text-muted p-2 m-0" style="font-size:14px;">
+                Belum ada ulasan. Reputasi mulai tercatat setelah sesi belajar pertama dinilai partnermu.
+            </p>
+
+            <ul th:unless="${#lists.isEmpty(reviews)}" class="list-unstyled m-0 p-2">
+                <li th:each="rv : ${reviews}" class="d-flex align-items-start gap-3 py-2"
+                    style="border-top: 1px solid var(--gk-border);">
+                    <div class="gk-avatar gk-avatar--sm flex-shrink-0"
+                         th:text="${#strings.toUpperCase(#strings.substring(rv.reviewerName,0,1))}">A</div>
+                    <div class="flex-grow-1 min-w-0">
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <span class="fw-bold" style="font-size:14px;color:var(--gk-ink);"
+                                  th:text="${rv.reviewerName}">Nama Pengulas</span>
+                            <span class="text-muted" style="font-size:12px;"
+                                  th:text="${#temporals.format(rv.createdAt, 'dd MMM yyyy')}">01 Jan 2026</span>
+                            <span class="d-inline-flex align-items-center gap-1 ms-auto" role="img"
+                                  th:aria-label="${rv.rating} + ' dari 5 bintang'">
+                                <i th:each="i : ${#numbers.sequence(1,5)}" class="bi"
+                                   th:classappend="${i <= rv.rating} ? 'bi-star-fill' : 'bi-star'"
+                                   th:style="${i <= rv.rating} ? 'color:var(--gk-warning);' : 'color:var(--gk-grey-300);'"></i>
+                            </span>
+                        </div>
+                        <p th:unless="${#strings.isEmpty(rv.comment)}" class="mb-0 text-muted" style="font-size:14px;"
+                           th:text="${rv.comment}">Isi ulasan</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
     </main>
 
     <!-- Right Sidebar Panel (~320px) -->
@@ -170,10 +210,20 @@
                 <span class="text-muted small">Keahlian Dicari</span>
                 <span class="gk-badge gk-badge--danger gk-badge--sm" th:text="${wantSkills.size()}">0</span>
             </div>
+            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom" style="border-color:var(--gk-border) !important;">
+                <span class="text-muted" style="font-size:13px;">Karya Portofolio</span>
+                <span class="badge bg-secondary rounded-pill px-2" th:text="${portfolios.size()}">0</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom" style="border-color:var(--gk-border) !important;">
+                <span class="text-muted" style="font-size:13px;">Rating Rata-rata</span>
+                <span th:if="${ratingAvg != null}" class="gk-badge gk-badge--warning gk-badge--sm"
+                      th:text="${ratingAvg} + ' / 5 (' + ${ratingCount} + ')'">4.5 / 5 (3)</span>
+                <span th:if="${ratingAvg == null}" class="text-muted" style="font-size:13px;">Belum ada ulasan</span>
+            </div>
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <span class="text-muted small">Status Akun</span>
                 <span class="gk-badge gk-badge--sm"
-                      th:classappend="${user.status == 'ACTIVE'} ? 'gk-badge--success' : 'gk-badge--danger'"
+                      th:classappend="${user.status.name() == 'ACTIVE'} ? 'gk-badge--success' : 'gk-badge--danger'"
                       th:text="${user.status}">ACTIVE</span>
             </div>
 

@@ -3,8 +3,8 @@ spring:
     name: gakbisa-backend
 
   config:
-    # Baca .env lokal sebagai properties; placeholder ${DB_HOST} dan sejenisnya ikut terisi.
-    import: optional:file:.env[.properties]
+    # Nama berkas env diambil dari GAKBISA_ENV (diatur oleh start.ps1). Default ".env" = PostgreSQL lokal.
+    import: optional:file:${GAKBISA_ENV:.env}[.properties]
 
   datasource:
     # Nilainya diambil dari .env (lihat .env.example). DB_SSL_MODE: require untuk Supabase, disable untuk lokal.
@@ -50,7 +50,6 @@ server:
   port: 8080
 
 gakbisa:
-  seed-data: ${SEED_DATA:false}
   storage:
     base-url: ${SUPABASE_URL:}
     service-key: ${SUPABASE_SERVICE_KEY:}
@@ -59,5 +58,16 @@ gakbisa:
     allowed-mime-types: ${ALLOWED_MIME_TYPES:image/jpeg,image/png,image/webp,application/pdf}
 
 logging:
+  # Console dibuat ringkas: jam, tingkat, logger pendek. Timestamp lengkap dan PID panjang
+  # hanya berguna di berkas log server, bukan di terminal.
+  pattern:
+    console: "%d{HH:mm:ss} %-5level %-34.34logger{34} : %msg%n"
   level:
-    com.gakbisa: INFO
+    root: info
+    com.gakbisa: info
+    # Framework bicara banyak saat start normal; peringatannya tetap tampil kalau bermasalah.
+    org.springframework: warn
+    org.apache.catalina: warn
+    org.hibernate: warn
+    com.zaxxer.hikari: warn
+    org.thymeleaf: warn

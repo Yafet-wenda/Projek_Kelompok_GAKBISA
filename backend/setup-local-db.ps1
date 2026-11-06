@@ -79,4 +79,3 @@ if (-not $written) {
 
 Write-Host ''
 Write-Host 'SELESAI. Tabel-tabel GAKBISA dibuat otomatis oleh Flyway saat aplikasi start.' -ForegroundColor Green
-Write-Host 'Login demo setelah start: yafet@gakbisa.test / yafet123  (admin: admin@gakbisa.test / admin123)'

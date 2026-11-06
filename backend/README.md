@@ -24,14 +24,23 @@ cd "F:/wenda/Projek GAKBISA/backend"
 
 ## Menjalankan
 
-```bash
-cd "F:/wenda/Projek GAKBISA/backend"
+Satu perintah, dari terminal VS Code apa pun (posisinya di folder proyek, bukan di `backend`):
+
+```powershell
+.\run.cmd            # PostgreSQL lokal (backend\.env); cluster dev ikut dinyalakan
+.\run.cmd supa       # database Supabase milik Nando (backend\.env.supabase)
+```
+
+`run.cmd` hanya memanggil `backend\start.ps1`, dan script itu menjalankan
+`mvnw.cmd spring-boot:run` seperti biasa. Berhenti dengan `Ctrl+C`.
+Kalau lebih suka tombol, Spring Boot Dashboard di VS Code juga bisa: klik play pada
+`gakbisa-backend`.
+
+Setup sekali di mesin baru:
+
+```powershell
+cd "F:\wenda\Projek GAKBISA\backend"
 cp .env.example .env   # lalu isi kredensial database
-
-# Jika JDK 25 belum terinstall global, arahkan JAVA_HOME ke JDK 25 (contoh: JDK portabel)
-export JAVA_HOME="C:/Users/Mahasiswa/tools/jdk-25.0.4.1+1"
-
-./mvnw.cmd spring-boot:run
 ```
 
 ### Database lokal (Opsi B — dipakai sementara)
@@ -46,7 +55,13 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\setup-local-db.ps1
 ```
 
 Tabel dibuat otomatis oleh Flyway saat aplikasi start (`V1__init_schema.sql`).
-Pindah ke Supabase nanti cukup ganti nilai `DB_*` di `.env`, tanpa mengubah kode.
+Script `setup-local-db.ps1` di atas mengasumsikan PostgreSQL di port **5432**; cluster dev
+yang dipakai sekarang ada di 5433, jadi jalankan script itu hanya saat menyiapkan mesin baru.
+
+Pindah ke database Supabase milik Nando tinggal isi `backend\.env.supabase` (berkas ini tidak
+ikut di-commit) lalu `.\run.cmd supa`. Berkas `.env` lokal dibiarkan utuh sebagai cadangan
+kalau sedang tidak ada internet.
+
 Upload portofolio baru berfungsi kalau `SUPABASE_URL` + `SUPABASE_SERVICE_KEY` terisi;
 kalau kosong, aplikasi tetap jalan dan hanya fitur itu yang menampilkan pesan
 "ruang penyimpanan berkas belum aktif".
@@ -66,14 +81,9 @@ jadi `ddl-auto: validate` aman.
 
 Aplikasi jalan di **http://localhost:8080** (sengaja bukan port 8000 agar tidak bentrok).
 
-Akun seed awal (dibuat otomatis saat `SEED_DATA=true`):
-
-| Email | Password | Role |
-|---|---|---|
-| admin@gakbisa.test | admin123 | ADMIN |
-| yafet@gakbisa.test | yafet123 | STUDENT |
-| faiz@gakbisa.test | faiz123 | STUDENT |
-| haudajun@gakbisa.test | haudajun123 | STUDENT |
+Database start dalam keadaan kosong. Aturan pengisiannya: pendaftar **pertama** otomatis
+menjadi ADMIN (akun berikutnya STUDENT), dan keahlian yang diketik pengguna di dasbor langsung
+masuk katalog di kategori `Lainnya` — admin yang memindahkannya ke kategori yang tepat.
 
 ## Konfigurasi environment (`.env`)
 
@@ -88,7 +98,6 @@ Akun seed awal (dibuat otomatis saat `SEED_DATA=true`):
 | `SUPABASE_URL` | `https://xxxx.supabase.co` | Basis URL project |
 | `SUPABASE_SERVICE_KEY` | `eyJ...` | Service role key untuk Storage API — **hanya di backend, jangan pernah dikirim ke browser** |
 | `STORAGE_BUCKET` | `portfolio-files` | Nama bucket portofolio |
-| `SEED_DATA` | `true` | Isi data awal (kategori, skill, akun demo) |
 
 > **Keamanan:** `.env` sudah ada di `.gitignore`. Jangan pernah commit kunci service.
 
@@ -96,7 +105,7 @@ Akun seed awal (dibuat otomatis saat `SEED_DATA=true`):
 
 ```
 src/main/java/com/gakbisa/backend/
-  config/      konfigurasi Beans, seed data
+  config/      konfigurasi Beans
   domain/      entity JPA + enum (10 tabel sesuai ERD proposal)
   repository/  Spring Data JPA repositories
   service/     logika bisnis: auth, profil, keahlian, matching, barter, sesi, ulasan, storage, admin
@@ -138,7 +147,7 @@ Postman: import koleksi manual dari `docs/api-examples.md` (endpoint REST `/api/
 - Halaman Thymeleaf mengonsumsi model dari `PageController`; data juga tersedia sebagai JSON di `/api/**`.
 - CSRF aktif: form POST wajib menyertakan `_csrf` (Thymeleaf hidden input). Untuk `fetch`,
   baca dari `<meta name="_csrf">` + `<meta name="_csrf_header">` yang sudah dipasang di
-  `templates/fragments/layout.html :: head`, jangan hardcode.
+  `templates/fragments/head.html :: head`, jangan hardcode.
 - Token CSRF **berganti setelah login**. Ambil ulang token dari halaman sesudah login,
   kalau tidak semua POST balasannya 403.
 - Meeting: `GET /api/sessions/{id}` mengembalikan `meetingUrl` **dan** `meetingRoom`
@@ -147,12 +156,19 @@ Postman: import koleksi manual dari `docs/api-examples.md` (endpoint REST `/api/
 
 ### Berkas tampilan yang sudah ada
 
+Tampilan dipakai bersama di atas Bootstrap 5 + design system kelompok; jangan menambah
+stylesheet sendiri tanpa alasan.
+
 | Berkas | Isi |
 |---|---|
-| `static/css/gakbisa.css` | design system: token warna, tipografi, kartu, tab, dialog, toast |
-| `templates/fragments/layout.html` | fragment `head`, `skip`, `topbar`, `foot` — dipakai semua halaman |
+| `static/css/design-system.css` | token warna & tipografi, komponen `gk-*` (kartu, tombol, badge, tab, toast, skeleton, empty state) |
+| `static/css/style.css` | gaya lama ala Facebook yang masih dipakai halaman auth |
+| `static/css/gk-navbar.css` / `gk-sidebar.css` / `gk-layout.css` | bilah atas, sidebar, dan kerangka tiga kolom |
+| `templates/fragments/head.html` | `<head>` bersama: Bootstrap CDN, CSS di atas, favicon, dan meta CSRF |
+| `templates/fragments/navbar.html` / `sidebar.html` / `footer.html` | navigasi (sudah menangani tamu), menu samping, dan kaki halaman |
 | `static/js/app.js` | `window.Gakbisa`: `api` (fetch + CSRF), `html` (auto-escape), `toast`, label & format tanggal |
-| `static/js/home.js` / `catalog.js` / `dashboard.js` / `forms.js` | logika tiap halaman |
+| `static/js/gk-navbar.js` / `gk-sidebar.js` / `forms.js` | perilaku bilah atas, drawer sidebar, dan konfirmasi form |
+| `static/js/catalog.js` | halaman `/catalog`: kategori, pencarian keahlian, galeri karya |
 
 `Gakbisa.html` mengembalikan string yang sudah di-escape, jadi aman langsung dipakai untuk
 `innerHTML` dan `.map(...).join("")`; nilai biasa tetap di-escape, jadi tidak perlu `esc()` manual.

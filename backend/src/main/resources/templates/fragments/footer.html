@@ -1,17 +1,18 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
 <footer th:fragment="footer" style="background: var(--gk-card-bg); border-top: 1px solid var(--gk-border); padding: 24px 0; margin-top: 32px; transition: background var(--gk-transition);">
     <div class="container-fluid">
         <div class="text-center" style="font-size: var(--gk-text-xs); color: var(--gk-ink-3); line-height: 1.6;">
             <div class="d-flex justify-content-center align-items-center gap-2 mb-1 flex-wrap">
-                <span class="fw-bold" style="color: var(--gk-ink-2);">GAKBISA</span> &middot;
-                <a href="#" class="text-decoration-none" style="color: var(--gk-ink-3);">Privasi</a> &middot;
-                <a href="#" class="text-decoration-none" style="color: var(--gk-ink-3);">Ketentuan</a> &middot;
-                <a href="#" class="text-decoration-none" style="color: var(--gk-ink-3);">Bantuan</a>
+                <a th:href="@{/catalog}" class="text-decoration-none" style="color: var(--gk-ink-3);">Katalog</a> &middot;
+                <a sec:authorize="isAuthenticated()" th:href="@{/profile/skills}"
+                   class="text-decoration-none" style="color: var(--gk-ink-3);">Keahlian</a>
+                <a sec:authorize="!isAuthenticated()" th:href="@{/register}"
+                   class="text-decoration-none" style="color: var(--gk-ink-3);">Daftar</a>
             </div>
-            <span>&copy; 2026 GAKBISA - Gantian Ajari, Kita Bisa!</span> &middot;
-            <span>Politeknik Elektronika Negeri Surabaya - PSDKU Lamongan</span>
+            <span>&copy; 2026 GAKBISA - Gantian Ajari, Kita Bisa!</span>
         </div>
     </div>
 </footer>

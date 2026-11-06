@@ -128,6 +128,39 @@ public class PortfolioService {
         return portfolios.findByUserId(userId);
     }
 
+    /** Karya hanya untuk pemiliknya (atau admin) — dipakai halaman edit, bukan untuk penonton. */
+    @Transactional(readOnly = true)
+    public Portfolio requireOwned(UUID actorId, UUID portfolioId) {
+        Portfolio p = portfolios.findById(portfolioId).orElseThrow(() -> new NotFoundException("Portofolio tidak ditemukan"));
+        if (!p.getUser().getId().equals(actorId) && !isAdmin(actorId)) {
+            throw new ForbiddenException("Karya ini bukan milikmu");
+        }
+        return p;
+    }
+
+    /**
+     * Mengubah metadata karya saja. Isi berkas tidak disentuh — menggantinya berarti
+     * mengunggah portofolio baru, karena path objek di storage ikut nama file lama.
+     */
+    @Transactional
+    public Portfolio update(UUID actorId, UUID portfolioId, String title, String description,
+                            PortfolioVisibility visibility) {
+        Portfolio p = requireOwned(actorId, portfolioId);
+        if (title == null || title.isBlank()) {
+            throw new ValidationException("Judul portofolio wajib diisi");
+        }
+        String bersih = title.trim();
+        if (bersih.length() > 150) {
+            throw new ValidationException("Judul portofolio maksimal 150 karakter");
+        }
+        p.setTitle(bersih);
+        p.setDescription(description == null || description.isBlank() ? null : description.trim());
+        if (visibility != null) {
+            p.setVisibility(visibility);
+        }
+        return portfolios.save(p);
+    }
+
     @Transactional
     public void delete(UUID actorId, UUID portfolioId) {
         Portfolio p = portfolios.findById(portfolioId).orElseThrow(() -> new NotFoundException("Portofolio tidak ditemukan"));
