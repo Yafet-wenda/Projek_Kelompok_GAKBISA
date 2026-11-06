@@ -5,6 +5,7 @@ import com.gakbisa.backend.domain.BarterStatus;
 import com.gakbisa.backend.domain.LearningSession;
 import com.gakbisa.backend.domain.Portfolio;
 import com.gakbisa.backend.domain.PortfolioVisibility;
+import com.gakbisa.backend.domain.ReportStatus;
 import com.gakbisa.backend.domain.SessionStatus;
 import com.gakbisa.backend.domain.SkillLevel;
 import com.gakbisa.backend.domain.SkillType;
@@ -22,10 +23,12 @@ import com.gakbisa.backend.repository.BarterRequestRepository;
 import com.gakbisa.backend.repository.LearningSessionRepository;
 import com.gakbisa.backend.repository.NotificationRepository;
 import com.gakbisa.backend.repository.PortfolioRepository;
+import com.gakbisa.backend.repository.ReportRepository;
 import com.gakbisa.backend.repository.SkillCategoryRepository;
 import com.gakbisa.backend.repository.SkillRepository;
 import com.gakbisa.backend.repository.UserRepository;
 import com.gakbisa.backend.service.AuthService;
+import com.gakbisa.backend.service.AdminService;
 import com.gakbisa.backend.service.BarterService;
 import com.gakbisa.backend.service.MatchingService;
 import com.gakbisa.backend.service.NotificationService;
@@ -70,6 +73,8 @@ public class PageController {
     private final NotificationService notificationService;
     private final NotificationRepository notificationRepository;
     private final ReviewService reviewService;
+    private final AdminService adminService;
+    private final ReportRepository reportRepository;
 
     public PageController(AuthService auth, UserService userService, UserRepository userRepository,
                           SkillCategoryRepository categoryRepository, SkillRepository skillRepository,
@@ -77,7 +82,8 @@ public class PageController {
                           BarterRequestRepository barterRequestRepository, PortfolioService portfolioService,
                           PortfolioRepository portfolioRepository, SessionService sessionService,
                           LearningSessionRepository sessionRepository, NotificationService notificationService,
-                          NotificationRepository notificationRepository, ReviewService reviewService) {
+                          NotificationRepository notificationRepository, ReviewService reviewService,
+                          AdminService adminService, ReportRepository reportRepository) {
         this.auth = auth;
         this.userService = userService;
         this.userRepository = userRepository;
@@ -93,6 +99,8 @@ public class PageController {
         this.notificationService = notificationService;
         this.notificationRepository = notificationRepository;
         this.reviewService = reviewService;
+        this.adminService = adminService;
+        this.reportRepository = reportRepository;
     }
 
     private UUID currentUserId() {
@@ -637,6 +645,27 @@ public class PageController {
     public String adminUsers(Model model) {
         model.addAttribute("users", userRepository.findAll());
         return "admin/users";
+    }
+
+    @GetMapping("/admin/categories")
+    public String adminCategories(Model model) {
+        model.addAttribute("categories", adminService.listCategories());
+        model.addAttribute("skills", skillRepository.findAll());
+        return "admin/categories";
+    }
+
+    @GetMapping("/admin/reports")
+    public String adminReports(@RequestParam(defaultValue = "OPEN") String status, Model model) {
+        ReportStatus reportStatus;
+        try {
+            reportStatus = ReportStatus.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            reportStatus = ReportStatus.OPEN;
+        }
+        model.addAttribute("reports", adminService.reportsByStatus(reportStatus));
+        model.addAttribute("currentStatus", reportStatus.name());
+        model.addAttribute("reportStatuses", ReportStatus.values());
+        return "admin/reports";
     }
 
     @GetMapping("/access-denied")

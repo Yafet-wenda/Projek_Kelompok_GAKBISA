@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/head :: head('Admin - Laporan')}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<div class="gk-layout container-fluid">
+    <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
+
+    <main class="gk-main">
+
+        <!-- Flash alerts -->
+        <div th:if="${success}" class="gk-alert gk-alert--success">
+            <i class="bi bi-check-circle-fill"></i>
+            <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="gk-alert gk-alert--danger">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            <span th:text="${error}"></span>
+        </div>
+
+        <!-- Page Header -->
+        <div class="gk-page-header">
+            <div class="gk-page-header__icon" style="background: var(--gk-danger-muted); color: var(--gk-danger);">
+                <i class="bi bi-flag-fill"></i>
+            </div>
+            <div class="flex-grow-1">
+                <h1 class="gk-page-header__title">Laporan</h1>
+                <p class="gk-page-header__subtitle">Tinjau dan moderasi laporan pelanggaran dari pengguna GAKBISA</p>
+            </div>
+            <div>
+                <span class="gk-badge gk-badge--danger" th:text="${reports.size()} + ' Laporan'">0 Laporan</span>
+            </div>
+        </div>
+
+        <!-- Status Filter Tabs -->
+        <div class="gk-card p-0 mb-4" style="overflow: hidden;">
+            <div class="d-flex border-bottom" style="border-color: var(--gk-border) !important; background: var(--gk-grey-50);">
+                <a th:each="status : ${reportStatuses}"
+                   th:href="@{/admin/reports(status=${status.name()})}"
+                   class="px-4 py-3 text-decoration-none fw-semibold d-flex align-items-center gap-2"
+                   style="font-size: var(--gk-text-sm); border-bottom: 2px solid transparent; transition: color 150ms, border-color 150ms;"
+                   th:classappend="${currentStatus == status.name()} ? 'text-primary border-primary' : 'text-muted'"
+                   th:style="${currentStatus == status.name()} ? 'border-bottom-color: var(--gk-primary) !important;' : ''">
+                    <i class="bi"
+                       th:classappend="${status.name() == 'OPEN'} ? 'bi-exclamation-circle' :
+                                       (${status.name() == 'REVIEWING'} ? 'bi-eye' :
+                                       (${status.name() == 'RESOLVED'} ? 'bi-check-circle' : 'bi-x-circle'))">
+                    </i>
+                    <span th:text="${status.name()}">STATUS</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Reports Table -->
+        <div class="gk-card p-0" style="overflow: hidden;">
+
+            <!-- Empty State -->
+            <div th:if="${#lists.isEmpty(reports)}" class="p-5">
+                <div class="gk-empty">
+                    <div class="gk-empty__icon"><i class="bi bi-flag"></i></div>
+                    <h3 class="gk-empty__title">Tidak Ada Laporan</h3>
+                    <p class="gk-empty__desc" th:text="'Tidak ada laporan dengan status ' + ${currentStatus} + ' saat ini.'">
+                        Tidak ada laporan saat ini.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div th:if="${!#lists.isEmpty(reports)}" class="table-responsive m-0">
+                <table class="table table-hover align-middle mb-0" style="font-size: var(--gk-text-sm);">
+                    <thead style="background: var(--gk-grey-50); border-bottom: 1px solid var(--gk-border);">
+                        <tr>
+                            <th class="py-3 px-3 text-muted text-uppercase fw-bold" style="font-size: 0.6875rem; letter-spacing: 0.05em;">Pelapor</th>
+                            <th class="py-3 px-3 text-muted text-uppercase fw-bold" style="font-size: 0.6875rem; letter-spacing: 0.05em;">Target</th>
+                            <th class="py-3 px-3 text-muted text-uppercase fw-bold" style="font-size: 0.6875rem; letter-spacing: 0.05em;">Alasan</th>
+                            <th class="py-3 px-3 text-muted text-uppercase fw-bold" style="font-size: 0.6875rem; letter-spacing: 0.05em;">Status</th>
+                            <th class="py-3 px-3 text-muted text-uppercase fw-bold" style="font-size: 0.6875rem; letter-spacing: 0.05em;">Tanggal</th>
+                            <th class="py-3 px-3 text-muted text-uppercase fw-bold text-end" style="font-size: 0.6875rem; letter-spacing: 0.05em;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="report : ${reports}" style="border-bottom: 1px solid var(--gk-border);">
+                            <!-- Pelapor -->
+                            <td class="py-3 px-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="gk-avatar gk-avatar--sm flex-shrink-0" style="width: 30px; height: 30px; font-size: 12px;">
+                                        <span th:text="${#strings.substring(report.reporter.fullName, 0, 1)}">A</span>
+                                    </div>
+                                    <div>
+                                        <span class="fw-semibold d-block" style="color: var(--gk-ink);" th:text="${report.reporter.fullName}">Nama</span>
+                                        <span class="text-muted small" th:text="${report.reporter.email}">email</span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Target -->
+                            <td class="py-3 px-3">
+                                <div class="d-flex align-items-center gap-1">
+                                    <span class="gk-badge gk-badge--sm"
+                                          th:classappend="${report.targetType.name() == 'USER'} ? 'gk-badge--primary' : 'gk-badge--warning'"
+                                          th:text="${report.targetType.name()}">USER</span>
+                                    <span class="text-muted small font-monospace" style="font-size: 11px;"
+                                          th:text="${#strings.substring(report.targetId.toString(), 0, 8)} + '...'">ID</span>
+                                </div>
+                            </td>
+
+                            <!-- Alasan -->
+                            <td class="py-3 px-3" style="max-width: 240px;">
+                                <span class="text-dark d-block" style="font-size: var(--gk-text-sm); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+                                      th:text="${report.reason}" th:title="${report.reason}">Alasan laporan...</span>
+                            </td>
+
+                            <!-- Status -->
+                            <td class="py-3 px-3">
+                                <span class="gk-badge gk-badge--sm"
+                                      th:classappend="${report.status.name() == 'OPEN'} ? 'gk-badge--danger' :
+                                                      (${report.status.name() == 'REVIEWING'} ? 'gk-badge--warning' :
+                                                      (${report.status.name() == 'RESOLVED'} ? 'gk-badge--success' : 'gk-badge--neutral'))"
+                                      th:text="${report.status.name()}">OPEN</span>
+                            </td>
+
+                            <!-- Tanggal -->
+                            <td class="py-3 px-3 text-muted small"
+                                th:text="${#temporals.format(report.createdAt, 'dd MMM yyyy', java.util.Locale.forLanguageTag('id'))}">01 Jan 2026</td>
+
+                            <!-- Aksi -->
+                            <td class="py-3 px-3 text-end">
+                                <div class="d-inline-flex gap-1">
+                                    <!-- Tandai Reviewing -->
+                                    <button th:if="${report.status.name() == 'OPEN'}"
+                                            class="gk-btn gk-btn--sm gk-btn--secondary"
+                                            style="padding: 4px 8px; font-size: 12px;"
+                                            th:data-report-id="${report.id}"
+                                            th:data-decision="REVIEWING"
+                                            onclick="reviewReport(this, 'REVIEWING', false, false)"
+                                            title="Tandai Sedang Ditinjau"
+                                            aria-label="Tandai laporan sedang ditinjau">
+                                        <i class="bi bi-eye" aria-hidden="true"></i>
+                                    </button>
+
+                                    <!-- Resolve -->
+                                    <button th:if="${report.status.name() != 'RESOLVED' and report.status.name() != 'DISMISSED'}"
+                                            class="gk-btn gk-btn--sm"
+                                            style="padding: 4px 8px; font-size: 12px; background: var(--gk-success); border-color: var(--gk-success); color: white;"
+                                            th:data-report-id="${report.id}"
+                                            onclick="reviewReport(this, 'RESOLVED', false, false)"
+                                            title="Selesaikan Laporan"
+                                            aria-label="Selesaikan laporan ini">
+                                        <i class="bi bi-check-lg" aria-hidden="true"></i>
+                                    </button>
+
+                                    <!-- Dismiss -->
+                                    <button th:if="${report.status.name() != 'RESOLVED' and report.status.name() != 'DISMISSED'}"
+                                            class="gk-btn gk-btn--danger gk-btn--sm"
+                                            style="padding: 4px 8px; font-size: 12px;"
+                                            th:data-report-id="${report.id}"
+                                            onclick="reviewReport(this, 'DISMISSED', false, false)"
+                                            title="Tolak Laporan"
+                                            aria-label="Tolak laporan ini">
+                                        <i class="bi bi-x-lg" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- RIGHT PANEL -->
+    <aside class="gk-sidebar-right">
+        <div class="gk-card p-3 mb-3">
+            <h6 class="fw-bold mb-3 d-flex align-items-center gap-2" style="font-size: var(--gk-text-sm); color: var(--gk-ink);">
+                <i class="bi bi-info-circle-fill text-primary"></i>
+                Alur Moderasi
+            </h6>
+            <div class="d-flex flex-column gap-3" style="font-size: var(--gk-text-xs); color: var(--gk-ink-2); line-height: 1.6;">
+                <div class="d-flex gap-2">
+                    <span class="gk-badge gk-badge--danger gk-badge--sm flex-shrink-0 mt-1">OPEN</span>
+                    <p class="m-0">Laporan baru yang belum ditangani. Perlu peninjauan segera.</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <span class="gk-badge gk-badge--warning gk-badge--sm flex-shrink-0 mt-1">REVIEWING</span>
+                    <p class="m-0">Laporan sedang dalam proses peninjauan oleh admin.</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <span class="gk-badge gk-badge--success gk-badge--sm flex-shrink-0 mt-1">RESOLVED</span>
+                    <p class="m-0">Laporan telah ditindaklanjuti dan diselesaikan.</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <span class="gk-badge gk-badge--neutral gk-badge--sm flex-shrink-0 mt-1">DISMISSED</span>
+                    <p class="m-0">Laporan ditolak karena tidak memenuhi kriteria pelanggaran.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="gk-card p-3">
+            <h6 class="fw-bold mb-2 d-flex align-items-center gap-2" style="font-size: var(--gk-text-sm); color: var(--gk-ink);">
+                <i class="bi bi-shield-exclamation text-warning"></i>
+                Kebijakan Moderasi
+            </h6>
+            <p class="text-muted m-0" style="font-size: var(--gk-text-xs); line-height: 1.6;">
+                Tindak laporan berdasarkan bukti yang valid. Peninjauan yang terburu-buru dapat merugikan pengguna yang tidak bersalah.
+            </p>
+        </div>
+    </aside>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/app.js}"></script>
+<script th:inline="javascript">
+/*<![CDATA[*/
+var csrfToken = /*[[${_csrf.token}]]*/ '';
+var csrfHeader = /*[[${_csrf.headerName}]]*/ 'X-CSRF-TOKEN';
+
+function reviewReport(btn, decision, hidePortfolio, suspendUser) {
+    var reportId = btn.getAttribute('data-report-id');
+    if (!reportId) return;
+
+    btn.disabled = true;
+
+    fetch('/api/admin/reports/' + reportId + '/review', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json', [csrfHeader]: csrfToken },
+        body: JSON.stringify({ decision: decision, hidePortfolio: hidePortfolio, suspendUser: suspendUser })
+    })
+    .then(function(r) {
+        if (!r.ok) throw new Error('Gagal');
+        return r.json();
+    })
+    .then(function() {
+        // Reload untuk muat status terbaru
+        window.location.reload();
+    })
+    .catch(function() {
+        btn.disabled = false;
+        alert('Gagal memperbarui status laporan. Coba lagi.');
+    });
+}
+/*]]>*/
+</script>
+</body>
+</html>
