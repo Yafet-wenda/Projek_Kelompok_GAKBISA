@@ -121,7 +121,7 @@ body {
   border-radius: var(--gk-radius-pill);
   padding: 0 14px;
   height: 38px;
-  width: 220px;
+  width: 260px;
   transition: width var(--gk-transition), border-color var(--gk-transition),
               box-shadow var(--gk-transition);
   /* Desktop: tampilkan; mobile: disembunyikan via media query */
@@ -130,7 +130,7 @@ body {
   border-color: var(--gk-primary);
   box-shadow: var(--gk-ring);
   background: var(--gk-grey-0);
-  width: 260px;
+  width: 320px;
 }
 
 .gk-navbar__search-icon {

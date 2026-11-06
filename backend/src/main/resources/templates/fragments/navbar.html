@@ -36,9 +36,8 @@
 
     <!-- Search bar (desktop only — muncul ≥ 768px) -->
     <div class="gk-navbar__search" sec:authorize="isAuthenticated()">
-      <label for="gk-nav-search" class="sr-only">Cari partner keahlian</label>
       <i class="bi bi-search gk-navbar__search-icon" aria-hidden="true"></i>
-      <form th:action="@{/matching}" method="get" role="search">
+      <form th:action="@{/matching}" method="get" role="search" class="d-flex align-items-center flex-grow-1 m-0" style="min-width:0;">
         <input id="gk-nav-search"
                type="search"
                name="keyword"
@@ -48,66 +47,6 @@
                aria-label="Cari partner keahlian">
       </form>
     </div>
-
-  </div>
-
-  <!-- ── Zona tengah: tab navigasi utama ───────────────────────────── -->
-  <div class="gk-navbar__center" sec:authorize="isAuthenticated()" aria-label="Menu utama">
-
-    <a th:href="@{/dashboard}"
-       class="gk-nav-tab"
-       data-path="/dashboard"
-       aria-label="Dashboard"
-       data-bs-toggle="tooltip"
-       data-bs-placement="bottom"
-       title="Dashboard">
-      <i class="bi bi-house-fill" aria-hidden="true"></i>
-      <span class="gk-nav-tab__label">Beranda</span>
-    </a>
-
-    <a th:href="@{/matching}"
-       class="gk-nav-tab"
-       data-path="/matching"
-       aria-label="Cari Partner"
-       data-bs-toggle="tooltip"
-       data-bs-placement="bottom"
-       title="Cari Partner">
-      <i class="bi bi-people-fill" aria-hidden="true"></i>
-      <span class="gk-nav-tab__label">Partner</span>
-    </a>
-
-    <a th:href="@{/barter}"
-       class="gk-nav-tab"
-       data-path="/barter"
-       aria-label="Permintaan Barter"
-       data-bs-toggle="tooltip"
-       data-bs-placement="bottom"
-       title="Permintaan Barter">
-      <i class="bi bi-arrow-left-right" aria-hidden="true"></i>
-      <span class="gk-nav-tab__label">Barter</span>
-    </a>
-
-    <a th:href="@{/sessions}"
-       class="gk-nav-tab"
-       data-path="/sessions"
-       aria-label="Sesi Belajar"
-       data-bs-toggle="tooltip"
-       data-bs-placement="bottom"
-       title="Sesi Belajar">
-      <i class="bi bi-calendar-event-fill" aria-hidden="true"></i>
-      <span class="gk-nav-tab__label">Sesi</span>
-    </a>
-
-    <a th:href="@{/portfolio}"
-       class="gk-nav-tab"
-       data-path="/portfolio"
-       aria-label="Portofolio Saya"
-       data-bs-toggle="tooltip"
-       data-bs-placement="bottom"
-       title="Portofolio">
-      <i class="bi bi-collection-fill" aria-hidden="true"></i>
-      <span class="gk-nav-tab__label">Portofolio</span>
-    </a>
 
   </div>
 
