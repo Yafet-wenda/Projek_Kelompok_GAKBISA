@@ -47,19 +47,9 @@
             </div>
             <div th:if="${success}" class="fb-alert fb-alert-success mb-3" th:text="${success}"></div>
 
-            <form th:action="@{/login}" method="post">
-                <div class="mb-3">
-                    <input type="email" name="username" class="form-control form-control-lg"
-                           placeholder="Email" required autofocus>
-                </div>
-                <div class="mb-3">
-                    <input type="password" name="password" class="form-control form-control-lg"
-                           placeholder="Password" required>
-                </div>
-                <button type="submit" class="btn btn-primary w-100 fw-bold" style="font-size:18px;padding:10px;">
-                    Masuk
-                </button>
-            </form>
+            <a th:href="@{/login}" class="btn btn-primary w-100 fw-bold" style="font-size:18px;padding:10px;">
+                Masuk
+            </a>
             <hr style="margin:16px 0;border-color:#CED0D4;">
             <div class="text-center">
                 <a th:href="@{/register}"
