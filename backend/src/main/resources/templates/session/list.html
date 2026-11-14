@@ -116,7 +116,11 @@
                         <span>Lihat Detail</span>
                     </a>
                     <a th:if="${sesi.status.name() == 'SCHEDULED' or sesi.status.name() == 'ONGOING'}"
+<<<<<<< HEAD
                        th:href="${sesi.meetingProvider.name() == 'JITSI'} ? @{'/sessions/' + ${sesi.id}} : ${sesi.meetingUrl}"
+=======
+                       th:href="${sesi.meetingProvider.name() == 'JITSI'} ? 'https://meet.jit.si/' + ${sesi.meetingRoom} : ${sesi.meetingUrl}"
+>>>>>>> origin/main
                        class="gk-btn gk-btn--success gk-btn--sm" target="_blank" rel="noopener noreferrer">
                         <i class="bi bi-camera-video-fill" aria-hidden="true"></i>
                         <span>Gabung Meeting</span>

@@ -3,8 +3,13 @@ spring:
     name: gakbisa-backend
 
   config:
+<<<<<<< HEAD
     # Baca .env lokal sebagai properties; placeholder ${DB_HOST} dan sejenisnya ikut terisi.
     import: optional:file:.env[.properties]
+=======
+    # Nama berkas env diambil dari GAKBISA_ENV (diatur oleh start.ps1). Default ".env" = PostgreSQL lokal.
+    import: optional:file:${GAKBISA_ENV:.env}[.properties]
+>>>>>>> origin/main
 
   datasource:
     # Nilainya diambil dari .env (lihat .env.example). DB_SSL_MODE: require untuk Supabase, disable untuk lokal.
@@ -50,13 +55,17 @@ server:
   port: 8080
 
 gakbisa:
+<<<<<<< HEAD
   seed-data: ${SEED_DATA:false}
+=======
+>>>>>>> origin/main
   storage:
     base-url: ${SUPABASE_URL:}
     service-key: ${SUPABASE_SERVICE_KEY:}
     bucket: ${STORAGE_BUCKET:portfolio-files}
     max-file-size-bytes: ${MAX_FILE_SIZE_BYTES:10485760}
     allowed-mime-types: ${ALLOWED_MIME_TYPES:image/jpeg,image/png,image/webp,application/pdf}
+<<<<<<< HEAD
   # Jitsi as a Service (meeting tertanam di halaman). Kosong = tombol membuka Jitsi publik di tab baru.
   jaas:
     app-id: ${JAAS_APP_ID:}
@@ -66,3 +75,20 @@ gakbisa:
 logging:
   level:
     com.gakbisa: INFO
+=======
+
+logging:
+  # Console dibuat ringkas: jam, tingkat, logger pendek. Timestamp lengkap dan PID panjang
+  # hanya berguna di berkas log server, bukan di terminal.
+  pattern:
+    console: "%d{HH:mm:ss} %-5level %-34.34logger{34} : %msg%n"
+  level:
+    root: info
+    com.gakbisa: info
+    # Framework bicara banyak saat start normal; peringatannya tetap tampil kalau bermasalah.
+    org.springframework: warn
+    org.apache.catalina: warn
+    org.hibernate: warn
+    com.zaxxer.hikari: warn
+    org.thymeleaf: warn
+>>>>>>> origin/main

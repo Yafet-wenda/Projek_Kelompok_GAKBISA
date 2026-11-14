@@ -108,6 +108,24 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
+<<<<<<< HEAD
+=======
+  // Jitsi Meet integration
+  var jitsiContainer = document.getElementById('jitsi-meet-container');
+  if (jitsiContainer) {
+    var roomName = jitsiContainer.dataset.room;
+    var displayName = jitsiContainer.dataset.name || 'GAKBISA User';
+    if (roomName && typeof JitsiMeetExternalAPI !== 'undefined') {
+      var api = new JitsiMeetExternalAPI('meet.jit.si', {
+        roomName: roomName,
+        parentNode: jitsiContainer,
+        userInfo: { displayName: displayName },
+        configOverwrite: { startWithAudioMuted: false, startWithVideoMuted: false },
+        interfaceConfigOverwrite: { TOOLBAR_BUTTONS: ['microphone','camera','chat','desktop','fullscreen','hangup'] }
+      });
+    }
+  }
+>>>>>>> origin/main
 });
 /* ============================================================
    GAKBISA: util bersama untuk halaman berbasis fetch.

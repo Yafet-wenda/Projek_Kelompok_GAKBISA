@@ -25,7 +25,11 @@
                     <label class="form-label fw-bold small text-muted text-uppercase mb-1" style="letter-spacing: 0.05em;">
                         Judul Karya <span class="text-danger">*</span>
                     </label>
+<<<<<<< HEAD
                     <input type="text" name="title" class="form-control"
+=======
+                    <input type="text" name="title" class="form-control" maxlength="150"
+>>>>>>> origin/main
                            style="border-radius: var(--gk-radius); border-color: var(--gk-border);"
                            th:value="${portfolio.title}" required>
                 </div>
@@ -49,7 +53,11 @@
                         <label class="p-3 rounded-3 flex-grow-1 d-flex align-items-center gap-3 cursor-pointer"
                                style="border: 1px solid var(--gk-border); background: var(--gk-grey-50); cursor: pointer;">
                             <input class="form-check-input mt-0" type="radio" name="visibility" value="PUBLIC"
+<<<<<<< HEAD
                                    id="visPublic" th:checked="${portfolio.visibility == 'PUBLIC'}">
+=======
+                                   id="visPublic" th:checked="${portfolio.visibility.name() == 'PUBLIC'}">
+>>>>>>> origin/main
                             <div>
                                 <div class="fw-bold small d-flex align-items-center gap-1" style="color: var(--gk-ink);">
                                     <i class="bi bi-globe2 text-success"></i>
@@ -61,7 +69,11 @@
                         <label class="p-3 rounded-3 flex-grow-1 d-flex align-items-center gap-3 cursor-pointer"
                                style="border: 1px solid var(--gk-border); background: var(--gk-grey-50); cursor: pointer;">
                             <input class="form-check-input mt-0" type="radio" name="visibility" value="PRIVATE"
+<<<<<<< HEAD
                                    id="visPrivate" th:checked="${portfolio.visibility == 'PRIVATE'}">
+=======
+                                   id="visPrivate" th:checked="${portfolio.visibility.name() == 'PRIVATE'}">
+>>>>>>> origin/main
                             <div>
                                 <div class="fw-bold small d-flex align-items-center gap-1" style="color: var(--gk-ink);">
                                     <i class="bi bi-lock-fill text-secondary"></i>

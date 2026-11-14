@@ -1,10 +1,20 @@
 package com.gakbisa.backend.controller;
 
+<<<<<<< HEAD
+=======
+import com.gakbisa.backend.domain.AccountStatus;
+>>>>>>> origin/main
 import com.gakbisa.backend.domain.BarterRequest;
 import com.gakbisa.backend.domain.BarterStatus;
 import com.gakbisa.backend.domain.LearningSession;
 import com.gakbisa.backend.domain.Portfolio;
 import com.gakbisa.backend.domain.PortfolioVisibility;
+<<<<<<< HEAD
+=======
+import com.gakbisa.backend.domain.Report;
+import com.gakbisa.backend.domain.ReportStatus;
+import com.gakbisa.backend.domain.ReportTargetType;
+>>>>>>> origin/main
 import com.gakbisa.backend.domain.SessionStatus;
 import com.gakbisa.backend.domain.SkillLevel;
 import com.gakbisa.backend.domain.SkillType;
@@ -15,7 +25,13 @@ import com.gakbisa.backend.dto.MatchResult;
 import com.gakbisa.backend.dto.PortfolioCreateDto;
 import com.gakbisa.backend.dto.ProfileUpdateDto;
 import com.gakbisa.backend.dto.RegisterRequest;
+<<<<<<< HEAD
 import com.gakbisa.backend.dto.ReviewCreateRequest;
+=======
+import com.gakbisa.backend.dto.ReportRow;
+import com.gakbisa.backend.dto.ReviewCreateRequest;
+import com.gakbisa.backend.dto.ReviewRow;
+>>>>>>> origin/main
 import com.gakbisa.backend.dto.SessionCreateRequest;
 import com.gakbisa.backend.dto.UserSkillDto;
 import com.gakbisa.backend.repository.BarterRequestRepository;
@@ -25,6 +41,10 @@ import com.gakbisa.backend.repository.PortfolioRepository;
 import com.gakbisa.backend.repository.SkillCategoryRepository;
 import com.gakbisa.backend.repository.SkillRepository;
 import com.gakbisa.backend.repository.UserRepository;
+<<<<<<< HEAD
+=======
+import com.gakbisa.backend.service.AdminService;
+>>>>>>> origin/main
 import com.gakbisa.backend.service.AuthService;
 import com.gakbisa.backend.service.BarterService;
 import com.gakbisa.backend.service.MatchingService;
@@ -41,6 +61,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+<<<<<<< HEAD
+=======
+import org.springframework.web.bind.annotation.RequestMapping;
+>>>>>>> origin/main
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -50,6 +74,10 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
+<<<<<<< HEAD
+=======
+import java.util.Map;
+>>>>>>> origin/main
 import java.util.UUID;
 
 @Controller
@@ -70,6 +98,10 @@ public class PageController {
     private final NotificationService notificationService;
     private final NotificationRepository notificationRepository;
     private final ReviewService reviewService;
+<<<<<<< HEAD
+=======
+    private final AdminService adminService;
+>>>>>>> origin/main
 
     public PageController(AuthService auth, UserService userService, UserRepository userRepository,
                           SkillCategoryRepository categoryRepository, SkillRepository skillRepository,
@@ -77,7 +109,12 @@ public class PageController {
                           BarterRequestRepository barterRequestRepository, PortfolioService portfolioService,
                           PortfolioRepository portfolioRepository, SessionService sessionService,
                           LearningSessionRepository sessionRepository, NotificationService notificationService,
+<<<<<<< HEAD
                           NotificationRepository notificationRepository, ReviewService reviewService) {
+=======
+                          NotificationRepository notificationRepository, ReviewService reviewService,
+                          AdminService adminService) {
+>>>>>>> origin/main
         this.auth = auth;
         this.userService = userService;
         this.userRepository = userRepository;
@@ -93,6 +130,10 @@ public class PageController {
         this.notificationService = notificationService;
         this.notificationRepository = notificationRepository;
         this.reviewService = reviewService;
+<<<<<<< HEAD
+=======
+        this.adminService = adminService;
+>>>>>>> origin/main
     }
 
     private UUID currentUserId() {
@@ -120,24 +161,40 @@ public class PageController {
 
     @GetMapping("/login")
     public String login() {
+<<<<<<< HEAD
         return "login";
+=======
+        return "auth/login";
+>>>>>>> origin/main
     }
 
     @GetMapping("/register")
     public String registerForm(Model model) {
         model.addAttribute("registerForm", new RegisterRequest(null, null, null, null));
+<<<<<<< HEAD
         return "register";
+=======
+        return "auth/register";
+>>>>>>> origin/main
     }
 
     @PostMapping("/register")
     public String register(@Valid @ModelAttribute("registerForm") RegisterRequest req, BindingResult errors, Model model) {
+<<<<<<< HEAD
         if (errors.hasErrors()) return "register";
+=======
+        if (errors.hasErrors()) return "auth/register";
+>>>>>>> origin/main
         try {
             auth.register(req);
             return "redirect:/login?registered";
         } catch (com.gakbisa.backend.config.AppExceptions.ValidationException e) {
             model.addAttribute("error", e.getMessage());
+<<<<<<< HEAD
             return "register";
+=======
+            return "auth/register";
+>>>>>>> origin/main
         }
     }
 
@@ -328,6 +385,11 @@ public class PageController {
         if (uid == null) return "redirect:/login";
         try {
             LearningSession s = sessionService.viewFor(uid, id);
+<<<<<<< HEAD
+=======
+            // Nama variabel "session" Reserved oleh Thymeleaf (sesi HTTP), jadi halaman
+            // ini pakai "sesi"; kalau tidak, halaman melempar 500 saat dirender.
+>>>>>>> origin/main
             model.addAttribute("sesi", s);
             return "session/detail";
         } catch (Exception e) {
@@ -460,6 +522,39 @@ public class PageController {
         }
     }
 
+<<<<<<< HEAD
+=======
+    @GetMapping("/portfolio/{id}/edit")
+    public String portfolioEdit(@PathVariable UUID id, Model model, RedirectAttributes ra) {
+        UUID uid = currentUserId();
+        if (uid == null) return "redirect:/login";
+        try {
+            model.addAttribute("portfolio", portfolioService.requireOwned(uid, id));
+            return "portfolio/edit";
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", messageOf(e, "Portofolio tidak ditemukan."));
+            return "redirect:/portfolio";
+        }
+    }
+
+    @PostMapping("/portfolio/{id}/edit")
+    public String portfolioEditPost(@PathVariable UUID id,
+                                    @RequestParam String title,
+                                    @RequestParam(required = false) String description,
+                                    @RequestParam PortfolioVisibility visibility,
+                                    RedirectAttributes ra) {
+        UUID uid = currentUserId();
+        if (uid == null) return "redirect:/login";
+        try {
+            portfolioService.update(uid, id, title, description, visibility);
+            ra.addFlashAttribute("success", "Perubahan portofolio tersimpan.");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", messageOf(e, "Gagal menyimpan perubahan."));
+        }
+        return "redirect:/portfolio";
+    }
+
+>>>>>>> origin/main
     @PostMapping("/portfolio/{id}/delete")
     public String deletePortfolio(@PathVariable UUID id, RedirectAttributes ra) {
         UUID uid = currentUserId();
@@ -531,7 +626,11 @@ public class PageController {
             model.addAttribute("wantSkills", Collections.emptyList());
             model.addAttribute("portfolios", Collections.emptyList());
         }
+<<<<<<< HEAD
         model.addAttribute("reviews", Collections.emptyList());
+=======
+        addReviews(model, uid);
+>>>>>>> origin/main
         return "profile/view";
     }
 
@@ -542,10 +641,32 @@ public class PageController {
         model.addAttribute("offerSkills", userService.listSkills(id, SkillType.OFFER));
         model.addAttribute("wantSkills", userService.listSkills(id, SkillType.WANT));
         model.addAttribute("portfolios", portfolioRepository.findByUserId(id));
+<<<<<<< HEAD
         model.addAttribute("reviews", Collections.emptyList());
         return "profile/view";
     }
 
+=======
+        addReviews(model, id);
+        return "profile/view";
+    }
+
+    /** Ulasan yang diterima plus rata-rata ratingnya; dipakai kartu "Ulasan" di profil. */
+    private void addReviews(Model model, UUID userId) {
+        if (userId == null) {
+            model.addAttribute("reviews", Collections.emptyList());
+            return;
+        }
+        model.addAttribute("reviews", reviewService.forUser(userId).stream()
+            .map(rv -> new ReviewRow(rv.getReviewer().getFullName(), rv.getRating(),
+                rv.getComment(), rv.getCreatedAt()))
+            .toList());
+        var reputasi = userService.reputation(userId);
+        model.addAttribute("ratingAvg", reputasi.averageRating());
+        model.addAttribute("ratingCount", reputasi.reviewCount());
+    }
+
+>>>>>>> origin/main
     @GetMapping("/profile/skills")
     public String profileSkills(Model model) {
         UUID uid = currentUserId();
@@ -557,12 +678,17 @@ public class PageController {
             model.addAttribute("wantSkills", Collections.emptyList());
         }
         model.addAttribute("categories", categoryRepository.findAll());
+<<<<<<< HEAD
         model.addAttribute("skills", skillRepository.findAll());
+=======
+        model.addAttribute("skills", skillRepository.findAllWithCategory());
+>>>>>>> origin/main
         model.addAttribute("userSkillDto", new UserSkillDto());
         return "profile/skills";
     }
 
     @PostMapping("/profile/skills")
+<<<<<<< HEAD
     public String addSkill(@Valid @ModelAttribute("userSkillDto") UserSkillDto dto, BindingResult errors) {
         UUID uid = currentUserId();
         if (uid != null && dto.getSkillId() != null) {
@@ -575,6 +701,35 @@ public class PageController {
                 return "redirect:/profile/skills?success";
             } catch (Exception e) {
                 return "redirect:/profile/skills?error=" + java.net.URLEncoder.encode(e.getMessage(), java.nio.charset.StandardCharsets.UTF_8);
+=======
+    public String addSkill(@Valid @ModelAttribute("userSkillDto") UserSkillDto dto, BindingResult errors,
+                           RedirectAttributes ra) {
+        UUID uid = currentUserId();
+        boolean adaPilihan = dto.getSkillId() != null;
+        boolean adaNama = dto.getSkillName() != null && !dto.getSkillName().isBlank();
+        if (!adaPilihan && !adaNama) {
+            // Id dari form bisa gagal terikat (bukan UUID), jadi dua-duanya kosong di sini.
+            ra.addFlashAttribute("error", "Pilih keahlian dari katalog atau tulis namanya");
+            return "redirect:/profile/skills";
+        }
+        if (uid != null) {
+            try {
+                SkillType st;
+                try {
+                    st = SkillType.valueOf(dto.getType());
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException("Tipe keahlian tidak dikenali");
+                }
+                SkillLevel sl = dto.getLevel() != null && !dto.getLevel().isBlank()
+                    ? SkillLevel.valueOf(dto.getLevel())
+                    : SkillLevel.BEGINNER;
+                userService.addSkill(uid, dto.getSkillId(), dto.getSkillName(), st, sl, dto.getNotes());
+                ra.addFlashAttribute("success", "Keahlian ditambahkan ke daftar kamu.");
+                return "redirect:/profile/skills";
+            } catch (Exception e) {
+                ra.addFlashAttribute("error", e.getMessage());
+                return "redirect:/profile/skills";
+>>>>>>> origin/main
             }
         }
         return "redirect:/profile/skills";
@@ -622,6 +777,7 @@ public class PageController {
 
     @GetMapping({"/admin", "/admin/dashboard"})
     public String adminDashboard(Model model) {
+<<<<<<< HEAD
         model.addAttribute("totalUsers", userRepository.count());
         model.addAttribute("totalPortfolios", portfolioRepository.count());
         model.addAttribute("totalBarters", barterRequestRepository.count());
@@ -630,6 +786,15 @@ public class PageController {
         model.addAttribute("pendingReports", 0);
         model.addAttribute("recentUsers", userRepository.findAll().stream().limit(5).toList());
         model.addAttribute("recentReports", Collections.emptyList());
+=======
+        Map<String, Long> ringkasan = adminService.dashboardSummary();
+        model.addAttribute("totalUsers", ringkasan.get("users"));
+        model.addAttribute("totalPortfolios", ringkasan.get("portfolios"));
+        model.addAttribute("totalBarters", ringkasan.get("barterRequests"));
+        model.addAttribute("totalSessions", sessionRepository.count());
+        model.addAttribute("openReports", ringkasan.get("openReports"));
+        model.addAttribute("recentReports", reportRows(adminService.pendingReports(5)));
+>>>>>>> origin/main
         return "admin/dashboard";
     }
 
@@ -639,7 +804,121 @@ public class PageController {
         return "admin/users";
     }
 
+<<<<<<< HEAD
     @GetMapping("/access-denied")
+=======
+    @PostMapping("/admin/users/{id}/suspend")
+    public String suspendUser(@PathVariable UUID id, RedirectAttributes ra) {
+        return changeAccountStatus(id, AccountStatus.SUSPENDED, ra, "Akun dibatasi.");
+    }
+
+    @PostMapping("/admin/users/{id}/activate")
+    public String activateUser(@PathVariable UUID id, RedirectAttributes ra) {
+        return changeAccountStatus(id, AccountStatus.ACTIVE, ra, "Akun diaktifkan kembali.");
+    }
+
+    private String changeAccountStatus(UUID targetId, AccountStatus status, RedirectAttributes ra, String ok) {
+        UUID uid = currentUserId();
+        if (uid == null) return "redirect:/login";
+        try {
+            User target = adminService.setAccountStatus(uid, targetId, status);
+            ra.addFlashAttribute("success", target.getFullName() + ": " + ok.toLowerCase());
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", messageOf(e, "Gagal mengubah status akun."));
+        }
+        return "redirect:/admin/users";
+    }
+
+    /** Antrean moderasi. Tanpa status, yang ditampilkan yang masih menunggu keputusan. */
+    @GetMapping("/admin/reports")
+    public String adminReports(@RequestParam(required = false) ReportStatus status, Model model) {
+        List<Report> laporan = status != null
+            ? adminService.reportsByStatus(status)
+            : adminService.pendingReports(50);
+        model.addAttribute("reports", reportRows(laporan));
+        model.addAttribute("activeStatus", status);
+        return "admin/reports";
+    }
+
+    @PostMapping("/admin/reports/{id}/review")
+    public String reviewReport(@PathVariable UUID id,
+                               @RequestParam ReportStatus decision,
+                               @RequestParam(defaultValue = "false") boolean hidePortfolio,
+                               @RequestParam(defaultValue = "false") boolean suspendUser,
+                               RedirectAttributes ra) {
+        UUID uid = currentUserId();
+        if (uid == null) return "redirect:/login";
+        try {
+            adminService.reviewReport(uid, id, decision, hidePortfolio, suspendUser);
+            ra.addFlashAttribute("success", decision == ReportStatus.DISMISSED
+                ? "Laporan diabaikan."
+                : "Laporan selesai ditindak.");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", messageOf(e, "Gagal memproses laporan."));
+        }
+        return "redirect:/admin/reports";
+    }
+
+    @GetMapping("/admin/categories")
+    public String adminCategories(Model model) {
+        model.addAttribute("categories", adminService.categoriesWithSkills());
+        return "admin/categories";
+    }
+
+    @PostMapping("/admin/categories")
+    public String addCategory(@RequestParam String name,
+                              @RequestParam(required = false) String description,
+                              RedirectAttributes ra) {
+        try {
+            var saved = adminService.upsertCategory(name, description);
+            ra.addFlashAttribute("success", "Kategori " + saved.getName() + " tersimpan.");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", messageOf(e, "Gagal menyimpan kategori."));
+        }
+        return "redirect:/admin/categories";
+    }
+
+    @PostMapping("/admin/categories/{id}/skills")
+    public String addCategorySkill(@PathVariable UUID id,
+                                   @RequestParam String name,
+                                   @RequestParam(required = false) String description,
+                                   RedirectAttributes ra) {
+        try {
+            var saved = adminService.upsertSkill(name, id, description);
+            ra.addFlashAttribute("success", "Keahlian " + saved.getName() + " tersimpan.");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", messageOf(e, "Gagal menyimpan keahlian."));
+        }
+        return "redirect:/admin/categories";
+    }
+
+    /** Nama pelapor dan sasaran diselesaikan di sini: open-in-view dimatikan, jadi
+     * template tidak bisa menarik relasi LAZY-nya sendiri. */
+    private List<ReportRow> reportRows(List<Report> laporan) {
+        return laporan.stream().map(r -> {
+            if (r.getTargetType() == ReportTargetType.USER) {
+                User target = userRepository.findById(r.getTargetId()).orElse(null);
+                return new ReportRow(r.getId(), r.getReason(), r.getReporter().getFullName(), r.getStatus().name(),
+                    "Pengguna", target == null ? "Sudah terhapus" : target.getFullName(),
+                    target == null ? null : "/profile/" + target.getId(), r.getCreatedAt());
+            }
+            String judul = portfolioRepository.findById(r.getTargetId())
+                .map(Portfolio::getTitle).orElse("Sudah terhapus");
+            return new ReportRow(r.getId(), r.getReason(), r.getReporter().getFullName(), r.getStatus().name(),
+                "Portofolio", judul, null, r.getCreatedAt());
+        }).toList();
+    }
+
+    private String messageOf(Exception e, String fallback) {
+        return e.getMessage() != null && !e.getMessage().isBlank() ? e.getMessage() : fallback;
+    }
+
+    /**
+     * Ditampilkan accessDeniedHandler lewat request dispatcher include, jadi harus menerima
+     * metode asal: 403 dari form POST kalau hanya dipetakan ke GET akan berakhir halaman kosong.
+     */
+    @RequestMapping("/access-denied")
+>>>>>>> origin/main
     public String denied() {
         return "denied";
     }

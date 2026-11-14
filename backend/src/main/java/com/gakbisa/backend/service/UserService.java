@@ -3,12 +3,21 @@ package com.gakbisa.backend.service;
 import com.gakbisa.backend.config.AppExceptions.ForbiddenException;
 import com.gakbisa.backend.config.AppExceptions.NotFoundException;
 import com.gakbisa.backend.config.AppExceptions.ValidationException;
+<<<<<<< HEAD
+=======
+import com.gakbisa.backend.domain.Skill;
+import com.gakbisa.backend.domain.SkillCategory;
+>>>>>>> origin/main
 import com.gakbisa.backend.domain.SkillLevel;
 import com.gakbisa.backend.domain.SkillType;
 import com.gakbisa.backend.domain.User;
 import com.gakbisa.backend.domain.UserSkill;
 import com.gakbisa.backend.repository.PortfolioRepository;
 import com.gakbisa.backend.repository.ReviewRepository;
+<<<<<<< HEAD
+=======
+import com.gakbisa.backend.repository.SkillCategoryRepository;
+>>>>>>> origin/main
 import com.gakbisa.backend.repository.SkillRepository;
 import com.gakbisa.backend.repository.UserRepository;
 import com.gakbisa.backend.repository.UserSkillRepository;
@@ -24,14 +33,26 @@ public class UserService {
     private final UserRepository users;
     private final UserSkillRepository userSkills;
     private final SkillRepository skills;
+<<<<<<< HEAD
+=======
+    private final SkillCategoryRepository categories;
+>>>>>>> origin/main
     private final PortfolioRepository portfolios;
     private final ReviewRepository reviews;
 
     public UserService(UserRepository users, UserSkillRepository userSkills, SkillRepository skills,
+<<<<<<< HEAD
                        PortfolioRepository portfolios, ReviewRepository reviews) {
         this.users = users;
         this.userSkills = userSkills;
         this.skills = skills;
+=======
+                       SkillCategoryRepository categories, PortfolioRepository portfolios, ReviewRepository reviews) {
+        this.users = users;
+        this.userSkills = userSkills;
+        this.skills = skills;
+        this.categories = categories;
+>>>>>>> origin/main
         this.portfolios = portfolios;
         this.reviews = reviews;
     }
@@ -64,6 +85,7 @@ public class UserService {
 
     /** Tambah keahlian OFFER/WANT beserta level dan catatan. */
     @Transactional
+<<<<<<< HEAD
     public UserSkill addSkill(UUID userId, UUID skillId, SkillType type, SkillLevel level, String notes) {
         User u = require(userId);
         SkillLevel lv = level == null ? SkillLevel.BEGINNER : level;
@@ -74,30 +96,87 @@ public class UserService {
         us.setUser(u);
         us.setSkill(skills.findById(skillId)
             .orElseThrow(() -> new NotFoundException("Keahlian tidak ditemukan")));
+=======
+    public UserSkill addSkill(UUID userId, UUID skillId, String skillName,
+                              SkillType type, SkillLevel level, String notes) {
+        User u = require(userId);
+        Skill skill = resolveSkill(skillId, skillName);
+        SkillLevel lv = level == null ? SkillLevel.BEGINNER : level;
+        if (userSkills.existsByUserIdAndSkill_IdAndType(userId, skill.getId(), type)) {
+            throw new ValidationException("Keahlian itu sudah ada di daftar kamu");
+        }
+        UserSkill us = new UserSkill();
+        us.setUser(u);
+        us.setSkill(skill);
+>>>>>>> origin/main
         us.setType(type);
         us.setLevel(lv);
         us.setNotes(notes);
         return userSkills.save(us);
     }
 
+<<<<<<< HEAD
+=======
+    /**
+     * Keahlian bisa dipilih dari katalog (skillId) atau ditulis langsung (skillName).
+     * Nama baru yang belum ada di katalog dibuat di kategori "Lainnya" supaya pengguna
+     * tidak perlu menunggu admin; admin tetap yang menentukan kategori akhirnya.
+     */
+    private Skill resolveSkill(UUID skillId, String skillName) {
+        if (skillId != null) {
+            return skills.findById(skillId).orElseThrow(() -> new NotFoundException("Keahlian tidak ditemukan"));
+        }
+        if (skillName == null || skillName.isBlank()) {
+            throw new ValidationException("Pilih keahlian dari katalog atau tulis namanya");
+        }
+        String nama = skillName.trim();
+        return skills.findByNameIgnoreCase(nama).orElseGet(() -> skills.save(buatSkillBaru(nama)));
+    }
+
+    private Skill buatSkillBaru(String nama) {
+        SkillCategory lain = categories.findByNameIgnoreCase("Lainnya").orElseGet(() -> {
+            SkillCategory c = new SkillCategory();
+            c.setName("Lainnya");
+            c.setDescription("Keahlian yang diketik sendiri oleh pengguna; kategorinya belum dirapikan admin");
+            return categories.save(c);
+        });
+        Skill s = new Skill();
+        s.setName(nama);
+        s.setCategory(lain);
+        return s;
+    }
+
+>>>>>>> origin/main
     @Transactional
     public void removeSkill(UUID userId, UUID userSkillId) {
         UserSkill us = userSkills.findById(userSkillId)
             .orElseThrow(() -> new NotFoundException("Keahlian pengguna tidak ditemukan"));
         if (!us.getUser().getId().equals(userId)) {
+<<<<<<< HEAD
             throw new ForbiddenException("Keahlian bukan milik Anda");
+=======
+            throw new ForbiddenException("Keahlian itu bukan milikmu");
+>>>>>>> origin/main
         }
         userSkills.delete(us);
     }
 
+<<<<<<< HEAD
     /** Ringkasan reputasi untuk profil: rating rata-rata, jumlah ulasan, jumlah portofolio. */
+=======
+    /** Ringkasan reputasi untuk profil: rating rata-rata, jumlah ulasan yang diterima, jumlah portofolio. */
+>>>>>>> origin/main
     @Transactional(readOnly = true)
     public ReputationDto reputation(UUID userId) {
         require(userId);
         Double avg = reviews.averageRatingFor(userId);
         return new ReputationDto(
             avg == null ? null : Math.round(avg * 10) / 10.0,
+<<<<<<< HEAD
             reviews.countByReviewerIdOrRevieweeId(userId, userId),
+=======
+            reviews.countByRevieweeId(userId),
+>>>>>>> origin/main
             portfolios.countByUserId(userId)
         );
     }

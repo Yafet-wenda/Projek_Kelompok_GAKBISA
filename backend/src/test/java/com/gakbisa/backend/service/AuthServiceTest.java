@@ -32,6 +32,10 @@ class AuthServiceTest {
     @Test
     void registrasiEmailBaruSuksesDanPasswordDiHash() {
         when(users.existsByEmail(anyString())).thenReturn(false);
+<<<<<<< HEAD
+=======
+        when(users.count()).thenReturn(3L);
+>>>>>>> origin/main
         when(users.save(any(User.class))).thenAnswer(inv -> {
             User u = inv.getArgument(0);
             u.setId(java.util.UUID.randomUUID());
@@ -46,6 +50,24 @@ class AuthServiceTest {
     }
 
     @Test
+<<<<<<< HEAD
+=======
+    void pendaftarPertamaNaikJadiAdmin() {
+        when(users.existsByEmail(anyString())).thenReturn(false);
+        when(users.count()).thenReturn(0L);
+        when(users.save(any(User.class))).thenAnswer(inv -> {
+            User u = inv.getArgument(0);
+            u.setId(java.util.UUID.randomUUID());
+            return u;
+        });
+
+        var dto = service.register(new RegisterRequest("Yafet", "yafet@example.com", "rahasia123", null));
+
+        assertEquals(UserRole.ADMIN.name(), dto.role());
+    }
+
+    @Test
+>>>>>>> origin/main
     void registrasiEmailDuplikatDitolak() {
         when(users.existsByEmail("ada@gakbisa.test")).thenReturn(true);
 

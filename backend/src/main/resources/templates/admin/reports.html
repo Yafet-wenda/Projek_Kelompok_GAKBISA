@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Admin - Laporan & Moderasi')}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<div class="gk-layout container-fluid">
+    <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
+
+    <main class="gk-main">
+
+        <!-- Flash alerts -->
+        <div th:if="${success}" class="gk-alert gk-alert--success">
+            <i class="bi bi-check-circle-fill"></i>
+            <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="gk-alert gk-alert--danger">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            <span th:text="${error}"></span>
+        </div>
+
+        <!-- Page Header -->
+        <div class="gk-page-header">
+            <div class="gk-page-header__icon" style="background: var(--gk-danger-muted); color: var(--gk-danger);">
+                <i class="bi bi-flag-fill"></i>
+            </div>
+            <div class="flex-grow-1">
+                <h1 class="gk-page-header__title">Laporan &amp; Moderasi</h1>
+                <p class="gk-page-header__subtitle">Periksa laporan pengguna, lalu tutup dengan keputusan yang tepat</p>
+            </div>
+        </div>
+
+        <!-- Filter status -->
+        <div class="d-flex flex-wrap gap-2 mb-3">
+            <a th:href="@{/admin/reports}" class="gk-btn gk-btn--sm"
+               th:classappend="${activeStatus == null} ? 'gk-btn--primary' : 'gk-btn--secondary'">Menunggu</a>
+            <a th:href="@{/admin/reports(status='OPEN')}" class="gk-btn gk-btn--sm"
+               th:classappend="${activeStatus != null and activeStatus.name() == 'OPEN'} ? 'gk-btn--primary' : 'gk-btn--secondary'">Baru</a>
+            <a th:href="@{/admin/reports(status='REVIEWING')}" class="gk-btn gk-btn--sm"
+               th:classappend="${activeStatus != null and activeStatus.name() == 'REVIEWING'} ? 'gk-btn--primary' : 'gk-btn--secondary'">Ditinjau</a>
+            <a th:href="@{/admin/reports(status='RESOLVED')}" class="gk-btn gk-btn--sm"
+               th:classappend="${activeStatus != null and activeStatus.name() == 'RESOLVED'} ? 'gk-btn--primary' : 'gk-btn--secondary'">Selesai</a>
+            <a th:href="@{/admin/reports(status='DISMISSED')}" class="gk-btn gk-btn--sm"
+               th:classappend="${activeStatus != null and activeStatus.name() == 'DISMISSED'} ? 'gk-btn--primary' : 'gk-btn--secondary'">Diabaikan</a>
+        </div>
+
+        <div class="gk-card p-0" style="overflow: hidden;">
+            <!-- Empty state -->
+            <div th:if="${#lists.isEmpty(reports)}" class="p-4">
+                <div class="gk-empty">
+                    <div class="gk-empty__icon"><i class="bi bi-flag"></i></div>
+                    <h3 class="gk-empty__title">Tidak Ada Laporan</h3>
+                    <p class="gk-empty__desc" th:if="${activeStatus == null}">
+                        Belum ada laporan yang menunggu keputusan. Daftar ini terisi otomatis saat mahasiswa menandai karya atau pengguna.
+                    </p>
+                    <p class="gk-empty__desc" th:unless="${activeStatus == null}">
+                        Tidak ada laporan dengan status ini.
+                    </p>
+                </div>
+            </div>
+
+            <div th:unless="${#lists.isEmpty(reports)}" class="table-responsive m-0">
+                <table class="table table-hover align-middle mb-0" style="font-size: var(--gk-text-sm);">
+                    <thead style="background: var(--gk-grey-50); border-bottom: 1px solid var(--gk-border);">
+                        <tr>
+                            <th class="py-3 px-3 text-muted text-uppercase fw-bold" style="font-size: 0.6875rem; letter-spacing: 0.05em;">Alasan</th>
+                            <th class="py-3 px-3 text-muted text-uppercase fw-bold" style="font-size: 0.6875rem; letter-spacing: 0.05em;">Sasaran</th>
+                            <th class="py-3 px-3 text-muted text-uppercase fw-bold" style="font-size: 0.6875rem; letter-spacing: 0.05em;">Pelapor</th>
+                            <th class="py-3 px-3 text-muted text-uppercase fw-bold" style="font-size: 0.6875rem; letter-spacing: 0.05em;">Status</th>
+                            <th class="py-3 px-3 text-muted text-uppercase fw-bold text-end" style="font-size: 0.6875rem; letter-spacing: 0.05em;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="lap : ${reports}" style="border-bottom: 1px solid var(--gk-border);">
+                            <td class="py-3 px-3">
+                                <span class="d-block text-dark" th:text="${lap.reason}">Alasan laporan</span>
+                                <span class="text-muted" style="font-size: var(--gk-text-xs);"
+                                      th:text="'Masuk ' + ${#temporals.format(lap.createdAt, 'dd MMM yyyy, HH:mm')}">Masuk 01 Jan 2026</span>
+                            </td>
+                            <td class="py-3 px-3">
+                                <span class="d-block text-muted" style="font-size: var(--gk-text-xs);" th:text="${lap.targetKind}">Pengguna</span>
+                                <a th:if="${lap.targetUrl != null}" th:href="@{${lap.targetUrl}}"
+                                   class="fw-bold text-dark text-decoration-none" th:text="${lap.targetName}">Nama</a>
+                                <span th:if="${lap.targetUrl == null}" class="fw-bold text-dark" th:text="${lap.targetName}">Judul</span>
+                            </td>
+                            <td class="py-3 px-3 text-muted" th:text="${lap.reporterName}">Pelapor</td>
+                            <td class="py-3 px-3">
+                                <span class="gk-badge gk-badge--sm"
+                                      th:classappend="${lap.status == 'OPEN'} ? 'gk-badge--danger' : (${lap.status == 'REVIEWING'} ? 'gk-badge--warning' : (${lap.status == 'RESOLVED'} ? 'gk-badge--success' : 'gk-badge--neutral'))"
+                                      th:text="${lap.status}">OPEN</span>
+                            </td>
+                            <td class="py-3 px-3 text-end">
+                                <form th:if="${lap.pending}"
+                                      th:action="@{'/admin/reports/' + ${lap.id} + '/review'}"
+                                      method="post" class="d-inline-flex flex-column align-items-end gap-2 m-0">
+                                    <label th:if="${lap.targetKind == 'Pengguna'}" class="text-muted d-flex align-items-center gap-1 m-0"
+                                           style="font-size: var(--gk-text-xs);">
+                                        <input type="checkbox" name="suspendUser" value="true" class="form-check-input m-0">
+                                        Batasi akun
+                                    </label>
+                                    <label th:if="${lap.targetKind == 'Portofolio'}" class="text-muted d-flex align-items-center gap-1 m-0"
+                                           style="font-size: var(--gk-text-xs);">
+                                        <input type="checkbox" name="hidePortfolio" value="true" class="form-check-input m-0">
+                                        Sembunyikan karya
+                                    </label>
+                                    <div class="d-inline-flex gap-1">
+                                        <button type="submit" name="decision" value="RESOLVED"
+                                                class="gk-btn gk-btn--sm text-white"
+                                                style="background: var(--gk-success); border-color: var(--gk-success);"
+                                                data-confirm="Tutup laporan ini sebagai selesai?"
+                                                title="Tandai selesai">
+                                            <i class="bi bi-check2" aria-hidden="true"></i> Selesai
+                                        </button>
+                                        <button type="submit" name="decision" value="DISMISSED"
+                                                class="gk-btn gk-btn--secondary gk-btn--sm"
+                                                data-confirm="Abaikan laporan ini tanpa tindakan?"
+                                                title="Abaikan">
+                                            <i class="bi bi-x-lg" aria-hidden="true"></i> Abaikan
+                                        </button>
+                                    </div>
+                                </form>
+                                <span th:unless="${lap.pending}" class="text-muted" style="font-size: var(--gk-text-xs);">Sudah ditutup</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- RIGHT PANEL -->
+    <aside class="gk-sidebar-right">
+        <div class="gk-card p-3 mb-3">
+            <h6 class="fw-bold mb-3 d-flex align-items-center gap-2" style="font-size: var(--gk-text-sm); color: var(--gk-ink);">
+                <i class="bi bi-info-circle text-primary"></i>
+                Arti Status
+            </h6>
+            <div class="d-flex flex-column gap-2 text-muted small" style="font-size: var(--gk-text-xs); line-height: 1.6;">
+                <p class="m-0"><strong>Baru:</strong> laporan masuk, belum ada keputusan.</p>
+                <p class="m-0"><strong>Ditinju:</strong> admin sudah melihatnya tetapi tindakan belum selesai.</p>
+                <p class="m-0"><strong>Selesai:</strong> laporan ditindak; centang di baris menentukan karya disembunyikan atau akun dibatasi.</p>
+                <p class="m-0"><strong>Diabaikan:</strong> laporan dianggap tidak melanggar.</p>
+            </div>
+        </div>
+    </aside>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

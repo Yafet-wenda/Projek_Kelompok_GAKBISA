@@ -47,6 +47,7 @@
             </div>
             <div th:if="${success}" class="fb-alert fb-alert-success mb-3" th:text="${success}"></div>
 
+<<<<<<< HEAD
             <form th:action="@{/login}" method="post">
                 <div class="mb-3">
                     <input type="email" name="username" class="form-control form-control-lg"
@@ -60,6 +61,11 @@
                     Masuk
                 </button>
             </form>
+=======
+            <a th:href="@{/login}" class="btn btn-primary w-100 fw-bold" style="font-size:18px;padding:10px;">
+                Masuk
+            </a>
+>>>>>>> origin/main
             <hr style="margin:16px 0;border-color:#CED0D4;">
             <div class="text-center">
                 <a th:href="@{/register}"

@@ -9,6 +9,10 @@ import java.util.UUID;
 public class UserSkillDto {
 
     private UUID skillId;
+<<<<<<< HEAD
+=======
+    private String skillName;
+>>>>>>> origin/main
     private String type = "OFFER";
     private String level = "BEGINNER";
     private String notes;
@@ -30,6 +34,17 @@ public class UserSkillDto {
         this.skillId = skillId;
     }
 
+<<<<<<< HEAD
+=======
+    public String getSkillName() {
+        return skillName;
+    }
+
+    public void setSkillName(String skillName) {
+        this.skillName = skillName;
+    }
+
+>>>>>>> origin/main
     public String getType() {
         return type;
     }
