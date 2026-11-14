@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Logo GAKBISA: dua panah bertukar keahlian">
+  <rect x="2" y="2" width="60" height="60" rx="8" fill="#14663f"/>
+  <path d="M14 25h26" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+  <path d="M34 18l8 7-8 7" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M50 39H24" stroke="#a8d5bb" stroke-width="5" stroke-linecap="round"/>
+  <path d="M30 32l-8 7 8 7" fill="none" stroke="#a8d5bb" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

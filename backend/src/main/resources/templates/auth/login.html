@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Login')}"></head>
+<body style="background:#F0F2F5;padding-top:0;min-height:100vh;display:flex;flex-direction:column;">
+
+    <!-- Simple nav -->
+    <div style="background:#fff;padding:0 24px;height:56px;display:flex;align-items:center;box-shadow:0 2px 4px rgba(0,0,0,.08);">
+        <a th:href="@{/}" style="font-size:28px;font-weight:900;color:#1877F2;letter-spacing:-1px;text-decoration:none;">GAKBISA</a>
+    </div>
+
+    <!-- Login card -->
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;">
+        <div style="background:#fff;border-radius:12px;padding:28px;box-shadow:0 2px 16px rgba(0,0,0,0.12);width:400px;max-width:100%;">
+
+            <div th:if="${param.error}" class="fb-alert fb-alert-error">
+                <i class="bi bi-exclamation-circle-fill"></i>
+                <span>Email atau password salah. Coba lagi.</span>
+            </div>
+            <div th:if="${param.logout}" class="fb-alert fb-alert-success">
+                <i class="bi bi-check-circle-fill"></i>
+                <span>Anda telah berhasil logout.</span>
+            </div>
+            <div th:if="${success}" class="fb-alert fb-alert-success">
+                <i class="bi bi-check-circle-fill"></i>
+                <span th:text="${success}"></span>
+            </div>
+
+            <form th:action="@{/login}" method="post">
+                <div class="mb-3">
+                    <input type="email" name="username" class="form-control form-control-lg"
+                           placeholder="Email" required autofocus>
+                </div>
+                <div class="mb-3">
+                    <input type="password" name="password" class="form-control form-control-lg"
+                           placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 fw-bold" style="font-size:17px;padding:12px;">
+                    Masuk
+                </button>
+            </form>
+
+            <hr style="margin:16px 0;border-color:#CED0D4;">
+
+            <div class="text-center">
+                <p style="font-size:14px;color:#65676B;margin-bottom:12px;">Belum punya akun?</p>
+                <a th:href="@{/register}" class="btn btn-success fw-bold px-5" style="font-size:15px;">
+                    Buat Akun Baru
+                </a>
+            </div>
+        </div>
+
+        <p class="mt-4" style="font-size:12px;color:#65676B;text-align:center;">
+            &copy; 2026 GAKBISA &middot; Politeknik Elektronika Negeri Surabaya
+        </p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>
+

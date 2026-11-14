@@ -1,0 +1,630 @@
+/*
+ * ╔══════════════════════════════════════════════════════════════════════════╗
+ * ║  GAKBISA Navbar — gk-navbar.css                                          ║
+ * ║                                                                           ║
+ * ║  Dimuat setelah design-system.css (token --gk-*) dan style.css.          ║
+ * ║  Semua kelas baru pakai prefix .gk-navbar / .gk-nav-tab / .gk-bottom-nav ║
+ * ║  agar tidak bentrok dengan .fb-navbar yang sudah ada di halaman lain.    ║
+ * ╚══════════════════════════════════════════════════════════════════════════╝
+ *
+ *  Layout tiga zona:
+ *    [gk-navbar__left]  | [gk-navbar__center] | [gk-navbar__right]
+ *    logo + search      |  nav tabs            |  notif + avatar
+ *
+ *  Responsif:
+ *    ≥ 769px  → navbar lengkap, nav-center di tengah.
+ *    ≤ 768px  → nav-center tersembunyi; bottom-nav muncul di bawah layar.
+ *               search collapse di bawah navbar saat ikon diklik.
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §1 · NAVBAR SHELL
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Override lebar navbar-height agar semua halaman pakai 64px */
+:root {
+  --navbar-height: 64px;
+  --gk-navbar-height: 64px;
+  --gk-bottom-nav-height: 60px;
+}
+
+/* Offset badan halaman agar tidak tertutup navbar fixed */
+body {
+  padding-top: var(--gk-navbar-height) !important;
+}
+/* Di mobile juga perlu ruang bawah untuk bottom nav */
+@media (max-width: 768px) {
+  body { padding-bottom: var(--gk-bottom-nav-height); }
+}
+
+.gk-navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--gk-navbar-height);
+  z-index: var(--gk-z-sticky);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0;
+  padding: 0 16px;
+
+  background: var(--gk-grey-0);
+  border-bottom: 1px solid var(--gk-border);
+  box-shadow: 0 1px 4px rgba(16, 24, 40, .06);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §2 · KIRI: Logo + Search
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.gk-navbar__left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 0 0 auto;
+}
+
+/* ── Brand ── */
+.gk-navbar__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  flex-shrink: 0;
+  border-radius: var(--gk-radius);
+  padding: 2px 4px;
+  transition: background var(--gk-transition);
+}
+.gk-navbar__brand:hover {
+  background: var(--gk-primary-muted);
+}
+.gk-navbar__brand:focus-visible {
+  outline: none;
+  box-shadow: var(--gk-ring);
+}
+
+/* Kotak "G" bergradasi biru sebagai icon mark */
+.gk-navbar__brand-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--gk-primary) 0%, #0D4ED8 100%);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -.5px;
+  flex-shrink: 0;
+}
+
+.gk-navbar__brand-name {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -.5px;
+  color: var(--gk-ink);
+  line-height: 1;
+  /* Sembunyikan teks merek di layar sangat kecil agar logo tidak patah */
+}
+@media (max-width: 380px) {
+  .gk-navbar__brand-name { display: none; }
+}
+
+/* ── Search bar ── */
+.gk-navbar__search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--gk-grey-50);
+  border: 1px solid var(--gk-border);
+  border-radius: var(--gk-radius-pill);
+  padding: 0 14px;
+  height: 38px;
+  width: 220px;
+  transition: width var(--gk-transition), border-color var(--gk-transition),
+              box-shadow var(--gk-transition);
+  /* Desktop: tampilkan; mobile: disembunyikan via media query */
+}
+.gk-navbar__search:focus-within {
+  border-color: var(--gk-primary);
+  box-shadow: var(--gk-ring);
+  background: var(--gk-grey-0);
+  width: 260px;
+}
+
+.gk-navbar__search-icon {
+  color: var(--gk-ink-3);
+  font-size: 14px;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.gk-navbar__search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 14px;
+  color: var(--gk-ink);
+  line-height: 1.4;
+  min-width: 0;
+  /* Reset style.css yang mungkin override */
+  padding: 0;
+  width: 100%;
+  box-shadow: none;
+  min-height: unset;
+}
+.gk-navbar__search-input::placeholder {
+  color: var(--gk-ink-3);
+}
+
+/* Sembunyikan search bar di mobile (ada versi mobile tersendiri) */
+@media (max-width: 768px) {
+  .gk-navbar__search { display: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §3 · TENGAH: Nav tabs
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.gk-navbar__center {
+  display: flex;
+  align-items: stretch;        /* anak bisa mengisi tinggi penuh navbar */
+  justify-content: center;
+  gap: 2px;
+  flex: 1;
+  /* Batasi agar tidak terlalu melebar di layar lebar */
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+/* Sembunyikan di mobile — digantikan bottom nav */
+@media (max-width: 768px) {
+  .gk-navbar__center { display: none; }
+}
+
+/* ── Tiap tab ── */
+.gk-nav-tab {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 80px;
+  height: var(--gk-navbar-height);
+  padding: 0 12px;
+  text-decoration: none;
+  color: var(--gk-ink-3);
+  border-radius: 0;           /* full-height indicator gunakan ::after */
+  font-size: 22px;
+  transition: color var(--gk-transition), background var(--gk-transition);
+  cursor: pointer;
+}
+
+/* Label teks kecil di bawah ikon */
+.gk-nav-tab__label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .01em;
+  line-height: 1;
+}
+
+/* Indikator aktif: garis bawah tebal + warna primary */
+.gk-nav-tab::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 6px; right: 6px;
+  height: 3px;
+  background: var(--gk-primary);
+  border-radius: 3px 3px 0 0;
+  opacity: 0;
+  transition: opacity var(--gk-transition);
+}
+
+/* Hover state */
+.gk-nav-tab:hover {
+  color: var(--gk-primary);
+  background: var(--gk-primary-muted);
+  text-decoration: none;
+}
+
+/* Pill background pada hover untuk kesan modern */
+.gk-nav-tab:hover i {
+  filter: none;
+}
+
+/* Aktif: ditandai via JS dengan kelas .active */
+.gk-nav-tab.active {
+  color: var(--gk-primary);
+}
+.gk-nav-tab.active::after {
+  opacity: 1;
+}
+
+/* Focus visible */
+.gk-nav-tab:focus-visible {
+  outline: none;
+  box-shadow: inset var(--gk-ring);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §4 · KANAN: Action icons + avatar
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.gk-navbar__right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 0 0 auto;
+}
+
+/* ── Generic icon button (notif, search mobile) ── */
+.gk-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: var(--gk-grey-50);
+  color: var(--gk-ink-2);
+  font-size: 19px;
+  cursor: pointer;
+  transition: background var(--gk-transition), color var(--gk-transition);
+  position: relative;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.gk-icon-btn:hover {
+  background: var(--gk-border);
+  color: var(--gk-ink);
+  text-decoration: none;
+}
+.gk-icon-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--gk-ring);
+}
+
+/* ── Badge notifikasi ── */
+.gk-navbar__notif-badge {
+  position: absolute;
+  top: 1px; right: 1px;
+  min-width: 18px; height: 18px;
+  padding: 0 4px;
+  background: var(--gk-danger);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: var(--gk-radius-pill);
+  border: 2px solid var(--gk-grey-0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  pointer-events: none;
+}
+
+/* ── Avatar button ── */
+.gk-navbar__avatar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 2px solid var(--gk-border);
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: border-color var(--gk-transition), box-shadow var(--gk-transition);
+  flex-shrink: 0;
+}
+.gk-navbar__avatar-btn:hover {
+  border-color: var(--gk-primary);
+}
+.gk-navbar__avatar-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--gk-ring);
+}
+
+/* Avatar inside button — full size */
+.gk-navbar__avatar {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 50% !important;
+  font-size: 14px !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* ── Dropdown shell ── */
+.gk-dropdown {
+  border: 1px solid var(--gk-border) !important;
+  border-radius: var(--gk-radius-md) !important;
+  box-shadow: var(--gk-shadow-lg) !important;
+  padding: 8px !important;
+  background: var(--gk-grey-0) !important;
+  /* Override Bootstrap default */
+  min-width: 200px;
+}
+
+.gk-dropdown__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px 8px;
+}
+.gk-dropdown__title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--gk-ink);
+}
+.gk-dropdown__link-sm {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gk-primary);
+  text-decoration: none;
+}
+.gk-dropdown__link-sm:hover { color: var(--gk-primary-dark); }
+
+/* ── Dropdown item ── */
+.gk-dropdown__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: var(--gk-radius);
+  text-decoration: none !important;
+  color: var(--gk-ink) !important;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background var(--gk-transition);
+  cursor: pointer;
+  background: transparent;
+  width: 100%;
+}
+.gk-dropdown__item:hover {
+  background: var(--gk-grey-50);
+  color: var(--gk-ink) !important;
+}
+
+.gk-dropdown__item--profile {
+  padding: 10px;
+  margin-bottom: 2px;
+}
+
+.gk-dropdown__item--danger {
+  color: var(--gk-danger) !important;
+}
+.gk-dropdown__item--danger:hover {
+  background: var(--gk-danger-muted);
+  color: var(--gk-danger-dark) !important;
+}
+
+.gk-dropdown__item-icon {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  background: var(--gk-grey-50);
+  color: var(--gk-ink-2);
+}
+
+.gk-dropdown__item-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gk-ink);
+  line-height: 1.3;
+}
+.gk-dropdown__item-sub {
+  font-size: 12px;
+  color: var(--gk-ink-3);
+  margin-top: 1px;
+  line-height: 1.3;
+}
+
+/* ── Dark mode navbar (dipakai .fb-dashboard) ── */
+.fb-dashboard .gk-navbar {
+  background: #1e1f20;
+  border-bottom-color: #3a3b3c;
+  box-shadow: 0 1px 3px rgba(0,0,0,.35);
+}
+.fb-dashboard .gk-navbar__brand-name { color: #e4e6eb; }
+.fb-dashboard .gk-navbar__search {
+  background: #3a3b3c;
+  border-color: #4a4b4c;
+}
+.fb-dashboard .gk-navbar__search:focus-within {
+  background: #3a3b3c;
+  border-color: var(--gk-primary);
+}
+.fb-dashboard .gk-navbar__search-input { color: #e4e6eb; }
+.fb-dashboard .gk-navbar__search-input::placeholder { color: #b0b3b8; }
+.fb-dashboard .gk-navbar__search-icon { color: #b0b3b8; }
+.fb-dashboard .gk-nav-tab { color: #b0b3b8; }
+.fb-dashboard .gk-nav-tab:hover { color: #e4e6eb; background: #3a3b3c; }
+.fb-dashboard .gk-nav-tab.active { color: var(--gk-primary); }
+.fb-dashboard .gk-icon-btn { background: #3a3b3c; color: #e4e6eb; }
+.fb-dashboard .gk-icon-btn:hover { background: #4a4b4c; color: #fff; }
+.fb-dashboard .gk-navbar__avatar-btn { border-color: #4a4b4c; }
+.fb-dashboard .gk-navbar__notif-badge { border-color: #1e1f20; }
+.fb-dashboard .gk-dropdown {
+  background: #242526 !important;
+  border-color: #3a3b3c !important;
+}
+.fb-dashboard .gk-dropdown__title { color: #e4e6eb; }
+.fb-dashboard .gk-dropdown__item { color: #e4e6eb !important; }
+.fb-dashboard .gk-dropdown__item:hover { background: #3a3b3c; }
+.fb-dashboard .gk-dropdown__item-title { color: #e4e6eb; }
+.fb-dashboard .gk-dropdown__item-sub { color: #b0b3b8; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §5 · MOBILE SEARCH BAR (collapse bawah navbar)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.gk-mobile-search {
+  position: fixed;
+  top: var(--gk-navbar-height);
+  left: 0; right: 0;
+  z-index: calc(var(--gk-z-sticky) - 1);
+  background: var(--gk-grey-0);
+  border-bottom: 1px solid var(--gk-border);
+  padding: 8px 16px;
+  box-shadow: 0 4px 12px rgba(16, 24, 40, .10);
+  animation: gk-slidedown .2s ease;
+}
+.gk-mobile-search[hidden] { display: none !important; }
+
+.gk-mobile-search__form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--gk-grey-50);
+  border: 1px solid var(--gk-border);
+  border-radius: var(--gk-radius-pill);
+  padding: 0 14px;
+  height: 40px;
+}
+.gk-mobile-search__form:focus-within {
+  border-color: var(--gk-primary);
+  box-shadow: var(--gk-ring);
+}
+.gk-mobile-search__form i {
+  color: var(--gk-ink-3);
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.gk-mobile-search__input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 15px;
+  color: var(--gk-ink);
+  padding: 0;
+  min-height: unset;
+  box-shadow: none;
+}
+.gk-mobile-search__input::placeholder { color: var(--gk-ink-3); }
+.gk-mobile-search__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px; height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: var(--gk-grey-100);
+  color: var(--gk-ink-2);
+  font-size: 13px;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+  transition: background var(--gk-transition);
+}
+.gk-mobile-search__close:hover { background: var(--gk-border); }
+
+@keyframes gk-slidedown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §6 · BOTTOM NAVIGATION BAR (mobile ≤768px)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.gk-bottom-nav {
+  display: none; /* default: tersembunyi */
+}
+
+@media (max-width: 768px) {
+  .gk-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: var(--gk-bottom-nav-height);
+    z-index: var(--gk-z-sticky);
+    background: var(--gk-grey-0);
+    border-top: 1px solid var(--gk-border);
+    box-shadow: 0 -2px 8px rgba(16, 24, 40, .08);
+    align-items: stretch;
+    justify-content: space-around;
+  }
+}
+
+.gk-bottom-nav__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  flex: 1;
+  padding: 6px 4px 4px;
+  text-decoration: none;
+  color: var(--gk-ink-3);
+  font-size: 20px;
+  transition: color var(--gk-transition), background var(--gk-transition);
+  border-radius: 0;
+  position: relative;
+}
+.gk-bottom-nav__item span {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .01em;
+  line-height: 1;
+}
+
+/* Garis atas sebagai indikator aktif */
+.gk-bottom-nav__item::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 16px; right: 16px;
+  height: 3px;
+  border-radius: 0 0 3px 3px;
+  background: var(--gk-primary);
+  opacity: 0;
+  transition: opacity var(--gk-transition);
+}
+
+.gk-bottom-nav__item:hover {
+  color: var(--gk-primary);
+  background: var(--gk-primary-muted);
+  text-decoration: none;
+}
+.gk-bottom-nav__item.active {
+  color: var(--gk-primary);
+}
+.gk-bottom-nav__item.active::before { opacity: 1; }
+
+/* Dark mode bottom nav */
+.fb-dashboard .gk-bottom-nav {
+  background: #1e1f20;
+  border-top-color: #3a3b3c;
+}
+.fb-dashboard .gk-bottom-nav__item { color: #b0b3b8; }
+.fb-dashboard .gk-bottom-nav__item:hover { background: #3a3b3c; color: #e4e6eb; }
+.fb-dashboard .gk-bottom-nav__item.active { color: var(--gk-primary); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §7 · OVERRIDE fb-navbar HEIGHT agar konsisten (style.css pakai 56px lama)
+   ═══════════════════════════════════════════════════════════════════════════ */
+.fb-navbar {
+  height: var(--gk-navbar-height) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §8 · REDUCED MOTION
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .gk-navbar,
+  .gk-nav-tab,
+  .gk-nav-tab::after,
+  .gk-icon-btn,
+  .gk-navbar__avatar-btn,
+  .gk-bottom-nav__item,
+  .gk-mobile-search { transition-duration: .001ms !important; animation-duration: .001ms !important; }
+}
+

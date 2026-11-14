@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/head :: head('Selamat Datang')}"></head>
+<body class="fb-landing" style="padding-top:0;">
+
+    <!-- Minimal landing nav -->
+    <div class="landing-nav d-flex justify-content-between align-items-center px-4" style="height:56px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.08);position:fixed;top:0;left:0;right:0;z-index:999;">
+        <span class="landing-brand" style="font-size:32px;font-weight:900;color:#1877F2;letter-spacing:-2px;">GAKBISA</span>
+        <div class="d-flex gap-2">
+            <a th:href="@{/login}" class="btn btn-outline-primary btn-sm fw-semibold">Login</a>
+            <a th:href="@{/register}" class="btn btn-primary btn-sm fw-semibold">Daftar</a>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:80px 24px 40px;background:#F0F2F5;flex-wrap:wrap;gap:40px;">
+
+        <!-- Left: Hero text -->
+        <div style="max-width:480px;">
+            <h1 style="font-size:52px;font-weight:800;color:#1877F2;line-height:1.05;margin-bottom:16px;">
+                Gantian Ajari,<br>Kita Bisa!
+            </h1>
+            <p style="font-size:22px;color:#050505;line-height:1.5;margin-bottom:0;">
+                Platform pertukaran keahlian mahasiswa. Temukan partner belajar, tukar ilmu, dan kembangkan kemampuan bersama — <strong>gratis, selalu.</strong>
+            </p>
+            <div class="d-flex flex-wrap gap-3 mt-4">
+                <div class="d-flex align-items-center gap-2" style="font-size:14px;color:#65676B;">
+                    <i class="bi bi-people-fill text-primary"></i> Partner matching otomatis
+                </div>
+                <div class="d-flex align-items-center gap-2" style="font-size:14px;color:#65676B;">
+                    <i class="bi bi-camera-video-fill text-primary"></i> Video meeting terintegrasi
+                </div>
+                <div class="d-flex align-items-center gap-2" style="font-size:14px;color:#65676B;">
+                    <i class="bi bi-shield-check-fill text-primary"></i> Sistem barter terstruktur
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Login card (for unauthenticated) or redirect (for authenticated) -->
+        <div sec:authorize="!isAuthenticated()" class="login-card" style="background:#fff;border-radius:12px;padding:28px;box-shadow:0 2px 16px rgba(0,0,0,0.12);width:360px;min-width:300px;">
+            <div th:if="${param.error}" class="fb-alert fb-alert-error mb-3">
+                <i class="bi bi-exclamation-circle-fill"></i> Email atau password salah.
+            </div>
+            <div th:if="${param.logout}" class="fb-alert fb-alert-success mb-3">
+                <i class="bi bi-check-circle-fill"></i> Anda telah berhasil logout.
+            </div>
+            <div th:if="${success}" class="fb-alert fb-alert-success mb-3" th:text="${success}"></div>
+
+            <form th:action="@{/login}" method="post">
+                <div class="mb-3">
+                    <input type="email" name="username" class="form-control form-control-lg"
+                           placeholder="Email" required autofocus>
+                </div>
+                <div class="mb-3">
+                    <input type="password" name="password" class="form-control form-control-lg"
+                           placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 fw-bold" style="font-size:18px;padding:10px;">
+                    Masuk
+                </button>
+            </form>
+            <hr style="margin:16px 0;border-color:#CED0D4;">
+            <div class="text-center">
+                <a th:href="@{/register}"
+                   class="btn btn-success fw-bold px-4"
+                   style="font-size:16px;">
+                    Buat Akun Baru
+                </a>
+            </div>
+        </div>
+
+        <!-- Authenticated: redirect box -->
+        <div sec:authorize="isAuthenticated()" class="login-card" style="background:#fff;border-radius:12px;padding:28px;box-shadow:0 2px 16px rgba(0,0,0,0.12);width:360px;text-align:center;">
+            <i class="bi bi-check-circle-fill text-success" style="font-size:48px;display:block;margin-bottom:12px;"></i>
+            <h5 style="font-weight:700;">Anda sudah login!</h5>
+            <p style="color:#65676B;">Lanjutkan ke dashboard Anda.</p>
+            <a th:href="@{/dashboard}" class="btn btn-primary w-100 fw-bold" style="font-size:16px;">
+                Ke Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Feature cards at bottom -->
+    <div style="background:#fff;padding:40px 24px;">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="text-center p-4">
+                        <div style="width:64px;height:64px;border-radius:50%;background:#e7f3ff;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;color:#1877F2;">
+                            <i class="bi bi-person-badge-fill"></i>
+                        </div>
+                        <h5 class="fw-bold">Buat Profil Keahlian</h5>
+                        <p style="color:#65676B;font-size:14px;">Tampilkan keahlian yang kamu kuasai dan yang ingin kamu pelajari. Upload portofolio terbaikmu.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center p-4">
+                        <div style="width:64px;height:64px;border-radius:50%;background:#e7f3ff;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;color:#1877F2;">
+                            <i class="bi bi-cpu-fill"></i>
+                        </div>
+                        <h5 class="fw-bold">Matching Otomatis</h5>
+                        <p style="color:#65676B;font-size:14px;">Sistem kami mencocokan keahlian yang kamu tawarkan dengan kebutuhan belajar orang lain secara cerdas.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center p-4">
+                        <div style="width:64px;height:64px;border-radius:50%;background:#e7f3ff;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;color:#1877F2;">
+                            <i class="bi bi-camera-video-fill"></i>
+                        </div>
+                        <h5 class="fw-bold">Belajar via Video</h5>
+                        <p style="color:#65676B;font-size:14px;">Setelah sepakat barter, jadwalkan sesi dan belajar bersama lewat video meeting yang terintegrasi.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>
