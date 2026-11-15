@@ -30,6 +30,11 @@ public class GlobalExceptionHandler {
         return problem(HttpStatus.FORBIDDEN, "Akses ditolak", e.getMessage());
     }
 
+    @ExceptionHandler(AppExceptions.UnauthorizedException.class)
+    public ProblemDetail onUnauthorized(AppExceptions.UnauthorizedException e) {
+        return problem(HttpStatus.UNAUTHORIZED, "Belum login", e.getMessage());
+    }
+
     private ProblemDetail problem(HttpStatus status, String title, String detail) {
         ProblemDetail pd = ProblemDetail.forStatusAndDetail(status, detail);
         pd.setTitle(title);

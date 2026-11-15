@@ -21,14 +21,11 @@ public interface SkillRepository extends JpaRepository<Skill, UUID> {
     @EntityGraph(attributePaths = "category")
     Page<Skill> findAllBy(Pageable pageable);
 
-<<<<<<< HEAD
-=======
     /** Daftar lengkap untuk dropdown katalog: kategorinya ikut termuat. */
     @EntityGraph(attributePaths = "category")
     @Query("select s from Skill s order by s.name")
     List<Skill> findAllWithCategory();
 
->>>>>>> origin/main
     @EntityGraph(attributePaths = "category")
     Page<Skill> findByCategory_Id(UUID categoryId, Pageable pageable);
 

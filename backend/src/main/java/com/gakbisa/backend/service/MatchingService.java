@@ -112,6 +112,11 @@ public class MatchingService {
                 }
             }
 
+            // Kandidat tanpa satu pun irisan keahlian tidak direkomendasikan
+            // (pencarian manual per kategori tetap tersedia). Berhenti di sini agar query
+            // portofolio dan ulasan di bawah tidak dijalankan sia-sia untuk kandidat itu.
+            if (!skillRelated) continue;
+
             // 4) Kelengkapan profil/portofolio (5)
             long theirPortfolios = portfolios.countByUserId(other.getId());
             int profilePts = 0;
@@ -132,12 +137,8 @@ public class MatchingService {
                 reasons.add("Reputasi " + String.format("%.1f", avg) + "/5");
             }
 
-            // Kandidat tanpa satu pun irisan keahlian tidak direkomendasikan
-            // (pencarian manual per kategori tetap tersedia).
-            if (skillRelated) {
-                result.add(new Candidate(other.getId(), other.getFullName(), other.getCampus(),
-                    Math.min(score, 100), reasons));
-            }
+            result.add(new Candidate(other.getId(), other.getFullName(), other.getCampus(),
+                Math.min(score, 100), reasons));
         }
 
         result.sort((left, right) -> Integer.compare(right.score(), left.score()));

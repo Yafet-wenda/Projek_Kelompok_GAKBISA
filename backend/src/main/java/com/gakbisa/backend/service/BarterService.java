@@ -144,4 +144,14 @@ public class BarterService {
         }
         return us;
     }
+
+    /** Detail barter hanya untuk dua pihak yang terlibat. */
+    @Transactional(readOnly = true)
+    public BarterRequest viewFor(UUID actorId, UUID barterId) {
+        BarterRequest b = require(barterId);
+        if (!b.getRequester().getId().equals(actorId) && !b.getTargetUser().getId().equals(actorId)) {
+            throw new ForbiddenException("Anda bukan pihak dalam permintaan barter ini");
+        }
+        return b;
+    }
 }

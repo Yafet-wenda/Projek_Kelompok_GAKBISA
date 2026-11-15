@@ -95,4 +95,12 @@ public class PortfolioController {
     public void delete(@PathVariable UUID id) {
         portfolios.delete(CurrentUser.id(), id);
     }
+
+    public record UpdateRequest(String title, String description, PortfolioVisibility visibility) {}
+
+    /** Ubah metadata karya (judul, deskripsi, visibilitas). Isi berkas tidak berubah. */
+    @PutMapping("/{id}")
+    public PortfolioDto update(@PathVariable UUID id, @RequestBody UpdateRequest req) {
+        return PortfolioDto.from(portfolios.update(CurrentUser.id(), id, req.title(), req.description(), req.visibility()));
+    }
 }

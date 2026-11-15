@@ -50,4 +50,17 @@ public class NotificationService {
         n.setRead(true);
         notifications.save(n);
     }
+
+    @Transactional(readOnly = true)
+    public long unreadCount(UUID userId) {
+        return notifications.countByUserIdAndReadFalse(userId);
+    }
+
+    @Transactional
+    public int markAllRead(UUID userId) {
+        List<Notification> unread = notifications.findByUserIdAndReadFalse(userId);
+        unread.forEach(n -> n.setRead(true));
+        notifications.saveAll(unread);
+        return unread.size();
+    }
 }

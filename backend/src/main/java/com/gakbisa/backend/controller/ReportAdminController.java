@@ -1,5 +1,7 @@
 package com.gakbisa.backend.controller;
 
+import com.gakbisa.backend.dto.CategoryRow;
+
 import com.gakbisa.backend.domain.Report;
 import com.gakbisa.backend.domain.ReportStatus;
 import com.gakbisa.backend.domain.ReportTargetType;
@@ -92,5 +94,12 @@ public class ReportAdminController {
     @PreAuthorize("hasRole('ADMIN')")
     public Map<String, Long> summary() {
         return admin.dashboardSummary();
+    }
+
+    /** Kategori beserta nama keahliannya (halaman kelola kategori admin). */
+    @GetMapping("/admin/categories")
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<CategoryRow> categories() {
+        return admin.categoriesWithSkills();
     }
 }

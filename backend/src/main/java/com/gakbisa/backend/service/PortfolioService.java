@@ -128,8 +128,6 @@ public class PortfolioService {
         return portfolios.findByUserId(userId);
     }
 
-<<<<<<< HEAD
-=======
     /** Karya hanya untuk pemiliknya (atau admin) — dipakai halaman edit, bukan untuk penonton. */
     @Transactional(readOnly = true)
     public Portfolio requireOwned(UUID actorId, UUID portfolioId) {
@@ -163,7 +161,6 @@ public class PortfolioService {
         return portfolios.save(p);
     }
 
->>>>>>> origin/main
     @Transactional
     public void delete(UUID actorId, UUID portfolioId) {
         Portfolio p = portfolios.findById(portfolioId).orElseThrow(() -> new NotFoundException("Portofolio tidak ditemukan"));

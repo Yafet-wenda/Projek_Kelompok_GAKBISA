@@ -5,6 +5,7 @@ package com.gakbisa.backend.config;
  * - ValidationException -> 400
  * - NotFoundException -> 404
  * - ForbiddenException -> 403
+ * - UnauthorizedException -> 401
  */
 public final class AppExceptions {
 
@@ -20,5 +21,9 @@ public final class AppExceptions {
 
     public static class ForbiddenException extends RuntimeException {
         public ForbiddenException(String message) { super(message); }
+    }
+
+    public static class UnauthorizedException extends RuntimeException {
+        public UnauthorizedException(String message) { super(message); }
     }
 }

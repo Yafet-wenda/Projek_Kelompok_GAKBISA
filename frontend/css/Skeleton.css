@@ -1,0 +1,39 @@
+/* Skeleton shimmer: pengganti teks "Memuat…" saat halaman menunggu data.
+   Warna mengikuti tema terang/gelap lewat atribut data-theme di <html>. */
+:root {
+  --gk-skel-base: rgba(15, 23, 42, 0.08);
+  --gk-skel-shine: rgba(255, 255, 255, 0.65);
+}
+[data-theme="dark"] {
+  --gk-skel-base: rgba(255, 255, 255, 0.07);
+  --gk-skel-shine: rgba(255, 255, 255, 0.12);
+}
+
+.gk-skel {
+  position: relative;
+  overflow: hidden;
+  display: block;
+  background: var(--gk-skel-base);
+  border-radius: 8px;
+}
+.gk-skel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent 0, var(--gk-skel-shine) 50%, transparent 100%);
+  animation: gk-shimmer 1.4s ease-in-out infinite;
+}
+.gk-skel--circle { border-radius: 50%; }
+.gk-skel--pill { border-radius: 999px; }
+
+.gk-skel-wrap .gk-card { pointer-events: none; }
+
+@keyframes gk-shimmer {
+  to { transform: translateX(100%); }
+}
+
+/* Pengguna yang mematikan animasi di sistemnya tetap melihat blok abu-abu yang diam. */
+@media (prefers-reduced-motion: reduce) {
+  .gk-skel::after { animation: none; }
+}

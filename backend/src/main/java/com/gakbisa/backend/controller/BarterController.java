@@ -48,4 +48,10 @@ public class BarterController {
     public BarterDto cancel(@PathVariable UUID id) {
         return BarterDto.from(barter.cancel(CurrentUser.id(), id));
     }
+
+    /** Detail satu permintaan barter (hanya pengirim atau penerima). */
+    @GetMapping("/{id}")
+    public BarterDto view(@PathVariable UUID id) {
+        return BarterDto.from(barter.viewFor(CurrentUser.id(), id));
+    }
 }

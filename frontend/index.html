@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GAKBISA</title>
+  <script>
+    // Tema awal: pilihan tersimpan -> kalau belum ada, gelap (hitam-biru khas GAKBISA).
+    (function () {
+      try {
+        var theme = localStorage.getItem("gk-theme") || "dark";
+        document.documentElement.setAttribute("data-theme", theme);
+        document.documentElement.setAttribute("data-bs-theme", theme);
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "dark");
+        document.documentElement.setAttribute("data-bs-theme", "dark");
+      }
+    })();
+  </script>
+  <link rel="icon" type="image/svg+xml" href="images/gakbisa-mark.svg">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+  <link href="css/design-system.css" rel="stylesheet">
+  <link href="css/gk-navbar.css" rel="stylesheet">
+  <link href="css/gk-sidebar.css" rel="stylesheet">
+  <link href="css/gk-layout.css" rel="stylesheet">
+  <link href="css/skeleton.css" rel="stylesheet">
+</head>
+<body>
+  <div id="app"></div>
+  <div id="toasts" style="position:fixed;right:16px;bottom:16px;z-index:2000;display:flex;flex-direction:column;gap:8px;"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
