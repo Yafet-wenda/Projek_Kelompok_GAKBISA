@@ -69,7 +69,7 @@ public class ChatMessage {
     public void markDeleted() {
         this.deletedAt = Instant.now();
         this.ciphertext = null;
-        this.iv = null;
+        // Keep the nonce reserved; clients may already have received the deleted ciphertext.
         this.attachmentPath = null;
     }
 

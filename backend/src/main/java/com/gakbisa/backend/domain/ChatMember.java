@@ -32,7 +32,7 @@ public class ChatMember {
     @Column(name = "role", nullable = false, length = 10)
     private ChatMemberRole role = ChatMemberRole.MEMBER;
 
-    @Column(name = "joined_at", nullable = false, updatable = false)
+    @Column(name = "joined_at", nullable = false)
     private Instant joinedAt;
 
     /** null = masih anggota. Saat bergabung lagi, isi null kembali (jangan buat baris baru). */
