@@ -97,7 +97,7 @@ masuk katalog di kategori `Lainnya` — admin yang memindahkannya ke kategori ya
 | `DB_SSL_MODE` | `disable` / `require` | `require` wajib untuk Supabase, `disable` untuk lokal |
 | `SUPABASE_URL` | `https://xxxx.supabase.co` | Basis URL project |
 | `SUPABASE_SERVICE_KEY` | `eyJ...` | Service role key untuk Storage API — **hanya di backend, jangan pernah dikirim ke browser** |
-| `STORAGE_BUCKET` | `portfolio-files` | Nama bucket portofolio |
+| `STORAGE_BUCKET` | `portofolio-files` | Nama bucket portofolio |
 
 > **Keamanan:** `.env` sudah ada di `.gitignore`. Jangan pernah commit kunci service.
 

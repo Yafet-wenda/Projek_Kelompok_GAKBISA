@@ -49,6 +49,16 @@ export async function api(path, { method = "GET", body, query, form } = {}) {
   }
 }
 
+/** Ambil berkas biner (foto/video/PDF) yang butuh header Authorization, untuk dibuat jadi blob URL. */
+export async function apiBlob(path) {
+  const t = token.get();
+  let res;
+  try { res = await fetch(API_BASE + path, { headers: t ? { Authorization: "Bearer " + t } : {} }); }
+  catch { throw new ApiError(0, "Tidak dapat menghubungi server. Pastikan backend berjalan di " + API_BASE); }
+  if (!res.ok) throw new ApiError(res.status, res.statusText || "Gagal memuat berkas");
+  return res.blob();
+}
+
 async function request(url, method, body, form) {
   const headers = { Accept: "application/json" };
   const t = token.get();
