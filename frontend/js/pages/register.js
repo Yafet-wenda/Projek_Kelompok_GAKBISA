@@ -1,33 +1,24 @@
 import { register } from "../auth.js";
 import { navigate } from "../router.js";
-import { alertBox } from "../ui.js";
+import { authLayout, authField, bindAuthForm } from "../auth-layout.js";
 
 export default function page(view) {
-  view.innerHTML = `
-    <div class="container py-5" style="max-width:420px">
-      <div class="text-center mb-4"><h1 class="h4 fw-bold">Daftar akun mahasiswa</h1></div>
-      <div id="msg"></div>
-      <form id="f" class="gk-card p-4 d-flex flex-column gap-3">
-        <div><label class="form-label small fw-bold">Nama lengkap</label>
-          <input name="fullName" class="form-control" required maxlength="120"></div>
-        <div><label class="form-label small fw-bold">Email</label>
-          <input name="email" type="email" class="form-control" required></div>
-        <div><label class="form-label small fw-bold">Kampus (opsional)</label>
-          <input name="campus" class="form-control" maxlength="150"></div>
-        <div><label class="form-label small fw-bold">Password (8–72 karakter)</label>
-          <input name="password" type="password" class="form-control" required minlength="8" maxlength="72"></div>
-        <button class="gk-btn text-white" style="background:var(--gk-primary)">Daftar</button>
-        <div class="text-center small">Sudah punya akun? <a href="#/login">Masuk</a></div>
-      </form>
-    </div>`;
-  view.querySelector("#f").onsubmit = async (ev) => {
-    ev.preventDefault();
-    const d = Object.fromEntries(new FormData(ev.target));
-    try {
-      await register(d);
-      navigate("/dashboard");
-    } catch (e) {
-      view.querySelector("#msg").innerHTML = alertBox(e.message);
-    }
-  };
+  view.innerHTML = authLayout({
+    eyebrow: "MULAI DARI SINI",
+    title: "Daftar akun mahasiswa.",
+    subtitle: "Buat akun, pilih keahlianmu, lalu temukan partner belajar.",
+    body: `
+      <form id="f" class="ga-fields">
+        ${authField({ label: "Nama lengkap", name: "fullName", attrs: 'required maxlength="120" autocomplete="name"' })}
+        ${authField({ label: "Email", name: "email", type: "email", placeholder: "nama@kampus.ac.id", attrs: 'required autocomplete="username"' })}
+        ${authField({ label: "Kampus (opsional)", name: "campus", attrs: 'maxlength="150"' })}
+        ${authField({ label: "Password (8–72 karakter)", name: "password", type: "password", attrs: 'required minlength="8" maxlength="72" autocomplete="new-password"' })}
+        <button class="ga-submit">Daftar sekarang <i class="bi bi-arrow-right"></i></button>
+        <p class="ga-alt">Sudah punya akun? <a href="#/login">Masuk</a></p>
+      </form>`,
+  });
+  bindAuthForm(view, async (d) => {
+    await register(Object.fromEntries(d));
+    navigate("/dashboard");
+  }, "Mendaftarkan…");
 }

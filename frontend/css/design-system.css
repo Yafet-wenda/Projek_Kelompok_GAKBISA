@@ -404,6 +404,7 @@ body:not(.fb-dashboard) {
     box-shadow var(--gk-transition),
     transform var(--gk-transition);
   -webkit-appearance: none;
+  appearance: none;
 }
 .gk-btn:focus-visible {
   outline: none;

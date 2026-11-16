@@ -13,6 +13,7 @@ import notifications from "./pages/notifications.js";
 import profile from "./pages/profile.js";
 import matching from "./pages/matching.js";
 import { skeletonFor } from "./skeleton.js";
+import { initGlassSidebar, setActive, sidebarCollapsed } from "./glass-sidebar.js";
 
 // ---- Tabel rute. Halaman baru = satu berkas di js/pages/ + satu baris di sini. ----
 route("/login", login, { auth: false, shell: false });
@@ -43,37 +44,79 @@ let badgeTimer = null;
 
 const NAV = [
   ["/dashboard", "bi-house", "Beranda"],
-  ["/barter", "bi-arrow-left-right", "Barter"],
-  ["/sessions", "bi-calendar-event", "Sesi"],
+  ["/matching", "bi-search", "Cari partner"],
+  ["/barter", "bi-arrow-left-right", "Barter keahlian"],
+  ["/sessions", "bi-calendar-event", "Sesi belajar"],
   ["/notifications", "bi-bell", "Notifikasi"],
-  ["/profile", "bi-person", "Profil"],
+  ["/profile", "bi-person", "Profil saya"],
 ];
 
-function shellHtml(path) {
-  const links = NAV.map(([href, icon, label]) => {
-    const active = path === href || (href !== "/dashboard" && path.startsWith(href + "/"));
-    const badge = href === "/notifications" ? ' <span id="gk-notif-badge" class="badge text-bg-danger" hidden>0</span>' : "";
-    return `<a href="#${href}" class="nav-link${active ? " active fw-bold" : ""}"><i class="bi ${icon} me-1"></i>${label}${badge}</a>`;
-  }).join("");
+const initials = (n = "") => n.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("") || "?";
+const today = () => new Date().toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+
+// Shell dirender SEKALI; pindah halaman hanya mengganti isi #view (animasi sidebar tidak reset).
+function shellHtml() {
+  const collapsed = sidebarCollapsed();
+  const items = NAV.map(([href, icon, label]) => `
+    <a href="#${href}" class="gs-item" data-href="${href}" data-tip="${label}">
+      <i class="bi ${icon}" aria-hidden="true"></i><span class="gs-fade">${label}</span>
+      ${href === "/notifications" ? '<em id="gk-notif-badge" class="gs-badge" hidden>0</em>' : ""}
+    </a>`).join("");
+  const bottom = NAV.map(([href, icon, label]) =>
+    `<a href="#${href}" data-href="${href}"><i class="bi ${icon}" aria-hidden="true"></i>${label.split(" ")[0]}</a>`).join("");
+  const u = currentUser();
   return `
-    <nav class="navbar navbar-expand border-bottom px-3 py-2" style="background:var(--gk-card-bg)">
-      <a class="gk-navbar__brand me-3" href="#/dashboard" aria-label="GAKBISA - beranda">
-        <span class="gk-navbar__brand-mark" aria-hidden="true">G</span>
-        <span class="gk-navbar__brand-name">GAKBISA</span>
+  <div class="gs-shell${collapsed ? " is-collapsed" : ""}">
+    <aside class="gs-side" aria-label="Navigasi utama">
+      <button class="gs-toggle" type="button" aria-expanded="${!collapsed}" aria-label="${collapsed ? "Perluas" : "Ciutkan"} sidebar"><i class="bi bi-chevron-left"></i></button>
+      <a class="gs-brand" href="#/dashboard" aria-label="GAKBISA - beranda">
+        <span class="gs-mark" aria-hidden="true">G</span>
+        <span class="gs-fade"><b>GAKBISA.</b><small>Gantian Ajari, Kita Bisa!</small></span>
       </a>
-      <form id="gk-nav-search" class="gk-navbar__search d-none d-md-flex me-3" role="search">
-        <i class="bi bi-search gk-navbar__search-icon" aria-hidden="true"></i>
-        <input name="keyword" type="search" class="gk-navbar__search-input" placeholder="Cari partner keahlian..."
-               aria-label="Cari partner keahlian" autocomplete="off" value="${esc(path === "/matching" ? (currentQuery().get("keyword") || "") : "")}">
-      </form>
-      <div class="navbar-nav me-auto flex-wrap">${links}</div>
-      <span class="small text-muted me-3">${esc(currentUser()?.fullName ?? "")}${isAdmin() ? " (admin)" : ""}</span>
-      <button id="gk-theme-toggle" type="button" class="gk-icon-btn me-2" aria-label="Ganti tema terang/gelap" title="Ganti tema">
-        <i class="bi ${currentTheme() === "dark" ? "bi-sun-fill" : "bi-moon-stars-fill"}" aria-hidden="true"></i>
-      </button>
-      <button id="gk-logout" class="gk-btn gk-btn--secondary gk-btn--sm"><i class="bi bi-box-arrow-right me-1"></i>Keluar</button>
-    </nav>
-    <main id="view" class="container py-4" style="max-width:960px"></main>`;
+      <div class="gs-label gs-fade">RUANG BELAJAR</div>
+      <nav class="gs-nav"><div class="gs-hl"></div>${items}</nav>
+      <div class="gs-me">
+        <span class="gs-avatar">${esc(initials(u?.fullName))}</span>
+        <span class="gs-fade"><b>${esc(u?.fullName ?? "")}${isAdmin() ? " (admin)" : ""}</b><small>Mahasiswa</small></span>
+        <button id="gk-logout" class="gs-logout" type="button" aria-label="Keluar" title="Keluar"><i class="bi bi-box-arrow-right"></i></button>
+      </div>
+    </aside>
+    <div class="gs-body">
+      <header class="gs-top">
+        <span id="gs-crumb" class="gs-crumb"></span>
+        <form id="gk-nav-search" class="gs-search" role="search"><i class="bi bi-search" aria-hidden="true"></i>
+          <input name="keyword" type="search" placeholder="Cari partner keahlian..." aria-label="Cari partner keahlian" autocomplete="off"></form>
+        <span class="gs-date">${esc(today())}</span>
+        <button id="gk-theme-toggle" type="button" class="gs-icon-btn" aria-label="Ganti tema terang/gelap" title="Ganti tema">
+          <i class="bi ${currentTheme() === "dark" ? "bi-sun-fill" : "bi-moon-stars-fill"}" aria-hidden="true"></i></button>
+      </header>
+      <main id="view" class="gs-main"></main>
+    </div>
+    <nav class="gs-bottom" aria-label="Navigasi bawah">${bottom}</nav>
+  </div>`;
+}
+
+function mountShell(path) {
+  let shell = app.querySelector(".gs-shell");
+  if (!shell) {
+    app.innerHTML = shellHtml();
+    shell = app.querySelector(".gs-shell");
+    initGlassSidebar(shell);
+    document.getElementById("gk-theme-toggle").onclick = toggleTheme;
+    document.getElementById("gk-nav-search").onsubmit = (ev) => {
+      ev.preventDefault();
+      const v = new FormData(ev.target).get("keyword").toString().trim();
+      navigate("/matching" + (v ? "?keyword=" + encodeURIComponent(v) : ""));
+    };
+    document.getElementById("gk-logout").onclick = () => { logout(); navigate("/login"); };
+    refreshBadge();
+    badgeTimer = setInterval(refreshBadge, 45000);
+  }
+  setActive(shell, path);
+  const cur = NAV.find(([h]) => path === h || path.startsWith(h + "/"));
+  document.getElementById("gs-crumb").textContent = "Ruang belajar" + (cur ? " / " + cur[2] : "");
+  document.querySelector("#gk-nav-search input").value = path === "/matching" ? (currentQuery().get("keyword") || "") : "";
+  return document.getElementById("view");
 }
 
 async function refreshBadge() {
@@ -94,21 +137,11 @@ async function render() {
   if (r.auth && !currentUser()) { navigate("/login"); return; }
   if (!r.auth && currentUser() && (path === "/login" || path === "/register")) { navigate("/dashboard"); return; }
 
-  clearInterval(badgeTimer);
   let view;
   if (r.shell) {
-    app.innerHTML = shellHtml(path);
-    view = document.getElementById("view");
-    document.getElementById("gk-theme-toggle").onclick = toggleTheme;
-    document.getElementById("gk-nav-search").onsubmit = (ev) => {
-      ev.preventDefault();
-      const v = new FormData(ev.target).get("keyword").toString().trim();
-      navigate("/matching" + (v ? "?keyword=" + encodeURIComponent(v) : ""));
-    };
-    document.getElementById("gk-logout").onclick = () => { logout(); navigate("/login"); };
-    refreshBadge();
-    badgeTimer = setInterval(refreshBadge, 45000);
+    view = mountShell(path);
   } else {
+    clearInterval(badgeTimer);
     app.innerHTML = '<div id="view"></div>';
     view = document.getElementById("view");
   }

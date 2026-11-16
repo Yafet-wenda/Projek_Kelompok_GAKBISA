@@ -1,0 +1,56 @@
+/* GAKBISA — halaman Masuk & Daftar (gk-glass-auth.css). Kelas .ga-* ; muat setelah design-system.css */
+.ga{min-height:100vh;display:grid;grid-template-columns:1.05fr 1fr;background:var(--gk-card-bg);color:var(--gk-ink)}
+
+/* Panel kiri */
+.ga-hero{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;gap:32px;padding:56px;background:#0e1a38;color:#fff}
+.ga-hero::before,.ga-hero::after{content:"";position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none}
+.ga-hero::before{width:420px;height:420px;top:-120px;right:-80px;background:rgba(29,95,232,.45)}
+.ga-hero::after{width:380px;height:380px;bottom:-120px;left:-60px;background:rgba(249,115,22,.28)}
+.ga-hero>*{position:relative;z-index:1}
+.ga-brand b{display:block;font-size:30px;font-weight:800;letter-spacing:-.02em}
+.ga-brand small{opacity:.7;font-size:13px}
+.ga-eyebrow{margin:0 0 14px;font-size:11px;font-weight:700;letter-spacing:.16em;color:#6ee7b7}
+.ga-eyebrow--blue{color:var(--gk-primary);letter-spacing:.08em;margin-bottom:10px}
+.ga-headline{margin:0 0 18px;font-size:clamp(34px,4.2vw,54px);line-height:1.1;font-weight:800;letter-spacing:-.03em}
+.ga-lead{margin:0 0 28px;opacity:.78;line-height:1.6;max-width:460px}
+.ga-swap{display:flex;align-items:center;justify-content:space-between;gap:16px;max-width:520px;padding:22px 24px;border-radius:22px;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.2);
+  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);transition:box-shadow .3s,transform .3s}
+.ga-swap:hover{transform:translateY(-3px);box-shadow:0 0 28px rgba(110,231,183,.25),inset 0 1px 0 rgba(255,255,255,.2)}
+.ga-swap small{display:block;font-size:10px;font-weight:700;letter-spacing:.1em;opacity:.65}
+.ga-swap b{display:block;margin-top:4px;font-size:22px}
+.ga-swap i{font-size:24px;color:#6ee7b7}
+.ga-steps{display:flex;gap:32px;margin:0 0 14px;padding:0;list-style:none;font-size:14px}
+.ga-steps span{display:block;font-size:11px;opacity:.6;margin-bottom:2px}
+.ga-foot{margin:0;font-size:12px;opacity:.6}
+
+/* Panel kanan */
+.ga-side{display:grid;place-items:center;padding:40px 24px}
+.ga-form{width:100%;max-width:440px;animation:ga-in .5s ease both}
+.ga-form h1{margin:0 0 8px;font-size:32px;font-weight:800;letter-spacing:-.02em}
+.ga-sub{margin:0 0 28px;color:var(--gk-ink-3);font-size:14px}
+.ga-fields{display:flex;flex-direction:column;gap:18px}
+.ga-field{display:flex;flex-direction:column;gap:8px}
+.ga-field>span:first-child{font-size:13px;font-weight:700}
+.ga-input{display:flex;align-items:center;height:52px;padding:0 16px;border:1px solid var(--gk-border);border-radius:14px;background:var(--gk-page-bg);transition:border-color .2s,box-shadow .2s}
+.ga-input:focus-within{border-color:var(--gk-primary);box-shadow:0 0 0 4px rgba(26,107,255,.16)}
+.ga-input input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--gk-ink);font:inherit;font-size:14px}
+.ga-eye{border:0;background:none;color:var(--gk-ink-3);cursor:pointer;font-size:18px;padding:4px;border-radius:8px;transition:color .2s,text-shadow .2s}
+.ga-eye:hover{color:var(--gk-primary);text-shadow:0 0 10px rgba(59,130,246,.6)}
+.ga-submit{height:52px;border:0;border-radius:14px;background:var(--gk-primary);color:#fff;font:inherit;font-weight:700;font-size:15px;cursor:pointer;transition:box-shadow .25s,transform .15s,opacity .2s}
+.ga-submit:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 0 0 4px rgba(96,165,250,.2),0 8px 28px rgba(59,130,246,.55)}
+.ga-submit:disabled{opacity:.65;cursor:progress}
+.ga-submit:focus-visible,.ga-eye:focus-visible{outline:2px solid var(--gk-primary);outline-offset:2px}
+.ga-alt{margin:2px 0 0;text-align:center;font-size:13px;color:var(--gk-ink-3)}
+.ga-alt a{font-weight:700;color:var(--gk-primary);text-decoration:none}.ga-alt a:hover{text-decoration:underline}
+.ga-note{margin:6px 0 0;padding:14px 16px;border-radius:14px;background:var(--gk-page-bg);color:var(--gk-ink-3);font-size:12px;text-align:center;line-height:1.5}
+@keyframes ga-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+@media (max-width:900px){
+  .ga{grid-template-columns:1fr}
+  .ga-hero{padding:28px 24px;gap:18px}
+  .ga-hero .ga-lead,.ga-steps,.ga-foot,.ga-swap{display:none}
+  .ga-headline{font-size:28px;margin:0}
+  .ga-side{padding:28px 20px 40px}
+}
+@media (prefers-reduced-motion:reduce){.ga-form{animation:none}.ga-swap,.ga-submit,.ga-input{transition:none}}

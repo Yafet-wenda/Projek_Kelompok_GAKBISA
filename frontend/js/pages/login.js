@@ -1,32 +1,23 @@
 import { login } from "../auth.js";
 import { navigate } from "../router.js";
-import { alertBox } from "../ui.js";
+import { authLayout, authField, bindAuthForm } from "../auth-layout.js";
 
 export default function page(view) {
-  view.innerHTML = `
-    <div class="container py-5" style="max-width:420px">
-      <div class="text-center mb-4">
-        <span class="gk-navbar__brand-mark" style="width:56px;height:56px;font-size:28px;border-radius:16px" role="img" aria-label="GAKBISA">G</span>
-        <h1 class="h4 fw-bold mt-2">Masuk ke GAKBISA</h1>
-      </div>
-      <div id="msg"></div>
-      <form id="f" class="gk-card p-4 d-flex flex-column gap-3">
-        <div><label class="form-label small fw-bold">Email</label>
-          <input name="email" type="email" class="form-control" required autocomplete="username"></div>
-        <div><label class="form-label small fw-bold">Password</label>
-          <input name="password" type="password" class="form-control" required autocomplete="current-password"></div>
-        <button class="gk-btn text-white" style="background:var(--gk-primary)">Masuk</button>
-        <div class="text-center small">Belum punya akun? <a href="#/register">Daftar</a></div>
-      </form>
-    </div>`;
-  view.querySelector("#f").onsubmit = async (ev) => {
-    ev.preventDefault();
-    const d = new FormData(ev.target);
-    try {
-      await login(d.get("email"), d.get("password"));
-      navigate("/dashboard");
-    } catch (e) {
-      view.querySelector("#msg").innerHTML = alertBox(e.message);
-    }
-  };
+  view.innerHTML = authLayout({
+    eyebrow: "SELAMAT DATANG KEMBALI",
+    title: "Lanjut jadi lebih bisa.",
+    subtitle: "Masuk untuk melanjutkan perjalanan belajarmu.",
+    body: `
+      <form id="f" class="ga-fields">
+        ${authField({ label: "Email", name: "email", type: "email", placeholder: "nama@kampus.ac.id", attrs: 'required autocomplete="username"' })}
+        ${authField({ label: "Password", name: "password", type: "password", placeholder: "Masukkan password kamu", attrs: 'required autocomplete="current-password"' })}
+        <button class="ga-submit">Masuk ke GAKBISA <i class="bi bi-arrow-right"></i></button>
+        <p class="ga-alt">Belum punya akun? <a href="#/register">Daftar akun mahasiswa</a></p>
+        <p class="ga-note">Gunakan akun pribadimu dan jangan bagikan password kepada siapa pun.</p>
+      </form>`,
+  });
+  bindAuthForm(view, async (d) => {
+    await login(d.get("email"), d.get("password"));
+    navigate("/dashboard");
+  }, "Memproses…");
 }

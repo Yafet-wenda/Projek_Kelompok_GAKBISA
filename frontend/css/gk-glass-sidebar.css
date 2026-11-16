@@ -1,0 +1,83 @@
+/* GAKBISA — Glass Sidebar (gk-glass-sidebar.css)
+   Kelas baru berawalan .gs-* supaya tidak bentrok dengan gk-sidebar.css / gk-layout.css lama.
+   Muat SETELAH design-system.css (memakai token --gk-*). */
+
+.gs-shell{--gs-w:264px;position:relative;min-height:100vh;background:var(--gk-page-bg);color:var(--gk-ink)}
+.gs-shell.is-collapsed{--gs-w:76px}
+
+/* Blob warna di belakang kaca (tanpa ini blur tidak terlihat) */
+.gs-shell::before,.gs-shell::after{content:"";position:fixed;z-index:0;border-radius:50%;filter:blur(90px);pointer-events:none}
+.gs-shell::before{width:460px;height:460px;top:-120px;right:8%;background:rgba(29,95,232,.28)}
+.gs-shell::after{width:420px;height:420px;bottom:-100px;left:14%;background:rgba(249,115,22,.22)}
+
+/* ── SIDEBAR ── */
+.gs-side{position:fixed;z-index:20;left:16px;top:16px;bottom:16px;width:var(--gs-w);display:flex;flex-direction:column;padding:18px 12px 14px;border-radius:28px;color:#fff;
+  background:linear-gradient(180deg,rgba(255,255,255,.04) 45%,rgba(249,115,22,.30)),rgba(14,26,56,.58);
+  -webkit-backdrop-filter:blur(22px) saturate(170%);backdrop-filter:blur(22px) saturate(170%);
+  border:1px solid rgba(255,255,255,.2);box-shadow:0 20px 50px rgba(8,16,40,.35),inset 0 1px 0 rgba(255,255,255,.25);
+  transition:width .35s cubic-bezier(.4,0,.2,1)}
+@supports not (backdrop-filter:blur(1px)){.gs-side{background:#13224a}}
+.gs-fade{overflow:hidden;white-space:nowrap;transition:opacity .2s,width .35s}
+.is-collapsed .gs-fade{opacity:0;width:0}
+
+.gs-brand{display:flex;align-items:center;gap:12px;height:44px;padding:0 6px;white-space:nowrap;color:#fff;text-decoration:none}
+.gs-mark{flex:none;width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,#ff7a2f,#e8441a);display:grid;place-items:center;font-weight:800}
+.gs-brand b{display:block;font-size:19px;letter-spacing:-.02em}
+.gs-brand small{display:block;font-size:10px;opacity:.65;margin-top:-2px}
+.gs-label{font-size:10px;letter-spacing:.12em;font-weight:700;opacity:.5;padding:18px 14px 6px;white-space:nowrap}
+
+.gs-toggle{position:absolute;right:-13px;top:28px;width:28px;height:28px;border-radius:50%;border:0;background:#fff;color:#0f1a33;cursor:pointer;display:grid;place-items:center;font-size:12px;box-shadow:0 4px 12px rgba(0,0,0,.25);transition:box-shadow .25s}
+.gs-toggle i{transition:transform .35s}
+.is-collapsed .gs-toggle i{transform:rotate(180deg)}
+.gs-toggle:hover{box-shadow:0 0 0 4px rgba(255,255,255,.25),0 0 20px rgba(255,255,255,.75)}
+
+.gs-nav{position:relative;display:flex;flex-direction:column;gap:4px}
+.gs-hl{position:absolute;left:0;right:0;top:0;height:46px;border-radius:16px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.4);box-shadow:inset 0 1px 0 rgba(255,255,255,.3);transition:transform .32s cubic-bezier(.3,1.2,.4,1),height .2s;pointer-events:none}
+.gs-item{position:relative;display:flex;align-items:center;gap:14px;height:46px;padding:0 14px;border-radius:16px;color:#fff;text-decoration:none!important;font-size:14px;font-weight:600;white-space:nowrap;opacity:.78;transition:opacity .2s,box-shadow .25s}
+.gs-item i{flex:none;width:22px;text-align:center;font-size:19px;transition:text-shadow .25s}
+.gs-item .gs-fade{flex:1}
+.gs-item:hover,.gs-item.is-active{opacity:1;color:#fff}
+.gs-item:hover{box-shadow:0 0 20px rgba(255,255,255,.2)}
+.gs-item:hover i{text-shadow:0 0 10px rgba(255,255,255,.9)}
+.gs-item:focus-visible,.gs-toggle:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.gs-badge{background:#ff5a36;color:#fff;font-style:normal;font-size:11px;font-weight:700;border-radius:99px;min-width:20px;height:20px;display:grid;place-items:center;padding:0 6px;transition:all .2s}
+.gs-badge[hidden]{display:none}
+.is-collapsed .gs-badge{position:absolute;top:8px;right:8px;min-width:9px;height:9px;padding:0;font-size:0}
+.is-collapsed .gs-item:hover::after{content:attr(data-tip);position:absolute;left:calc(100% + 18px);top:50%;transform:translateY(-50%);background:#0f1a33;color:#fff;font-size:12px;padding:6px 10px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.3);z-index:5}
+
+.gs-me{margin-top:auto;display:flex;align-items:center;gap:10px;padding:10px 8px 0;border-top:1px solid rgba(255,255,255,.15);white-space:nowrap}
+.is-collapsed .gs-me{flex-direction:column}
+.gs-avatar{flex:none;width:38px;height:38px;border-radius:50%;background:#fff;color:#0f1a33;font-weight:800;font-size:13px;display:grid;place-items:center}
+.gs-me .gs-fade{flex:1;min-width:0}
+.gs-me b{display:block;font-size:13px}.gs-me small{display:block;opacity:.65;font-size:11px}
+.gs-logout{flex:none;width:34px;height:34px;border-radius:12px;border:0;background:rgba(255,255,255,.12);color:#fff;cursor:pointer;transition:box-shadow .25s}
+.gs-logout:hover{box-shadow:0 0 16px rgba(255,255,255,.35)}
+
+/* ── BODY ── */
+.gs-body{position:relative;z-index:1;margin-left:calc(var(--gs-w) + 48px);padding:20px 28px 56px;transition:margin .35s cubic-bezier(.4,0,.2,1)}
+.gs-top{display:flex;align-items:center;gap:12px;margin:0 auto 20px;max-width:1100px}
+.gs-crumb{margin-right:auto;font-size:13px;color:var(--gk-ink-3)}
+.gs-date{font-size:13px;color:var(--gk-ink-3)}
+.gs-search{display:flex;align-items:center;gap:8px;height:42px;padding:0 14px;border:1px solid var(--gk-border);border-radius:14px;background:var(--gk-card-bg)}
+.gs-search input{border:0;outline:0;background:transparent;color:var(--gk-ink);font:inherit;font-size:13px;width:180px}
+.gs-icon-btn{width:42px;height:42px;border-radius:14px;border:1px solid var(--gk-border);background:var(--gk-card-bg);color:var(--gk-ink);cursor:pointer;transition:box-shadow .25s,transform .15s,border-color .25s}
+.gs-icon-btn:hover{transform:translateY(-2px);border-color:rgba(59,130,246,.55);box-shadow:0 0 20px rgba(59,130,246,.45)}
+.gs-main{max-width:1100px;margin:0 auto}
+
+/* Glow untuk tombol utama proyek (gk-btn). Hapus blok ini bila tidak diinginkan. */
+.gk-btn--primary:hover,.gk-btn:not(.gk-btn--secondary):hover{box-shadow:0 0 0 4px rgba(96,165,250,.2),0 8px 28px rgba(59,130,246,.55)}
+.gk-btn{transition:box-shadow .25s,transform .15s}
+
+/* ── MOBILE: bottom nav ── */
+.gs-bottom{display:none}
+@media (max-width:900px){
+  .gs-side,.gs-shell::after{display:none}
+  .gs-body{margin-left:0;padding:16px 16px calc(100px + env(safe-area-inset-bottom,0px))}
+  .gs-search,.gs-date{display:none}
+  .gs-bottom{display:flex;position:fixed;z-index:30;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));padding:8px;border-radius:24px;background:rgba(14,26,56,.7);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.2)}
+  .gs-bottom a{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0;border-radius:16px;color:#fff;opacity:.6;font-size:10px;font-weight:600;text-decoration:none;transition:box-shadow .25s,opacity .2s}
+  .gs-bottom a i{font-size:19px}
+  .gs-bottom a:hover{opacity:1;box-shadow:0 0 16px rgba(255,255,255,.28)}
+  .gs-bottom a.is-active{opacity:1;background:rgba(255,255,255,.18)}
+}
+@media (prefers-reduced-motion:reduce){.gs-side,.gs-body,.gs-hl,.gs-fade,.gs-toggle i{transition:none!important}}

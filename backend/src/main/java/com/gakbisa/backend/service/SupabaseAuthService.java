@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
 
 import java.util.Map;
 
@@ -44,7 +45,9 @@ public class SupabaseAuthService {
         Map<String, String> body = Map.of("email", email, "password", password);
         HttpEntity<Map<String, String>> request = new HttpEntity<>(body, headers);
 
-        ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, request, Map.class);
+       ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+        url, HttpMethod.POST, request,
+        new ParameterizedTypeReference<Map<String, Object>>() {});
         log.info("Supabase signUp response status: {}", response.getStatusCode());
         return response.getBody();
     }
@@ -63,7 +66,9 @@ public class SupabaseAuthService {
         Map<String, String> body = Map.of("email", email, "password", password);
         HttpEntity<Map<String, String>> request = new HttpEntity<>(body, headers);
 
-        ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, request, Map.class);
+        ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+            url, HttpMethod.POST, request,
+            new ParameterizedTypeReference<Map<String, Object>>() {});
         log.info("Supabase signIn response status: {}", response.getStatusCode());
 
         Map<String, Object> responseBody = response.getBody();
