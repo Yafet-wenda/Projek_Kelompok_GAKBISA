@@ -58,7 +58,7 @@ public class PortfolioService {
         String byContent = MagicType.detect(content);
         String declared = declaredType == null ? "" : declaredType.toLowerCase(Locale.ROOT);
         if (byContent.isEmpty()) {
-            throw new ValidationException("Isi file tidak dikenali sebagai JPG/PNG/WEBP/PDF yang sah");
+            throw new ValidationException("Isi file tidak dikenali sebagai JPG/PNG/WEBP/MP4/WEBM/PDF yang sah");
         }
         if (props.allowedMimeTypes().stream().noneMatch(t -> t.equalsIgnoreCase(byContent))) {
             throw new ValidationException("Tipe file tidak diizinkan: " + byContent
@@ -175,7 +175,7 @@ public class PortfolioService {
     }
 
     private boolean isAdmin(UUID userId) {
-        return users.findById(userId).map(u -> u.getRole() == UserRole.ADMIN).orElse(false);
+        return userId != null && users.findById(userId).map(u -> u.getRole() == UserRole.ADMIN).orElse(false);
     }
 
     /** Nama file aman: hanya alfanumerik, dot, dash, underscore; maks 100 karakter. */

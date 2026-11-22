@@ -31,7 +31,7 @@ Tampilkan `detail` (atau `message`) ke pengguna.
 | Method | Path | Body / Query | Keterangan |
 |---|---|---|---|
 | POST 🔓🆕 | `/api/auth/login` | `{email, password}` | Dapatkan JWT |
-| POST 🔓 | `/api/register` | `{fullName, email, password(8-72), campus?}` | Daftar akun STUDENT (akun pertama di DB kosong jadi ADMIN) |
+| POST 🔓 | `/api/register` | `{fullName, email, password(8-72), campus?}` | Daftar akun STUDENT (termasuk akun pertama di DB kosong) |
 | GET | `/api/me` | | Data akun sendiri |
 | PUT 🆕 | `/api/me` | `{fullName, bio, campus}` | Ubah profil sendiri |
 | GET 🔓🆕 | `/api/health` | | `{"status":"ok"}` |

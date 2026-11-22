@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Edit Profil')}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<div class="gk-layout container-fluid">
+    <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
+
+    <main class="gk-main">
+        <div class="gk-page-header">
+            <div class="gk-page-header__text">
+                <span class="gk-page-header__eyebrow">Pengaturan Akun</span>
+                <h1 class="gk-page-header__title d-flex align-items-center gap-2">
+                    <i class="bi bi-person-fill text-primary" aria-hidden="true"></i>
+                    <span>Edit Profil</span>
+                </h1>
+                <p class="gk-page-header__desc">
+                    Perbarui identitas, biografi singkat, dan informasi kampus Anda.
+                </p>
+            </div>
+        </div>
+
+        <div th:if="${success}" class="gk-alert gk-alert--success">
+            <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+            <span th:text="${success}"></span>
+        </div>
+
+        <div th:if="${error}" class="gk-alert gk-alert--danger" role="alert" th:text="${error}"></div>
+
+        <div class="gk-card p-4 mb-4">
+            <div class="gk-card__header mb-3 pb-2">
+                <h2 class="gk-card__title">Foto dan sampul profil</h2>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Foto profil</label>
+                    <div class="d-flex align-items-center gap-3">
+                        <img th:if="${viewer.avatarPath != null}" th:src="${viewer.avatarPath}"
+                             class="gk-profile-edit-avatar" alt="Foto profil">
+                        <div th:if="${viewer.avatarPath == null}"
+                             class="gk-profile-edit-avatar gk-profile-edit-avatar--fallback"
+                             th:text="${#strings.toUpperCase(#strings.substring(viewer.fullName,0,1))}">U</div>
+                        <form th:action="@{/profile/avatar}" method="post" enctype="multipart/form-data" class="flex-grow-1">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <input class="form-control" type="file" name="avatarFile"
+                                   accept="image/jpeg,image/png,image/webp" required>
+                            <button type="submit" class="gk-btn gk-btn--secondary gk-btn--sm mt-2">
+                                <i class="bi bi-camera me-1" aria-hidden="true"></i>Ganti foto
+                            </button>
+                        </form>
+                    </div>
+                    <div class="form-text">JPG, PNG, atau WEBP. Maksimal 5 MB.</div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Foto sampul</label>
+                    <div class="gk-profile-edit-banner mb-2">
+                        <img th:if="${viewer.bannerPath != null}" th:src="${viewer.bannerPath}" alt="Foto sampul">
+                        <span th:if="${viewer.bannerPath == null}">Belum ada sampul</span>
+                    </div>
+                    <form th:action="@{/profile/banner}" method="post" enctype="multipart/form-data">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <input class="form-control" type="file" name="bannerFile"
+                               accept="image/jpeg,image/png,image/webp" required>
+                        <button type="submit" class="gk-btn gk-btn--secondary gk-btn--sm mt-2">
+                            <i class="bi bi-image me-1" aria-hidden="true"></i>Ganti sampul
+                        </button>
+                    </form>
+                    <div class="form-text">JPG, PNG, atau WEBP. Maksimal 10 MB.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="gk-card p-4">
+            <form th:action="@{/profile/edit}" method="post" th:object="${profileUpdateDto}">
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold" style="font-size:14px;color:var(--gk-ink);">
+                        Nama Lengkap <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" th:field="*{fullName}" class="form-control"
+                           placeholder="Nama lengkap Anda" required>
+                    <div th:if="${#fields.hasErrors('fullName')}" class="text-danger small mt-1"
+                         th:errors="*{fullName}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold" style="font-size:14px;color:var(--gk-ink);">Bio / Deskripsi Singkat</label>
+                    <textarea th:field="*{bio}" class="form-control" rows="4"
+                              placeholder="Ceritakan minat belajar, bidang keahlian, atau pengalaman Anda..."></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold" style="font-size:14px;color:var(--gk-ink);">Kampus / Program Studi</label>
+                    <input type="text" th:field="*{campus}" class="form-control"
+                           placeholder="Institusi atau komunitas (opsional)">
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="gk-btn gk-btn--primary">
+                        <i class="bi bi-check-lg" aria-hidden="true"></i> Simpan Perubahan
+                    </button>
+                    <a th:href="@{/profile}" class="gk-btn gk-btn--ghost">
+                        Batal
+                    </a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <aside class="gk-sidebar-right">
+        <div class="gk-card">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="bi bi-info-circle text-primary" style="font-size:18px;"></i>
+                <h4 class="m-0 fw-bold" style="font-size:14px;color:var(--gk-ink);">Tips Profil</h4>
+            </div>
+            <p style="font-size:13px;color:var(--gk-ink-3);margin-bottom:8px;line-height:1.5;">
+                Profil yang lengkap dan jelas meningkatkan skor kecocokan dengan partner belajar potensial.
+            </p>
+            <ul style="font-size:13px;color:var(--gk-ink-2);padding-left:18px;margin-bottom:0;line-height:1.6;">
+                <li>Tuliskan bio dengan jelas</li>
+                <li>Isi institusi atau kampus Anda</li>
+                <li>Gunakan nama yang mudah dikenali</li>
+            </ul>
+        </div>
+    </aside>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

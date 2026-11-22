@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Masuk')}"></head>
+<body class="gk-auth">
+
+    <main class="gk-auth__stage">
+        <div class="gk-auth__shell">
+
+            <a class="gk-auth__mark" th:href="@{/}">
+                <img th:src="@{/images/gakbisa-logo.png}" alt="" width="30" height="30">
+                <span>GAKBISA</span>
+            </a>
+
+            <div class="gk-auth__head">
+                <h1 class="gk-auth__title">Masuk</h1>
+            </div>
+            <div th:if="${param.error}" class="gk-auth__alert gk-auth__alert--error" role="alert">
+                <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i>
+                <span>Email atau password-nya salah. Kalau belum punya akun, daftar dulu.</span>
+            </div>
+            <div th:if="${param.logout}" class="gk-auth__alert gk-auth__alert--success" role="status">
+                <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+                <span>Kamu sudah keluar.</span>
+            </div>
+            <div th:if="${param.registered}" class="gk-auth__alert gk-auth__alert--success" role="status">
+                <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+                <span>Akunmu sudah jadi. Masuk, lalu isi keahlian supaya ada bahan untuk mencarikan partner.</span>
+            </div>
+            <div th:if="${success}" class="gk-auth__alert gk-auth__alert--success" role="status">
+                <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+                <span th:text="${success}"></span>
+            </div>
+
+            <form class="gk-auth__fields" th:action="@{/login}" method="post">
+                <div>
+                    <label class="gk-auth__label" for="email">Email</label>
+                    <input class="gk-auth__input" type="email" id="email" name="email"
+                           autocomplete="email" placeholder="nama@email.com" required autofocus>
+                </div>
+                <div class="gk-auth__pw">
+                    <label class="gk-auth__label" for="password">Password</label>
+                    <input class="gk-auth__input" type="password" id="password" name="password"
+                           autocomplete="current-password" required>
+                    <button class="gk-auth__toggle" type="button" aria-pressed="false"
+                            aria-controls="password">Lihat</button>
+                </div>
+                <button class="gk-auth__submit" type="submit">Masuk</button>
+            </form>
+
+            <p class="gk-auth__switch">Belum punya akun? <a th:href="@{/register}">Daftar</a>.</p>
+
+        </div>
+
+        <p class="gk-auth__note">&copy; 2026 GAKBISA. Gantian Ajari, Kita Bisa!</p>
+    </main>
+
+    <script th:src="@{/js/forms.js}"></script>
+</body>
+</html>

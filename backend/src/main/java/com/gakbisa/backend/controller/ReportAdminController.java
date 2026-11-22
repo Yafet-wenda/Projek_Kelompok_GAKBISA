@@ -9,6 +9,8 @@ import com.gakbisa.backend.service.AdminService;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,6 +54,17 @@ public class ReportAdminController {
             .toList();
     }
 
+    @GetMapping("/admin/reports/page")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Page<Map<String, Object>> pagedReports(@RequestParam(defaultValue = "OPEN") ReportStatus status,
+                                                   @RequestParam(defaultValue = "0") int page,
+                                                   @RequestParam(defaultValue = "20") int size) {
+        return admin.reportsByStatus(status, PageRequest.of(page, Math.min(size, 100)))
+            .map(r -> Map.of(
+                "id", r.getId(), "targetType", r.getTargetType().name(), "targetId", r.getTargetId(),
+                "reason", r.getReason(), "status", r.getStatus().name(), "createdAt", r.getCreatedAt()));
+    }
+
     @PostMapping("/admin/reports/{id}/review")
     @PreAuthorize("hasRole('ADMIN')")
     public Map<String, Object> review(@PathVariable UUID id, @RequestBody ReviewDecisionRequest req) {
@@ -80,6 +93,15 @@ public class ReportAdminController {
             .map(u -> Map.<String, Object>of("id", u.getId(), "email", u.getEmail(),
                 "fullName", u.getFullName(), "role", u.getRole().name(), "status", u.getStatus().name()))
             .toList();
+    }
+
+    @GetMapping("/admin/users/page")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Page<Map<String, Object>> pagedUsers(@RequestParam(defaultValue = "0") int page,
+                                                @RequestParam(defaultValue = "20") int size) {
+        return admin.listUsers(PageRequest.of(page, Math.min(size, 100)))
+            .map(u -> Map.of("id", u.getId(), "email", u.getEmail(),
+                "fullName", u.getFullName(), "role", u.getRole().name(), "status", u.getStatus().name()));
     }
 
     @PostMapping("/admin/users/{id}/status")

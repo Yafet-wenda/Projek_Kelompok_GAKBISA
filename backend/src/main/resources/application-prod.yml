@@ -1,0 +1,12 @@
+spring:
+  jpa:
+    open-in-view: false
+  flyway:
+    validate-on-migrate: true
+
+logging:
+  level:
+    root: info
+    com.gakbisa: info
+    org.springframework: warn
+    org.hibernate: warn

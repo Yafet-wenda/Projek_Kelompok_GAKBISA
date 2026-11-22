@@ -47,7 +47,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void pendaftarPertamaNaikJadiAdmin() {
+    void pendaftarPertamaTetapStudent() {
         when(users.existsByEmail(anyString())).thenReturn(false);
         when(users.count()).thenReturn(0L);
         when(users.save(any(User.class))).thenAnswer(inv -> {
@@ -58,7 +58,44 @@ class AuthServiceTest {
 
         var dto = service.register(new RegisterRequest("Yafet", "yafet@example.com", "rahasia123", null));
 
-        assertEquals(UserRole.ADMIN.name(), dto.role());
+        assertEquals(UserRole.STUDENT.name(), dto.role());
+        verify(users).save(argThat(u -> u.getRole() == UserRole.STUDENT));
+    }
+
+    @Test
+    void registrasiTidakMengubahAdminYangSudahAda() {
+        User admin = new User();
+        admin.setId(java.util.UUID.randomUUID());
+        admin.setFullName("Admin");
+        admin.setEmail("admin@gakbisa.test");
+        admin.setPasswordHash(encoder.encode("adminPassword123"));
+        admin.setRole(UserRole.ADMIN);
+        String originalPasswordHash = admin.getPasswordHash();
+        var accounts = new java.util.ArrayList<User>();
+        accounts.add(admin);
+        when(users.count()).thenAnswer(inv -> (long) accounts.size());
+        when(users.findAll()).thenAnswer(inv -> accounts);
+        when(users.existsByEmail(anyString())).thenAnswer(inv -> accounts.stream()
+            .anyMatch(u -> u.getEmail().equals(inv.getArgument(0))));
+        when(users.save(any(User.class))).thenAnswer(inv -> {
+            User u = inv.getArgument(0);
+            u.setId(java.util.UUID.randomUUID());
+            accounts.add(u);
+            return u;
+        });
+
+        var dto = service.register(new RegisterRequest("Yafet", "yafet@example.com", "rahasia123", null));
+
+        assertEquals(UserRole.STUDENT.name(), dto.role());
+        assertEquals(2, accounts.size());
+        assertSame(admin, accounts.getFirst());
+        assertEquals(UserRole.ADMIN, admin.getRole());
+        assertEquals("Admin", admin.getFullName());
+        assertEquals("admin@gakbisa.test", admin.getEmail());
+        assertEquals(originalPasswordHash, admin.getPasswordHash());
+        verify(users).existsByEmail("yafet@example.com");
+        verify(users).save(argThat(u -> u != admin && u.getRole() == UserRole.STUDENT));
+        verifyNoMoreInteractions(users);
     }
 
     @Test

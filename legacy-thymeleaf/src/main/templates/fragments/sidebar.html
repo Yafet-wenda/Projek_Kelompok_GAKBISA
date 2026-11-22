@@ -29,7 +29,8 @@
     <!-- Mobile Drawer Header (close button, hanya muncul di <= 992px) -->
     <div class="gk-sidebar__drawer-header d-lg-none">
         <div class="d-flex align-items-center gap-2">
-            <span class="gk-navbar__brand-mark" style="width:28px;height:28px;font-size:14px;" aria-hidden="true">G</span>
+            <img class="gk-navbar__brand-mark gk-navbar__brand-mark--sm"
+                 th:src="@{/images/gakbisa-logo-64.png}" alt="" aria-hidden="true">
             <span class="fw-bold" style="font-size:15px;color:var(--gk-ink);">Menu Navigasi</span>
         </div>
         <button type="button" class="gk-sidebar__close-btn" id="gkSidebarClose" aria-label="Tutup menu samping">
@@ -57,7 +58,7 @@
     <div class="gk-sidebar__nav">
         <th:block th:replace="~{fragments/sidebar :: sidebarItem('/dashboard', 'bi-house-fill', 'Dashboard')}"></th:block>
         <th:block th:replace="~{fragments/sidebar :: sidebarItem('/profile', 'bi-person-fill', 'Profil Saya')}"></th:block>
-        <th:block th:replace="~{fragments/sidebar :: sidebarItem('/profile/skills', 'bi-stars', 'Keahlian Saya')}"></th:block>
+        <th:block th:replace="~{fragments/sidebar :: sidebarItem('/profile/skills', 'bi-award-fill', 'Keahlian Saya')}"></th:block>
     </div>
 
     <hr class="gk-sidebar-divider">

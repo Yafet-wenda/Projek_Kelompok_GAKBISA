@@ -80,6 +80,213 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
+   §1.1 · ADMIN WORKSPACE
+   ═══════════════════════════════════════════════════════════════════════════ */
+.gk-admin-page { --gk-page-bg: #f3f1ed; }
+
+.gk-admin-page .gk-layout {
+  max-width: 1180px !important;
+  padding-top: 28px !important;
+  gap: 28px !important;
+}
+
+.gk-admin-page .gk-main { max-width: 880px; }
+.gk-admin-page .gk-sidebar-right { display: none !important; }
+
+.gk-admin-header {
+  align-items: center;
+  min-height: 74px;
+  margin-bottom: 18px;
+  padding: 0 0 18px;
+  border-bottom: 1px solid var(--gk-border);
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  animation: none;
+}
+
+.gk-admin-header__mark {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--gk-border);
+  border-radius: 50%;
+  background: var(--gk-card-bg);
+  color: var(--gk-ink);
+  flex-shrink: 0;
+  font-size: 16px;
+}
+
+.gk-admin-header .gk-page-header__title {
+  font-family: var(--gk-font-mono);
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+
+.gk-admin-header .gk-page-header__subtitle { margin-top: 4px; }
+.gk-admin-stats { margin-bottom: 20px !important; }
+
+.gk-admin-stats .gk-stat {
+  min-height: 118px;
+  border: 1px solid var(--gk-border);
+  border-left-width: 1px;
+  border-radius: 6px;
+  box-shadow: none;
+  padding: 16px 18px;
+  position: relative;
+}
+
+.gk-admin-stats .gk-stat::before {
+  content: '';
+  position: absolute;
+  left: 18px;
+  top: 0;
+  width: 34px;
+  height: 3px;
+  background: var(--gk-primary);
+}
+
+.gk-admin-stats .gk-stat--success::before { background: var(--gk-success); }
+.gk-admin-stats .gk-stat--warning::before { background: var(--gk-warning); }
+.gk-admin-stats .gk-stat--danger::before { background: var(--gk-danger); }
+
+.gk-admin-stats .gk-stat__label {
+  font-family: var(--gk-font-mono);
+  letter-spacing: .02em;
+  text-transform: none;
+}
+
+.gk-admin-stats .gk-stat__value {
+  font-family: var(--gk-font-mono);
+  font-size: 30px;
+  font-weight: 600;
+}
+
+.gk-admin-stats .gk-stat__sub {
+  border-top: 1px solid var(--gk-border);
+  padding-top: 7px;
+  margin-top: 3px;
+}
+
+.gk-admin-quick {
+  border-radius: 6px;
+  box-shadow: none;
+  padding: 18px !important;
+}
+
+.gk-admin-section-title {
+  margin: 0 0 14px;
+  font-family: var(--gk-font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gk-ink);
+}
+
+.gk-admin-quick [class*="col-"] > a {
+  border-radius: 4px !important;
+  align-items: flex-start !important;
+  text-align: left !important;
+  min-height: 92px;
+  padding: 14px !important;
+  background: transparent !important;
+  transition: background var(--gk-transition), border-color var(--gk-transition);
+}
+
+.gk-admin-quick [class*="col-"] > a:hover {
+  background: var(--gk-grey-50) !important;
+  border-color: var(--gk-border-strong) !important;
+}
+
+.gk-admin-quick [class*="col-"] > a > div {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 4px !important;
+  margin-bottom: 9px !important;
+  font-size: 14px !important;
+  background: transparent !important;
+  border: 1px solid var(--gk-border);
+  color: var(--gk-ink) !important;
+}
+
+.gk-admin-quick [class*="col-"] > a > span {
+  color: var(--gk-ink) !important;
+  font-family: var(--gk-font-mono);
+  font-size: 12px !important;
+}
+
+.gk-admin-quick [class*="col-"] > a > span:last-child {
+  font-family: var(--gk-font-sans);
+  color: var(--gk-ink-3) !important;
+  margin-top: 3px !important;
+}
+
+.gk-admin-page .gk-card {
+  border-radius: 6px;
+  box-shadow: none;
+}
+
+.gk-admin-page .table thead {
+  background: var(--gk-grey-50) !important;
+  font-family: var(--gk-font-mono);
+}
+
+@media (max-width: 1080px) {
+  .gk-admin-page .gk-layout { max-width: 100% !important; }
+  .gk-admin-page .gk-main { max-width: none; }
+}
+
+.gk-profile-banner__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.gk-profile-edit-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--gk-card-bg);
+  box-shadow: var(--gk-shadow-sm);
+  flex-shrink: 0;
+}
+
+.gk-profile-edit-avatar--fallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gk-primary-muted);
+  color: var(--gk-primary-dark);
+  font-size: 34px;
+  font-weight: 700;
+}
+
+.gk-profile-edit-banner {
+  min-height: 120px;
+  border: 1px solid var(--gk-border);
+  border-radius: var(--gk-radius);
+  background: var(--gk-grey-50);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gk-ink-3);
+  font-size: var(--gk-text-sm);
+}
+
+.gk-profile-edit-banner img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  display: block;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
    §2 · HALAMAN /sessions (SESI BELAJAR)
    ═══════════════════════════════════════════════════════════════════════════ */
 

@@ -4,6 +4,7 @@ import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -24,9 +25,13 @@ public class JwtConfig {
     private static final Logger log = LoggerFactory.getLogger(JwtConfig.class);
 
     @Bean
-    public SecretKey jwtSecretKey(@Value("${gakbisa.security.jwt-secret:}") String secret) {
+    public SecretKey jwtSecretKey(@Value("${gakbisa.security.jwt-secret:}") String secret,
+                                  Environment environment) {
         byte[] key;
         if (secret == null || secret.isBlank()) {
+            if (java.util.Arrays.asList(environment.getActiveProfiles()).contains("prod")) {
+                throw new IllegalStateException("JWT_SECRET wajib diisi saat profile prod aktif");
+            }
             log.warn("JWT_SECRET kosong: memakai kunci acak sementara. Token hilang setiap restart. "
                 + "Isi JWT_SECRET (min. 32 karakter) di .env untuk penggunaan normal.");
             key = new byte[32];

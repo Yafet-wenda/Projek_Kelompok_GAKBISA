@@ -4,6 +4,7 @@ import com.gakbisa.backend.config.AppExceptions.ForbiddenException;
 import com.gakbisa.backend.config.AppExceptions.ValidationException;
 import com.gakbisa.backend.domain.*;
 import com.gakbisa.backend.dto.ChatDtos.MessageRequest;
+import com.gakbisa.backend.dto.ChatDtos.MessageEditRequest;
 import com.gakbisa.backend.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ class ChatServiceTest {
     private ChatRoomRepository rooms;
     private ChatMemberRepository members;
     private ChatMessageRepository messages;
+    private ChatMessageNonceRepository nonces;
     private ChatService service;
 
     private final UUID actorId = UUID.randomUUID();
@@ -37,7 +39,8 @@ class ChatServiceTest {
         members = mock(ChatMemberRepository.class);
         ChatRoomKeyRepository roomKeys = mock(ChatRoomKeyRepository.class);
         messages = mock(ChatMessageRepository.class);
-        service = new ChatService(users, userKeys, rooms, members, roomKeys, messages);
+        nonces = mock(ChatMessageNonceRepository.class);
+        service = new ChatService(users, userKeys, rooms, members, roomKeys, messages, nonces);
 
         actor = new User();
         actor.setId(actorId);
@@ -57,7 +60,7 @@ class ChatServiceTest {
 
     @Test
     void sendsEncryptedMessageForCurrentRoomKey() {
-        when(messages.existsByRoom_IdAndKeyVersionAndIv(
+        when(nonces.existsByRoom_IdAndKeyVersionAndIv(
             roomId, 1, "AAAAAAAAAAAAAAAA")).thenReturn(false);
         when(messages.save(any(ChatMessage.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -95,7 +98,7 @@ class ChatServiceTest {
 
     @Test
     void rejectsReusedMessageIv() {
-        when(messages.existsByRoom_IdAndKeyVersionAndIv(
+        when(nonces.existsByRoom_IdAndKeyVersionAndIv(
             roomId, 1, "AAAAAAAAAAAAAAAA")).thenReturn(true);
 
         assertThrows(ValidationException.class, () -> service.sendMessage(actorId, roomId,
@@ -112,6 +115,95 @@ class ChatServiceTest {
                 "AAAAAAAAAAAAAAAA", "some-user-file", null)));
 
         verify(messages, never()).save(any(ChatMessage.class));
+    }
+
+    @Test
+    void reservesNonceBeforeSavingCiphertext() {
+        when(messages.save(any(ChatMessage.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        service.sendMessage(actorId, roomId, new MessageRequest(1, ChatMessageType.TEXT,
+            "AAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAA", null, null));
+
+        var order = inOrder(rooms, nonces, messages);
+        order.verify(rooms).findByIdForUpdate(roomId);
+        order.verify(nonces).existsByRoom_IdAndKeyVersionAndIv(roomId, 1, "AAAAAAAAAAAAAAAA");
+        order.verify(nonces).saveAndFlush(any(ChatMessageNonce.class));
+        order.verify(messages).save(any(ChatMessage.class));
+    }
+
+    @Test
+    void rejectsEditUsingReservedNonceWithoutChangingMessage() {
+        ChatMessage message = editableMessage();
+        when(nonces.existsByRoom_IdAndKeyVersionAndIv(roomId, 1, "AQEBAQEBAQEBAQEB")).thenReturn(true);
+
+        assertThrows(ValidationException.class, () -> service.editMessage(actorId, roomId, message.getId(),
+            new MessageEditRequest("AQEBAQEBAQEBAQEBAQEBAQ==", "AQEBAQEBAQEBAQEB")));
+
+        assertEquals("AAAAAAAAAAAAAAAA", message.getIv());
+        assertEquals("AAAAAAAAAAAAAAAAAAAAAA==", message.getCiphertext());
+        verify(nonces, never()).saveAndFlush(any());
+        verify(messages, never()).save(any());
+    }
+
+    @Test
+    void cannotEditMessageFromPreviousKeyEpoch() {
+        ChatMessage message = editableMessage();
+        room.setCurrentKeyVersion(2);
+
+        assertThrows(ValidationException.class, () -> service.editMessage(actorId, roomId, message.getId(),
+            new MessageEditRequest("AQEBAQEBAQEBAQEBAQEBAQ==", "AQEBAQEBAQEBAQEB")));
+
+        verifyNoInteractions(nonces);
+        verify(messages, never()).save(any());
+    }
+
+    @Test
+    void legacyRoomRequiresKeyRotationBeforeSendOrEdit() {
+        ChatMessage message = editableMessage();
+        room.setMinMessageKeyVersion(2);
+
+        assertThrows(ValidationException.class, () -> service.sendMessage(actorId, roomId,
+            new MessageRequest(1, ChatMessageType.TEXT, "AAAAAAAAAAAAAAAAAAAAAA==",
+                "AQEBAQEBAQEBAQEB", null, null)));
+        assertThrows(ValidationException.class, () -> service.editMessage(actorId, roomId, message.getId(),
+            new MessageEditRequest("AQEBAQEBAQEBAQEBAQEBAQ==", "AQEBAQEBAQEBAQEB")));
+
+        verifyNoInteractions(nonces);
+    }
+
+    @Test
+    void rejectsEditByAnotherSender() {
+        ChatMessage message = editableMessage();
+        User other = new User();
+        other.setId(UUID.randomUUID());
+        message.setSender(other);
+
+        assertThrows(ForbiddenException.class, () -> service.editMessage(actorId, roomId, message.getId(),
+            new MessageEditRequest("AQEBAQEBAQEBAQEBAQEBAQ==", "AQEBAQEBAQEBAQEB")));
+
+        verifyNoInteractions(nonces);
+    }
+
+    @Test
+    void rejectsEditFromFormerMember() {
+        membership.setLeftAt(java.time.Instant.now());
+
+        assertThrows(ForbiddenException.class, () -> service.editMessage(actorId, roomId, UUID.randomUUID(),
+            new MessageEditRequest("AQEBAQEBAQEBAQEBAQEBAQ==", "AQEBAQEBAQEBAQEB")));
+
+        verifyNoInteractions(messages, nonces);
+    }
+
+    private ChatMessage editableMessage() {
+        ChatMessage message = new ChatMessage();
+        message.setId(UUID.randomUUID());
+        message.setRoom(room);
+        message.setSender(actor);
+        message.setKeyVersion(1);
+        message.setCiphertext("AAAAAAAAAAAAAAAAAAAAAA==");
+        message.setIv("AAAAAAAAAAAAAAAA");
+        when(messages.findByIdAndRoom_Id(message.getId(), roomId)).thenReturn(Optional.of(message));
+        return message;
     }
 
     @Test

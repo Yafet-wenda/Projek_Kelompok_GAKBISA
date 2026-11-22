@@ -19,6 +19,9 @@ public interface LearningSessionRepository extends JpaRepository<LearningSession
         "barterRequest.wantedUserSkill", "barterRequest.wantedUserSkill.skill"})
     Optional<LearningSession> findById(UUID id);
 
+    @Query("select s.barterRequest.id from LearningSession s where s.id = :id")
+    Optional<UUID> findBarterRequestIdById(@Param("id") UUID id);
+
     List<LearningSession> findByBarterRequestId(UUID barterRequestId);
 
     @EntityGraph(attributePaths = {"barterRequest", "barterRequest.requester", "barterRequest.targetUser",

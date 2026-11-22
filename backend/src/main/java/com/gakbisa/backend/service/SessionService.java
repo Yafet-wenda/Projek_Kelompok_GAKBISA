@@ -47,7 +47,7 @@ public class SessionService {
 
     @Transactional
     public LearningSession schedule(UUID actorId, SessionCreateRequest req) {
-        BarterRequest b = barter.findById(req.barterRequestId())
+        BarterRequest b = barter.findByIdForUpdate(req.barterRequestId())
             .orElseThrow(() -> new NotFoundException("Permintaan barter tidak ditemukan"));
         // Skenario uji #7: sesi ditolak sebelum barter diterima.
         if (b.getStatus() != BarterStatus.ACCEPTED) {
@@ -85,8 +85,9 @@ public class SessionService {
 
     @Transactional
     public LearningSession reschedule(UUID actorId, UUID sessionId, Instant newTime, int durationMinutes) {
-        LearningSession s = require(sessionId);
+        LearningSession s = requireForUpdate(sessionId);
         requireParticipant(s.getBarterRequest(), actorId);
+        requireAccepted(s.getBarterRequest());
         if (s.getStatus() != SessionStatus.SCHEDULED) {
             throw new ValidationException("Hanya sesi SCHEDULED yang dapat dijadwal ulang");
         }
@@ -100,8 +101,11 @@ public class SessionService {
 
     @Transactional
     public LearningSession setStatus(UUID actorId, UUID sessionId, SessionStatus next) {
-        LearningSession s = require(sessionId);
+        LearningSession s = requireForUpdate(sessionId);
         requireParticipant(s.getBarterRequest(), actorId);
+        if (next == SessionStatus.ONGOING || next == SessionStatus.COMPLETED) {
+            requireAccepted(s.getBarterRequest());
+        }
 
         switch (next) {
             case ONGOING -> {
@@ -134,12 +138,17 @@ public class SessionService {
                 "Tandai ulasan untuk sesi ini bila belum memberi.");
             notifications.push(b.getTargetUser(), NotificationService.TYPE_SESSION, "Sesi selesai",
                 "Tandai ulasan untuk sesi ini bila belum memberi.");
-            // Tanpa ini barter tersangkut di ACCEPTED dan permintaan baru untuk kandidat
-            // yang sama ditolak sebagai duplikat.
-            boolean sesiMasihAktif = sessions.findByBarterRequestId(b.getId()).stream()
-                .anyMatch(x -> x.getStatus() == SessionStatus.SCHEDULED || x.getStatus() == SessionStatus.ONGOING);
-            if (!sesiMasihAktif && b.getStatus() == BarterStatus.ACCEPTED) {
-                barterService.complete(b.getId());
+        }
+        if (next == SessionStatus.COMPLETED || next == SessionStatus.CANCELLED) {
+            var b = s.getBarterRequest();
+            if (b.getStatus() == BarterStatus.ACCEPTED) {
+                List<LearningSession> children = sessions.findByBarterRequestId(b.getId());
+                boolean active = children.stream()
+                    .anyMatch(x -> x.getStatus() == SessionStatus.SCHEDULED || x.getStatus() == SessionStatus.ONGOING);
+                boolean completed = children.stream().anyMatch(x -> x.getStatus() == SessionStatus.COMPLETED);
+                if (!active && completed) {
+                    barterService.complete(b.getId());
+                }
             }
         }
         return saved;
@@ -161,6 +170,20 @@ public class SessionService {
     @Transactional(readOnly = true)
     public LearningSession require(UUID sessionId) {
         return sessions.findById(sessionId).orElseThrow(() -> new NotFoundException("Sesi tidak ditemukan"));
+    }
+
+    private LearningSession requireForUpdate(UUID sessionId) {
+        UUID barterId = sessions.findBarterRequestIdById(sessionId)
+            .orElseThrow(() -> new NotFoundException("Sesi tidak ditemukan"));
+        barter.findByIdForUpdate(barterId)
+            .orElseThrow(() -> new NotFoundException("Permintaan barter tidak ditemukan"));
+        return require(sessionId);
+    }
+
+    private void requireAccepted(BarterRequest b) {
+        if (b.getStatus() != BarterStatus.ACCEPTED) {
+            throw new ValidationException("Sesi hanya dapat diubah untuk barter berstatus ACCEPTED");
+        }
     }
 
     private void requireParticipant(BarterRequest b, UUID actorId) {

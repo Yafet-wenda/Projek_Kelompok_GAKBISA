@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Admin Dashboard')}"></head>
+<body class="gk-admin-page">
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<div class="gk-layout container-fluid">
+    <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
+
+    <main class="gk-main">
+
+        <!-- Flash alerts -->
+        <div th:if="${success}" class="gk-alert gk-alert--success">
+            <i class="bi bi-check-circle-fill"></i>
+            <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="gk-alert gk-alert--danger">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            <span th:text="${error}"></span>
+        </div>
+
+        <!-- Page Header -->
+        <header class="gk-page-header gk-admin-header">
+            <div class="gk-admin-header__mark" aria-hidden="true">
+                <i class="bi bi-shield-fill-check"></i>
+            </div>
+            <div>
+                <h1 class="gk-page-header__title">Admin Dashboard</h1>
+                <p class="gk-page-header__subtitle">Ringkasan operasi komunitas dan antrean moderasi.</p>
+            </div>
+        </header>
+
+        <!-- Stat Cards Grid -->
+        <section class="row g-3 mb-4 gk-admin-stats" aria-label="Ringkasan dashboard">
+            <div class="col-6 col-lg-4">
+                <div class="gk-stat gk-stat--primary">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span class="gk-stat__label">Total Pengguna</span>
+                        <i class="bi bi-people-fill text-primary"></i>
+                    </div>
+                    <span class="gk-stat__value" th:text="${totalUsers}">0</span>
+                    <span class="gk-stat__sub">Pengguna terdaftar</span>
+                </div>
+            </div>
+
+            <div class="col-6 col-lg-4">
+                <div class="gk-stat gk-stat--success">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span class="gk-stat__label">Total Portofolio</span>
+                        <i class="bi bi-collection-fill text-success"></i>
+                    </div>
+                    <span class="gk-stat__value" th:text="${totalPortfolios}">0</span>
+                    <span class="gk-stat__sub">Karya terunggah</span>
+                </div>
+            </div>
+
+            <div class="col-6 col-lg-4">
+                <div class="gk-stat gk-stat--warning">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span class="gk-stat__label">Total Barter</span>
+                        <i class="bi bi-arrow-left-right text-warning"></i>
+                    </div>
+                    <span class="gk-stat__value" th:text="${totalBarters}">0</span>
+                    <span class="gk-stat__sub">Semua permintaan</span>
+                </div>
+            </div>
+
+            <div class="col-6 col-lg-4">
+                <div class="gk-stat">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span class="gk-stat__label">Total Sesi</span>
+                        <i class="bi bi-calendar-check-fill text-info"></i>
+                    </div>
+                    <span class="gk-stat__value" th:text="${totalSessions}">0</span>
+                    <span class="gk-stat__sub">Pertemuan terjadwal</span>
+                </div>
+            </div>
+
+            <div class="col-6 col-lg-4">
+                <div class="gk-stat gk-stat--danger">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span class="gk-stat__label">Laporan Terbuka</span>
+                        <i class="bi bi-flag-fill text-danger"></i>
+                    </div>
+                    <span class="gk-stat__value" th:text="${openReports}">0</span>
+                    <span class="gk-stat__sub">Perlu peninjauan</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Navigation Cards -->
+        <section class="gk-card gk-admin-quick p-4" aria-labelledby="quick-admin-title">
+            <h2 id="quick-admin-title" class="gk-admin-section-title">
+                Kelola Aplikasi
+            </h2>
+            <div class="row g-3">
+                <div class="col-6 col-md-3">
+                    <a th:href="@{/admin/users}"
+                       class="d-flex flex-column align-items-center p-3 rounded-3 text-decoration-none transition-all h-100 text-center"
+                       style="background: var(--gk-grey-50); border: 1px solid var(--gk-border);">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mb-2"
+                             style="width: 44px; height: 44px; background: var(--gk-primary-muted); color: var(--gk-primary); font-size: 20px;">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                        <span class="fw-bold text-dark" style="font-size: var(--gk-text-sm);">Kelola Pengguna</span>
+                        <span class="text-muted small mt-1" style="font-size: 0.75rem;">Status akun & hak akses</span>
+                    </a>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <a th:href="@{/admin/categories}"
+                       class="d-flex flex-column align-items-center p-3 rounded-3 text-decoration-none transition-all h-100 text-center"
+                       style="background: var(--gk-grey-50); border: 1px solid var(--gk-border);">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mb-2"
+                             style="width: 44px; height: 44px; background: var(--gk-success-muted); color: var(--gk-success); font-size: 20px;">
+                            <i class="bi bi-tags-fill"></i>
+                        </div>
+                        <span class="fw-bold text-dark" style="font-size: var(--gk-text-sm);">Katalog Keahlian</span>
+                        <span class="text-muted small mt-1" style="font-size: 0.75rem;">Kategori & topik barter</span>
+                    </a>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <a th:href="@{/portfolio}"
+                       class="d-flex flex-column align-items-center p-3 rounded-3 text-decoration-none transition-all h-100 text-center"
+                       style="background: var(--gk-grey-50); border: 1px solid var(--gk-border);">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mb-2"
+                             style="width: 44px; height: 44px; background: var(--gk-warning-muted); color: var(--gk-warning); font-size: 20px;">
+                            <i class="bi bi-collection-fill"></i>
+                        </div>
+                        <span class="fw-bold text-dark" style="font-size: var(--gk-text-sm);">Portofolio</span>
+                        <span class="text-muted small mt-1" style="font-size: 0.75rem;">Karya yang Anda unggah</span>
+                    </a>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <a th:href="@{/sessions}"
+                       class="d-flex flex-column align-items-center p-3 rounded-3 text-decoration-none transition-all h-100 text-center"
+                       style="background: var(--gk-grey-50); border: 1px solid var(--gk-border);">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mb-2"
+                             style="width: 44px; height: 44px; background: var(--gk-danger-muted); color: var(--gk-danger); font-size: 20px;">
+                            <i class="bi bi-calendar-event-fill"></i>
+                        </div>
+                        <span class="fw-bold text-dark" style="font-size: var(--gk-text-sm);">Sesi Belajar</span>
+                        <span class="text-muted small mt-1" style="font-size: 0.75rem;">Sesi yang Anda ikuti</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Antrean Moderasi -->
+        <div class="gk-card p-0 mt-4" style="overflow: hidden;">
+            <div class="d-flex align-items-center justify-content-between gap-2 p-3" style="border-bottom: 1px solid var(--gk-border);">
+                <h2 class="fw-bold mb-0" style="font-size: var(--gk-text-base); color: var(--gk-ink);">
+                    <i class="bi bi-flag-fill me-1" style="color: var(--gk-danger);"></i>Laporan Menunggu Tindakan
+                </h2>
+                <a th:href="@{/admin/reports}" class="gk-btn gk-btn--secondary gk-btn--sm">Tinjau Semua</a>
+            </div>
+
+            <div th:if="${#lists.isEmpty(recentReports)}" class="p-4">
+                <div class="gk-empty">
+                    <div class="gk-empty__icon"><i class="bi bi-shield-check"></i></div>
+                    <h3 class="gk-empty__title">Tidak Ada Laporan Terbuka</h3>
+                    <p class="gk-empty__desc">Semua laporan sudah ditindak. Antrean moderasi akan muncul di sini begitu ada laporan masuk.</p>
+                </div>
+            </div>
+
+            <div th:unless="${#lists.isEmpty(recentReports)}" class="table-responsive m-0">
+                <table class="table table-hover align-middle mb-0" style="font-size: var(--gk-text-sm);">
+                    <thead style="background: var(--gk-grey-50); border-bottom: 1px solid var(--gk-border);">
+                        <tr>
+                            <th class="py-3 px-3 text-muted text-uppercase fw-bold" style="font-size: 0.6875rem; letter-spacing: 0.05em;">Alasan</th>
+                            <th class="py-3 px-3 text-muted text-uppercase fw-bold" style="font-size: 0.6875rem; letter-spacing: 0.05em;">Sasaran</th>
+                            <th class="py-3 px-3 text-muted text-uppercase fw-bold" style="font-size: 0.6875rem; letter-spacing: 0.05em;">Dilaporkan Oleh</th>
+                            <th class="py-3 px-3 text-muted text-uppercase fw-bold" style="font-size: 0.6875rem; letter-spacing: 0.05em;">Masuk</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="lap : ${recentReports}" style="border-bottom: 1px solid var(--gk-border);">
+                            <td class="py-3 px-3 text-dark" th:text="${lap.reason}">Alasan laporan</td>
+                            <td class="py-3 px-3">
+                                <span class="d-block text-muted" style="font-size: var(--gk-text-xs);" th:text="${lap.targetKind}">Pengguna</span>
+                                <a th:if="${lap.targetUrl != null}" th:href="@{${lap.targetUrl}}"
+                                   class="fw-bold text-dark text-decoration-none" th:text="${lap.targetName}">Nama</a>
+                                <span th:if="${lap.targetUrl == null}" class="fw-bold text-dark" th:text="${lap.targetName}">Judul</span>
+                            </td>
+                            <td class="py-3 px-3 text-muted" th:text="${lap.reporterName}">Pelapor</td>
+                            <td class="py-3 px-3 text-muted small"
+                                th:text="${#temporals.format(lap.createdAt, 'dd MMM yyyy')}">01 Jan 2026</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- RIGHT PANEL -->
+    <aside class="gk-sidebar-right">
+        <div class="gk-card p-3 mb-3">
+            <h6 class="fw-bold mb-3 d-flex align-items-center gap-2" style="font-size: var(--gk-text-sm); color: var(--gk-ink);">
+                <i class="bi bi-gear-wide-connected text-primary"></i>
+                Hak Istimewa Admin
+            </h6>
+            <p class="text-muted small mb-3" style="line-height: 1.6;">
+                Anda dapat meninjau laporan, membatasi akun yang melanggar aturan, dan menyembunyikan karya yang dilaporkan.
+            </p>
+            <div class="p-2 rounded-2" style="background: var(--gk-grey-50); border: 1px solid var(--gk-border); font-size: var(--gk-text-xs);">
+                <div class="fw-bold text-dark mb-1"><i class="bi bi-shield-lock me-1 text-success"></i>Keamanan Akun</div>
+                <span class="text-muted">Gunakan konfirmasi sebelum melakukan suspend akun atau moderasi konten.</span>
+            </div>
+        </div>
+    </aside>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

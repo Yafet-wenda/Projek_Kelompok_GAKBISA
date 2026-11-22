@@ -101,6 +101,22 @@ masuk katalog di kategori `Lainnya` — admin yang memindahkannya ke kategori ya
 
 > **Keamanan:** `.env` sudah ada di `.gitignore`. Jangan pernah commit kunci service.
 
+## Menjalankan mode produksi
+
+Gunakan profile `prod` dan kirim seluruh rahasia lewat environment secret/secret manager,
+bukan dari berkas yang berada di repository:
+
+```powershell
+$env:GAKBISA_ENV=".env.prod"
+$env:SPRING_PROFILES_ACTIVE="prod"
+./mvnw.cmd spring-boot:run
+```
+
+Saat `prod`, aplikasi menolak start jika `JWT_SECRET`, `DB_PASSWORD`,
+`SUPABASE_URL`, atau `SUPABASE_SERVICE_KEY` kosong/masih berisi placeholder.
+Database juga wajib memakai `sslmode=require`. Log produksi ditulis ke konsola dan
+`logs/gakbisa.log` dengan rotasi harian/berkas.
+
 ## Struktur kode
 
 ```

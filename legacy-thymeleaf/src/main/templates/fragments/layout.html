@@ -13,7 +13,7 @@
   <meta name="description" content="GAKBISA: Gantian Ajari, Kita Bisa! Pertukaran keahlian antarmahasiswa: tawarkan keahlianmu, pelajari keahlian temanmu.">
   <meta name="_csrf" th:content="${_csrf?.token}">
   <meta name="_csrf_header" th:content="${_csrf?.headerName}">
-  <link rel="icon" type="image/svg+xml" th:href="@{/images/gakbisa-mark.svg}">
+  <link rel="icon" type="image/png" th:href="@{/images/gakbisa-logo-64.png}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
@@ -35,7 +35,7 @@
 <header th:fragment="topbar(active)" class="topbar">
   <div class="shell topbar__in">
     <a class="mark" th:href="@{/}">
-      <img th:src="@{/images/gakbisa-mark.svg}" alt="" width="34" height="34">
+      <img th:src="@{/images/gakbisa-logo.png}" alt="" width="34" height="34">
       <span>
         <span class="mark__name">GAKBISA</span>
         <span class="mark__sub">Gantian Ajari</span>

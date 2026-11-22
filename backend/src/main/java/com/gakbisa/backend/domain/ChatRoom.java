@@ -42,6 +42,9 @@ public class ChatRoom {
     @Column(name = "current_key_version", nullable = false)
     private int currentKeyVersion = 1;
 
+    @Column(name = "min_message_key_version", nullable = false)
+    private int minMessageKeyVersion = 1;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 

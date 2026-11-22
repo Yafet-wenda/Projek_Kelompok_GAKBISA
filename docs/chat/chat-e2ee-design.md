@@ -19,12 +19,14 @@ Siapa chat dengan siapa, kapan, ukuran pesan, nama grup, dan keanggotaan. Isi pe
 - Jika user kehilangan kunci privat dan tidak punya cadangan, riwayat chat tidak bisa dipulihkan.
 - Laporan/moderasi (`reports`) tidak bisa memeriksa isi chat, kecuali pelapor mengirim plaintext pesan itu secara sukarela.
 
-## Aturan yang harus dijaga di service (tidak bisa dipaksa oleh SQL)
+## Aturan service dan database
 - Ruang `PRIVATE` harus punya tepat 2 anggota.
 - Hanya anggota aktif (`left_at IS NULL`) yang boleh mengirim dan membaca pesan.
 - Hanya OWNER/ADMIN yang boleh menambah atau mengeluarkan anggota grup.
-- IV AES-GCM harus unik per pesan (client memakai 12 byte acak).
-- Saat mengirim pesan, `key_version` harus sama dengan `chat_rooms.current_key_version`.
+- IV AES-GCM (12 byte acak) hanya boleh dipakai sekali untuk satu ruang dan versi kunci. `chat_message_nonces` menyimpan semua IV yang diterima, termasuk sebelum pesan diedit atau dihapus; constraint unik mencegah pemakaian ulang.
+- Kirim dan edit pesan wajib memakai `chat_rooms.current_key_version` dan tidak boleh berada di bawah `min_message_key_version`. Pesan dari versi lama tetap bisa dibaca, tetapi tidak bisa diedit.
+- Migrasi V4 mempertahankan nonce yang masih tersedia. Bila pesan pada versi aktif pernah diedit atau dihapus tanpa menyisakan IV, riwayat nonce tidak lengkap: anggota harus merotasi kunci ruang melalui API sebelum mengirim lagi, dengan kunci AES baru, bukan membungkus ulang kunci lama.
+- Sebelum menjalankan V4, hentikan semua instance backend lama dan tunggu seluruh transaksi chat selesai. Setelah migrasi, jalankan hanya backend baru yang mencatat nonce. Jangan melakukan rolling deployment atau menjalankan backend lama bersama backend baru: kiriman dari backend lama dapat lolos dari pencatatan nonce.
 
 ## Query penting
 

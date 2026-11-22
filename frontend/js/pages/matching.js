@@ -42,7 +42,7 @@ export default async function page(view) {
         <div class="text-end">
           <span class="gk-badge">${esc(c.score)} poin</span>
           <div class="mt-2">
-            <button class="gk-btn gk-btn--sm text-white" style="background:var(--gk-primary)"
+            <button class="gk-btn gk-btn--primary gk-btn--sm"
                     data-barter="${esc(c.userId)}" data-name="${esc(c.fullName)}">
               <i class="bi bi-arrow-left-right me-1"></i>Ajukan barter
             </button>
@@ -61,7 +61,7 @@ export default async function page(view) {
       <input id="gk-search-input" name="keyword" type="search" class="form-control"
              placeholder="Cari nama, kampus, atau keahlian (mis. Python, Desain)…"
              value="${esc(keyword)}" autocomplete="off">
-      <button class="gk-btn text-white" style="background:var(--gk-primary)">Cari</button>
+      <button class="gk-btn gk-btn--primary">Cari</button>
     </form>
     ${chips}
     <div id="msg"></div>
@@ -115,7 +115,7 @@ async function openBarterDialog(view, targetUserId, name) {
         <textarea name="message" class="form-control" rows="3" maxlength="2000"></textarea></div>
       <div class="d-flex justify-content-end gap-2">
         <button type="button" class="gk-btn gk-btn--secondary" data-close>Batal</button>
-        <button class="gk-btn text-white" style="background:var(--gk-primary)" ${missing ? "disabled" : ""}>Kirim permintaan</button>
+        <button class="gk-btn gk-btn--primary" ${missing ? "disabled" : ""}>Kirim permintaan</button>
       </div>
     </form>`;
 

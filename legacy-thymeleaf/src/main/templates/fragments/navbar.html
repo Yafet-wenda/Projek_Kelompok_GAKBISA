@@ -30,7 +30,7 @@
 
     <!-- Logo / brand -->
     <a th:href="@{/}" class="gk-navbar__brand" aria-label="GAKBISA - beranda">
-      <span class="gk-navbar__brand-mark" aria-hidden="true">G</span>
+      <img class="gk-navbar__brand-mark" th:src="@{/images/gakbisa-logo-64.png}" alt="" aria-hidden="true">
       <span class="gk-navbar__brand-name">GAKBISA</span>
     </a>
 
@@ -139,7 +139,7 @@
           <li>
             <a th:href="@{/profile/skills}" class="gk-dropdown__item">
               <span class="gk-dropdown__item-icon" style="background:var(--gk-primary-muted);color:var(--gk-primary);">
-                <i class="bi bi-stars" aria-hidden="true"></i>
+                <i class="bi bi-award-fill" aria-hidden="true"></i>
               </span>
               Kelola Keahlian
             </a>

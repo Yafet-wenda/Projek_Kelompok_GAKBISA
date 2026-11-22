@@ -30,12 +30,12 @@
    ≥ 3:1 untuk teks besar / UI elements).
 
    Diverifikasi dengan https://webaim.org/resources/contrastchecker/ :
-     --gk-primary #1A6BFF on #FFFFFF = 4.54 ✓
+     --gk-primary #B34700 on #FFFFFF = 5.5  ✓
      --gk-success #1B7E4A on #FFFFFF = 5.1  ✓
      --gk-warning #895C00 on #FFFFFF = 5.3  ✓
      --gk-danger  #C0281E on #FFFFFF = 5.0  ✓
      --gk-info    #1A5FAD on #FFFFFF = 5.5  ✓
-     --gk-ink     #1C2127 on #F5F7FA = 15.6 ✓
+     --gk-ink     #211A15 on #F7F4F0 = 15.7 ✓
    ═══════════════════════════════════════════════════════════════════════════ */
 
 :root {
@@ -62,10 +62,11 @@
   --gk-weight-semibold:  600;
   --gk-weight-bold:      700;
 
-  /* ─── Colour: Primary (Biru GAKBISA) ─────────────────────────────────── */
-  --gk-primary:        #1A6BFF;  /* main CTA — "ajukan barter", "daftar"   */
-  --gk-primary-dark:   #1459D6;  /* hover, active                           */
-  --gk-primary-muted:  #E8F0FE;  /* chip bg, alert bg, sidebar highlight   */
+  /* ─── Colour: Primary (Oranye GAKBISA) ───────────────────────────────── */
+  --gk-primary:        #B34700;  /* main CTA — "ajukan barter", "daftar"   */
+  --gk-primary-dark:   #8F3800;  /* hover, active                           */
+  --gk-primary-muted:  #FBEEE3;  /* chip bg, alert bg, sidebar highlight   */
+  --gk-primary-border: #F0C9A6;
   --gk-on-primary:     #FFFFFF;
 
   /* ─── Colour: Semantic ────────────────────────────────────────────────── */
@@ -91,13 +92,13 @@
 
   /* ─── Colour: Grey scale ─────────────────────────────────────────────── */
   --gk-grey-0:   #FFFFFF;
-  --gk-grey-50:  #F5F7FA;   /* page background                              */
-  --gk-grey-100: #EAECF0;   /* divider, skeleton                            */
-  --gk-grey-200: #D0D5DD;   /* border default                               */
-  --gk-grey-300: #B8BFC9;   /* border strong, placeholder                   */
-  --gk-grey-500: #667085;   /* muted text, icon                             */
-  --gk-grey-700: #344054;   /* secondary text                               */
-  --gk-grey-900: #1C2127;   /* primary text                                 */
+  --gk-grey-50:  #F7F4F0;   /* page background                              */
+  --gk-grey-100: #EDE7E1;   /* divider, skeleton                            */
+  --gk-grey-200: #DCD3CB;   /* border default                               */
+  --gk-grey-300: #C0B4A8;   /* border strong, placeholder                   */
+  --gk-grey-500: #6E6259;   /* muted text, icon                             */
+  --gk-grey-700: #3D342D;   /* secondary text                               */
+  --gk-grey-900: #211A15;   /* primary text                                 */
 
   /* Semantic aliases (used in components) */
   --gk-page-bg:  var(--gk-grey-50);
@@ -127,15 +128,15 @@
   --gk-radius-pill: 9999px;
 
   /* ─── Shadow ────────────────────────────────────────────────────────── */
-  --gk-shadow-sm: 0 1px 2px rgba(16, 24, 40, .06),
-                  0 1px 3px rgba(16, 24, 40, .10);
-  --gk-shadow-md: 0 4px 8px -2px rgba(16, 24, 40, .10),
-                  0 2px 4px -2px rgba(16, 24, 40, .06);
-  --gk-shadow-lg: 0 12px 24px -4px rgba(16, 24, 40, .12),
-                  0 4px 8px -2px rgba(16, 24, 40, .06);
+  --gk-shadow-sm: 0 1px 2px rgba(33, 26, 21, .06),
+                  0 1px 3px rgba(33, 26, 21, .10);
+  --gk-shadow-md: 0 4px 8px -2px rgba(33, 26, 21, .10),
+                  0 2px 4px -2px rgba(33, 26, 21, .06);
+  --gk-shadow-lg: 0 12px 24px -4px rgba(33, 26, 21, .12),
+                  0 4px 8px -2px rgba(33, 26, 21, .06);
 
   /* ─── Focus ring ────────────────────────────────────────────────────── */
-  --gk-ring: 0 0 0 3px rgba(26, 107, 255, .28);
+  --gk-ring: 0 0 0 3px rgba(179, 71, 0, .30);
 
   /* ─── Transition ────────────────────────────────────────────────────── */
   --gk-transition: 150ms cubic-bezier(.4, 0, .2, 1);
@@ -151,23 +152,28 @@
    §1.1 · DARK MODE TOKENS ([data-theme="dark"])
    ═══════════════════════════════════════════════════════════════════════════ */
 [data-theme="dark"] {
-  --gk-page-bg:       #0B0F19;
-  --gk-card-bg:       #131B2E;
-  --gk-border:        #232F48;
-  --gk-border-strong: #334466;
-  --gk-grey-0:        #131B2E;
-  --gk-grey-50:       #0B0F19;
-  --gk-grey-100:      #1B2640;
-  --gk-grey-200:      #232F48;
-  --gk-grey-300:      #334466;
-  --gk-grey-500:      #94A3B8;
-  --gk-grey-700:      #CBD5E1;
-  --gk-grey-900:      #F8FAFC;
-  --gk-ink:           #F8FAFC;
-  --gk-ink-2:         #E2E8F0;
-  --gk-ink-3:         #94A3B8;
+  --gk-page-bg:       #12100D;
+  --gk-card-bg:       #1C1814;
+  --gk-border:        #322B22;
+  --gk-border-strong: #4A4034;
+  --gk-grey-0:        #1C1814;
+  --gk-grey-50:       #12100D;
+  --gk-grey-100:      #262119;
+  --gk-grey-200:      #322B22;
+  --gk-grey-300:      #4A4034;
+  --gk-grey-500:      #A99889;
+  --gk-grey-700:      #D5C7BA;
+  --gk-grey-900:      #F5EFE9;
+  --gk-ink:           #F5EFE9;
+  --gk-ink-2:         #E7DCD1;
+  --gk-ink-3:         #A99889;
 
-  --gk-primary-muted: rgba(26, 107, 255, 0.22);
+  --gk-primary:        #E07B2A;
+  --gk-primary-dark:   #C96A1C;
+  --gk-on-primary:     #241305;
+  --gk-primary-muted: rgba(224, 123, 42, 0.18);
+  --gk-primary-border: rgba(224, 123, 42, 0.42);
+  --gk-ring: 0 0 0 3px rgba(224, 123, 42, .35);
   --gk-success-muted: rgba(27, 126, 74, 0.22);
   --gk-warning-muted: rgba(137, 92, 0, 0.25);
   --gk-danger-muted:  rgba(192, 40, 30, 0.25);
@@ -177,16 +183,16 @@
   --gk-shadow-md:     0 4px 10px rgba(0, 0, 0, 0.55);
   --gk-shadow-lg:     0 12px 24px rgba(0, 0, 0, 0.65);
 
-  --bs-body-bg:       #0B0F19;
-  --bs-body-color:    #F8FAFC;
-  --bs-border-color:  #232F48;
+  --bs-body-bg:       var(--gk-page-bg);
+  --bs-body-color:    var(--gk-ink);
+  --bs-border-color:  var(--gk-border);
 
-  --fb-white:         #131B2E;
-  --fb-bg:            #0B0F19;
-  --fb-border:        #232F48;
-  --fb-card-shadow:   0 1px 3px rgba(0, 0, 0, 0.45);
-  --fb-text:          #F8FAFC;
-  --fb-text-secondary:#94A3B8;
+  --fb-white:         var(--gk-card-bg);
+  --fb-bg:            var(--gk-page-bg);
+  --fb-border:        var(--gk-border);
+  --fb-card-shadow:   var(--gk-shadow-sm);
+  --fb-text:          var(--gk-ink);
+  --fb-text-secondary:var(--gk-ink-3);
   --fb-hover:         rgba(255, 255, 255, 0.06);
 }
 
@@ -197,31 +203,31 @@
 
 [data-theme="dark"] .form-control,
 [data-theme="dark"] .form-select {
-  background-color: #131B2E !important;
-  color: #F8FAFC !important;
-  border-color: #232F48 !important;
+  background-color: var(--gk-card-bg) !important;
+  color: var(--gk-ink) !important;
+  border-color: var(--gk-border) !important;
 }
 
 [data-theme="dark"] .form-control:focus,
 [data-theme="dark"] .form-select:focus {
-  background-color: #131B2E !important;
-  color: #F8FAFC !important;
+  background-color: var(--gk-card-bg) !important;
+  color: var(--gk-ink) !important;
   border-color: var(--gk-primary) !important;
   box-shadow: var(--gk-ring) !important;
 }
 
 [data-theme="dark"] .dropdown-menu {
-  background-color: #131B2E !important;
-  border-color: #232F48 !important;
-  color: #F8FAFC !important;
+  background-color: var(--gk-card-bg) !important;
+  border-color: var(--gk-border) !important;
+  color: var(--gk-ink) !important;
   box-shadow: var(--gk-shadow-lg) !important;
 }
 
 [data-theme="dark"] .table {
   --bs-table-bg: transparent;
-  --bs-table-color: #F8FAFC;
+  --bs-table-color: var(--gk-ink);
   --bs-table-hover-bg: rgba(255, 255, 255, 0.04);
-  border-color: #232F48 !important;
+  border-color: var(--gk-border) !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -447,9 +453,9 @@ body:not(.fb-dashboard) {
 }
 .gk-btn--secondary:hover,
 .gk-btn--secondary:focus-visible {
-  background: #d1e2fd;
+  background: var(--gk-primary-muted);
   color: var(--gk-primary-dark);
-  border-color: #b5ccfb;
+  border-color: var(--gk-primary-border);
 }
 
 /* Ghost */
@@ -539,7 +545,7 @@ body:not(.fb-dashboard) {
   border: 1px solid transparent;
 }
 
-.gk-badge--primary  { background: var(--gk-primary-muted);  color: var(--gk-primary-dark); border-color: #b5ccfb; }
+.gk-badge--primary  { background: var(--gk-primary-muted);  color: var(--gk-primary-dark); border-color: var(--gk-primary-border); }
 .gk-badge--success  { background: var(--gk-success-muted);  color: var(--gk-success);      border-color: #99d4b6; }
 .gk-badge--warning  { background: var(--gk-warning-muted);  color: var(--gk-warning);      border-color: #e8c97a; }
 .gk-badge--danger   { background: var(--gk-danger-muted);   color: var(--gk-danger);       border-color: #f2b6b2; }
@@ -549,12 +555,12 @@ body:not(.fb-dashboard) {
 /* Semantic shortcuts sesuai domain GAKBISA */
 .gk-badge--PENDING    { background: var(--gk-warning-muted); color: var(--gk-warning); border-color: #e8c97a; }
 .gk-badge--ACCEPTED   { background: var(--gk-success-muted); color: var(--gk-success); border-color: #99d4b6; }
-.gk-badge--COMPLETED  { background: var(--gk-primary-muted); color: var(--gk-primary); border-color: #b5ccfb; }
+.gk-badge--COMPLETED  { background: var(--gk-primary-muted); color: var(--gk-primary); border-color: var(--gk-primary-border); }
 .gk-badge--REJECTED   { background: var(--gk-danger-muted);  color: var(--gk-danger);  border-color: #f2b6b2; }
 .gk-badge--CANCELLED  { background: var(--gk-grey-100);      color: var(--gk-ink-3);   border-color: var(--gk-border); }
 .gk-badge--SCHEDULED  { background: var(--gk-info-muted);    color: var(--gk-info);    border-color: #a3c4e8; }
 .gk-badge--ONGOING    { background: var(--gk-success-muted); color: var(--gk-success); border-color: #99d4b6; }
-.gk-badge--OFFER      { background: var(--gk-primary-muted); color: var(--gk-primary); border-color: #b5ccfb; }
+.gk-badge--OFFER      { background: var(--gk-primary-muted); color: var(--gk-primary); border-color: var(--gk-primary-border); }
 .gk-badge--WANT       { background: #fce4ec;                 color: #880e4f;            border-color: #f8bbd9; }
 .gk-badge--PUBLIC     { background: var(--gk-success-muted); color: var(--gk-success); border-color: #99d4b6; }
 .gk-badge--PRIVATE    { background: var(--gk-grey-100);      color: var(--gk-ink-3);   border-color: var(--gk-border); }
@@ -941,9 +947,9 @@ body:not(.fb-dashboard) {
 .gk-tab-btn.active {
   background: var(--gk-primary-muted);
   color: var(--gk-primary);
-  border-color: #b5ccfb;
+  border-color: var(--gk-primary-border);
   font-weight: var(--gk-weight-bold);
-  box-shadow: 0 1px 2px rgba(26, 107, 255, 0.08);
+  box-shadow: 0 1px 2px rgba(179, 71, 0, 0.10);
 }
 
 
@@ -1037,10 +1043,14 @@ body:not(.fb-dashboard) {
    Override variabel Bootstrap agar warna tema konsisten dengan design token.
    Tidak ubah behaviour Bootstrap — hanya warna.
    ══════════════════════════════════════════════════════════════════════════ */
-:root {
+:root,
+[data-theme] {
   /* Bootstrap 5 custom properties */
-  --bs-primary:          #1A6BFF;
-  --bs-primary-rgb:      26, 107, 255;
+  --bs-primary:          var(--gk-primary);
+  --bs-primary-rgb:      179, 71, 0;
+  --bs-primary-text-emphasis: var(--gk-primary-dark);
+  --bs-primary-bg-subtle: var(--gk-primary-muted);
+  --bs-primary-border-subtle: var(--gk-primary-border);
   --bs-success:          #1B7E4A;
   --bs-success-rgb:      27, 126, 74;
   --bs-danger:           #C0281E;
@@ -1049,15 +1059,70 @@ body:not(.fb-dashboard) {
   --bs-warning-rgb:      137, 92, 0;
   --bs-info:             #1A5FAD;
   --bs-info-rgb:         26, 95, 173;
-  --bs-body-bg:          #F5F7FA;
-  --bs-border-color:     #D0D5DD;
+  --bs-body-bg:          var(--gk-page-bg);
+  --bs-body-bg-rgb:      247, 244, 240;
+  --bs-body-color:       var(--gk-ink);
+  --bs-body-color-rgb:   33, 26, 21;
+  --bs-emphasis-color:   var(--gk-ink);
+  --bs-emphasis-color-rgb: 33, 26, 21;
+  --bs-secondary-color:  var(--gk-ink-3);
+  --bs-secondary-bg:     var(--gk-grey-100);
+  --bs-secondary-bg-rgb: 237, 231, 225;
+  --bs-tertiary-bg:      var(--gk-grey-50);
+  --bs-tertiary-bg-rgb:  247, 244, 240;
+  --bs-border-color:     var(--gk-border);
   --bs-border-radius:    8px;
   --bs-border-radius-sm: 4px;
   --bs-border-radius-lg: 12px;
-  --bs-box-shadow-sm:    0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.10);
-  --bs-link-color:       #1A6BFF;
-  --bs-link-hover-color: #1459D6;
+  --bs-box-shadow-sm:    var(--gk-shadow-sm);
+  --bs-link-color:       var(--gk-primary);
+  --bs-link-color-rgb:   179, 71, 0;
+  --bs-link-hover-color: var(--gk-primary-dark);
+  --bs-link-hover-color-rgb: 143, 56, 0;
 }
+
+[data-theme="dark"] {
+  --bs-primary-rgb:      224, 123, 42;
+  --bs-body-bg-rgb:      18, 16, 13;
+  --bs-body-color-rgb:   245, 239, 233;
+  --bs-emphasis-color-rgb: 245, 239, 233;
+  --bs-secondary-bg-rgb: 38, 33, 25;
+  --bs-tertiary-bg-rgb:  18, 16, 13;
+  --bs-link-color-rgb:   224, 123, 42;
+  --bs-link-hover-color-rgb: 201, 106, 28;
+}
+
+.btn-primary {
+  --bs-btn-color: var(--gk-on-primary);
+  --bs-btn-bg: var(--gk-primary);
+  --bs-btn-border-color: var(--gk-primary);
+  --bs-btn-hover-color: var(--gk-on-primary);
+  --bs-btn-hover-bg: var(--gk-primary-dark);
+  --bs-btn-hover-border-color: var(--gk-primary-dark);
+  --bs-btn-active-color: var(--gk-on-primary);
+  --bs-btn-active-bg: var(--gk-primary-dark);
+  --bs-btn-active-border-color: var(--gk-primary-dark);
+  --bs-btn-disabled-color: var(--gk-on-primary);
+  --bs-btn-disabled-bg: var(--gk-primary);
+  --bs-btn-disabled-border-color: var(--gk-primary);
+  --bs-btn-focus-box-shadow: var(--gk-ring);
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--gk-primary);
+  --bs-btn-border-color: var(--gk-primary);
+  --bs-btn-hover-color: var(--gk-on-primary);
+  --bs-btn-hover-bg: var(--gk-primary);
+  --bs-btn-hover-border-color: var(--gk-primary);
+  --bs-btn-active-color: var(--gk-on-primary);
+  --bs-btn-active-bg: var(--gk-primary-dark);
+  --bs-btn-active-border-color: var(--gk-primary-dark);
+  --bs-btn-disabled-color: var(--gk-primary);
+  --bs-btn-disabled-border-color: var(--gk-primary);
+  --bs-btn-focus-box-shadow: var(--gk-ring);
+}
+
+.text-bg-primary { color: var(--gk-on-primary) !important; }
 
 /* Synchronise --fb-* dengan token baru agar halaman style.css tetap konsisten */
 :root {
@@ -1065,6 +1130,10 @@ body:not(.fb-dashboard) {
   --fb-blue-dark:  var(--gk-primary-dark);
   --fb-blue-light: var(--gk-primary-muted);
   --fb-bg:         var(--gk-grey-50);
+  --fb-white:      var(--gk-card-bg);
+  --fb-text:       var(--gk-ink);
+  --fb-text-secondary: var(--gk-ink-3);
+  --fb-hover:      var(--gk-grey-100);
   --fb-border:     var(--gk-border);
   --fb-radius:     var(--gk-radius);
   --fb-radius-lg:  var(--gk-radius-md);
@@ -1103,15 +1172,6 @@ body:not(.fb-dashboard) {
 
 /* ══════════════════════════════════════════════════════════════════════════
    §10 · HALAMAN MASUK & BUAT AKUN  (.gk-auth)
-   Dipakai hanya oleh templates/auth/login.html dan auth/register.html.
-
-   Input di sini tidak memakai .form-control: override dark mode di §1.1
-   memberi background/border `!important` pada .form-control sehingga warna
-   field tidak bisa disesuaikan tanpa ikut mengubah halaman lain.
-   Warna netral (isi field, border, ring merah/hijau, page-bg, muted) semuanya
-   token §1 supaya ikut otomatis di light dan dark. Yang dilokalkan hanya
-   aksen: halaman ini memegang identitas indigo sendiri, dan --gk-primary biru
-   tidak dipakai agar tidak menyatu dengan kulit halaman lain.
    ══════════════════════════════════════════════════════════════════════════ */
 
 /* Ruang navbar/bottom-nav di gk-navbar.css dipasang dengan !important pada body;
@@ -1125,21 +1185,21 @@ body.gk-auth {
 }
 [data-theme="dark"] body.gk-auth { color-scheme: dark; }
 
-/* Cincin fokus global di §1.2 dipasang `!important` dengan --gk-primary, jadi
-   mengalahkan ring indigo di bawah dan membuat halaman ini tetap terbaca biru.
-   Outline-nya dilepas khusus di dalam .gk-auth; tiap aturan fokus di lapisan ini
-   sudah menggambar ring sendiri, jadi keyboard tetap punya indikator. */
+/* Cincin fokus global di §1.2 dipasang dengan `!important`, jadi mengalahkan
+   ring di bawah. Outline-nya dilepas khusus di dalam .gk-auth; tiap aturan
+   fokus di lapisan ini sudah menggambar ring sendiri, jadi keyboard tetap
+   punya indikator. */
 .gk-auth :focus-visible { outline: none !important; }
 
 /* Permukaan bawaan browser ikut ditata — halaman ini tidak boleh terlihat
    seperti form HTML telanjang di dalam kulit yang sudah dirancang. */
-.gk-auth__stage ::selection { background: rgba(74, 95, 209, .18); }
+.gk-auth__stage ::selection { background: rgba(179, 71, 0, .18); }
 
 .gk-auth__stage {
-  --gk-auth-accent:      #4A5FD1;
-  --gk-auth-accent-dark: #3345CA;
-  --gk-auth-link:        #3345CA;
-  --gk-auth-ring:        0 0 0 3px rgba(74, 95, 209, .22);
+  --gk-auth-accent:      var(--gk-primary);
+  --gk-auth-accent-dark: var(--gk-primary-dark);
+  --gk-auth-link:        var(--gk-primary-dark);
+  --gk-auth-ring:        var(--gk-ring);
   /* Warna isi isian. Sendiri karena halaman tanpa kartu (§10.3) butuh isi
      yang lebih terang dari foto di belakangnya. */
   --gk-auth-field:       var(--gk-grey-50);
@@ -1270,30 +1330,32 @@ body.gk-auth {
 
 /* Tombol lihat/sembunyi duduk di dalam border kolom password. */
 .gk-auth__pw { position: relative; }
-.gk-auth__pw .gk-auth__input { padding-right: 4.5rem; }
+.gk-auth__pw .gk-auth__input { padding-right: 3.25rem; }
 .gk-auth__toggle {
   position: absolute;
   top: 50%;
   right: .5rem;
   transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
   height: 34px;
-  padding: 0 .625rem;
+  padding: 0;
   border: 0;
   border-radius: var(--gk-radius-sm);
   background: transparent;
   color: var(--gk-ink-2);
-  font: inherit;
-  font-size: var(--gk-text-xs);
-  font-weight: 600;
+  font-size: 1.0625rem;
+  line-height: 1;
   cursor: pointer;
   transition: background-color var(--gk-transition), color var(--gk-transition);
 }
 .gk-auth__toggle:hover { background: var(--gk-grey-100); color: var(--gk-ink); }
 .gk-auth__toggle:focus-visible { outline: none; box-shadow: var(--gk-auth-ring); }
 @media (max-width: 560px) {
-  /* Jempol, bukan kursor: target sentuh dinaikkan ke 40x44. */
-  .gk-auth__toggle { height: 40px; min-width: 44px; }
-  .gk-auth__pw .gk-auth__input { padding-right: 5.25rem; }
+  .gk-auth__toggle { width: 40px; height: 40px; font-size: 1.25rem; }
+  .gk-auth__pw .gk-auth__input { padding-right: 3.5rem; }
 }
 
 .gk-auth__hint {
@@ -1394,26 +1456,49 @@ body.gk-auth {
   color: var(--gk-ink-2);
 }
 
-/* Dark mode: netral sudah ikut token §1 (field, border, page-bg, ink).
-   Yang ditimpa hanya aksen, karena indigo harus naik satu tingkat supaya
-   border fokus dan caret terlihat di atas field nyaris hitam. */
-[data-theme="dark"] .gk-auth__stage {
-  --gk-auth-accent: #6C82E8;
-  --gk-auth-link:   #8FA3F0;
-  --gk-auth-ring:   0 0 0 3px rgba(108, 130, 232, .34);
+[data-theme="dark"] .gk-auth__submit:disabled {
+  background: var(--gk-grey-100);
+  color: var(--gk-ink-3);
 }
-/* Nilai tengah, bukan accent dark mode: #6C82E8 membuat teks putih tombol
-   jatuh ke 3.5:1, sedangkan #3345CA hanya 2.3:1 terhadap kartu gelap.
-   #4A5FD1 lolos keduanya (5.5:1 teks, 3.1:1 pemisahan). */
-[data-theme="dark"] .gk-auth__submit { background: #4A5FD1; }
-[data-theme="dark"] .gk-auth__submit:disabled { background: var(--gk-grey-100); }
 
 /* §10.3 — Layar lebar: foto membentang di separuh kanan dan form ditempel
-   langsung ke sisi kirinya yang memang kosong (dinding krem). Tidak ada
-   kartu di sini; di bawah 1280px kartu + ban foto di kepalanya yang dipakai,
-   karena di sana tidak ada permukaan selebar 380px yang aman untuk teks.
-   Ambangnya 1280 juga: dengan `cover` pada 1024×768, form 380px jatuh tepat
-   di wajah orang pertama. */
+   langsung ke permukaan kiri. Pada 900–1279px form memakai kartu putih
+   agar teks tetap aman; pada 1280px ke atas foto menjadi latar utama dan
+   form dilepas dari kartu. */
+@media (min-width: 900px) and (max-width: 1279px) {
+  .gk-auth__stage {
+    background-image:
+      linear-gradient(to right, var(--gk-page-bg) 0, var(--gk-page-bg) 44%, transparent 44%),
+      url('../images/auth-bg.jpg');
+    background-size: cover, cover;
+    background-repeat: no-repeat, no-repeat;
+    background-position: center, right center;
+  }
+  .gk-auth__shell,
+  .gk-auth__note {
+    align-self: flex-start;
+  }
+  .gk-auth__shell {
+    --gk-auth-field: var(--gk-card-bg);
+    width: min(380px, 42%);
+    margin-left: clamp(2rem, 6vw, 5rem);
+    padding: clamp(1.5rem, 3vw, 2rem);
+    background: var(--gk-card-bg);
+    border-color: var(--gk-border);
+    box-shadow: var(--gk-shadow-md);
+  }
+  .gk-auth__shell::before { display: none; }
+  .gk-auth__note {
+    margin-left: clamp(2rem, 6vw, 5rem);
+    text-align: left;
+  }
+  [data-theme="dark"] .gk-auth__stage {
+    background-image:
+      linear-gradient(to right, rgba(18, 16, 13, .96) 0, rgba(18, 16, 13, .96) 44%, rgba(18, 16, 13, .30) 44%),
+      url('../images/auth-bg.jpg');
+  }
+}
+
 @media (min-width: 1280px) {
   .gk-auth__stage {
     background-image: url('../images/auth-bg.jpg');
@@ -1421,14 +1506,10 @@ body.gk-auth {
     background-repeat: no-repeat;
     background-position: right center;
   }
-  /* Batas antara krem dan foto sudah ada di gambar aslinya, jadi form cukup
-     berhenti sebelum garis itu. 11vw, bukan lebih besar: padding stage 40px
-     ikut dihitung dan tepi tajam foto ada di 50,5% lebarnya, sehingga pada
-     1280×800 batas itu jatuh di 576px sementara isian berhenti di 561px. */
   .gk-auth__shell,
   .gk-auth__note {
     align-self: flex-start;
-    margin-left: clamp(2rem, 11vw, 240px);
+    margin-left: clamp(2rem, calc(min(50.5vw, 100vw - 88vh) - 468px), 40vw);
   }
   .gk-auth__note { text-align: left; }
   /* Ban di kepala kartu dimatikan: tanpa kartu, posisinya tidak lagi
@@ -1447,7 +1528,7 @@ body.gk-auth {
   /* Foto terlalu terang untuk kulit gelap: ditutup scrim sewarna page-bg
      supaya tetap jadi tekstur, bukan poster yang menempel di wajah. */
   [data-theme="dark"] .gk-auth__stage {
-    background-image: linear-gradient(rgba(11, 15, 25, .82), rgba(11, 15, 25, .82)),
+    background-image: linear-gradient(rgba(18, 16, 13, .82), rgba(18, 16, 13, .82)),
                       url('../images/auth-bg.jpg');
   }
 }

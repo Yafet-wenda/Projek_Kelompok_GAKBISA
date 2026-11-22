@@ -21,7 +21,7 @@ export default async function page(view, { id }) {
         <div class="col-md-3"><div class="small text-muted">Durasi</div><div class="fw-bold">${esc(s.durationMinutes)} menit</div></div>
         <div class="col-md-3"><div class="small text-muted">Platform</div><div class="fw-bold">${esc(s.meetingProvider)}</div></div>
       </div>
-      ${open && s.meetingUrl ? `<a class="gk-btn text-white mb-3" style="background:var(--gk-primary)" href="${esc(s.meetingUrl)}" target="_blank" rel="noopener noreferrer"><i class="bi bi-camera-video-fill me-1"></i>Buka ruang meeting</a>` : ""}
+      ${open && s.meetingUrl ? `<a class="gk-btn gk-btn--primary mb-3" href="${esc(s.meetingUrl)}" target="_blank" rel="noopener noreferrer"><i class="bi bi-camera-video-fill me-1"></i>Buka ruang meeting</a>` : ""}
       ${open ? `
       <form id="resched" class="border rounded-3 p-3 mb-3">
         <div class="fw-bold small mb-2"><i class="bi bi-calendar-check me-1"></i>Ubah jadwal</div>

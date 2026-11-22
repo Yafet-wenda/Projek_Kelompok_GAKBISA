@@ -140,8 +140,8 @@ public class UserService {
     public record ReputationDto(Double averageRating, long reviewCount, long portfolioCount) {}
 
     /** Kartu profil untuk katalog publik: identitas + reputasi + apa yang dia ajarkan. */
-    public record PublicProfile(UUID id, String fullName, String campus, Double averageRating,
-                                long reviewCount, long portfolioCount, List<String> offers) {}
+    public record PublicProfile(UUID id, String fullName, String campus, String avatarPath, String bannerPath,
+                                Double averageRating, long reviewCount, long portfolioCount, List<String> offers) {}
 
     @Transactional(readOnly = true)
     public PublicProfile publicProfile(UUID userId) {
@@ -155,6 +155,7 @@ public class UserService {
             .toList();
         return new PublicProfile(u.getId(), u.getFullName(),
             u.getCampus() == null ? "" : u.getCampus(),
+            u.getAvatarPath(), u.getBannerPath(),
             r.averageRating(), r.reviewCount(), r.portfolioCount(), diajarkan);
     }
 }

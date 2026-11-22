@@ -5,7 +5,7 @@ import { esc, alertBox } from "./ui.js";
 
 import login from "./pages/login.js";
 import register from "./pages/register.js";
-import dashboard from "./pages/dashboard.js";
+import dashboard from "./pages/Dashboard.js";
 import barter from "./pages/barter.js";
 import sessions from "./pages/sessions.js";
 import sessionDetail from "./pages/session-detail.js";
@@ -43,6 +43,7 @@ let badgeTimer = null;
 
 const NAV = [
   ["/dashboard", "bi-house", "Beranda"],
+  ["/matching", "bi-search", "Cari partner"],
   ["/barter", "bi-arrow-left-right", "Barter"],
   ["/sessions", "bi-calendar-event", "Sesi"],
   ["/notifications", "bi-bell", "Notifikasi"],
@@ -56,18 +57,18 @@ function shellHtml(path) {
     return `<a href="#${href}" class="nav-link${active ? " active fw-bold" : ""}"><i class="bi ${icon} me-1"></i>${label}${badge}</a>`;
   }).join("");
   return `
-    <nav class="navbar navbar-expand border-bottom px-3 py-2" style="background:var(--gk-card-bg)">
-      <a class="gk-navbar__brand me-3" href="#/dashboard" aria-label="GAKBISA - beranda">
-        <span class="gk-navbar__brand-mark" aria-hidden="true">G</span>
+    <nav class="gk-app-nav navbar navbar-expand flex-wrap border-bottom px-3 py-2" style="background:var(--gk-card-bg)">
+      <a class="gk-navbar__brand me-auto me-xl-3" href="#/dashboard" aria-label="GAKBISA - beranda">
+        <img class="gk-navbar__brand-mark" src="images/gakbisa-logo.png" alt="" width="34" height="34">
         <span class="gk-navbar__brand-name">GAKBISA</span>
       </a>
-      <form id="gk-nav-search" class="gk-navbar__search d-none d-md-flex me-3" role="search">
+      <form id="gk-nav-search" class="gk-navbar__search d-none d-xl-flex me-3" role="search">
         <i class="bi bi-search gk-navbar__search-icon" aria-hidden="true"></i>
         <input name="keyword" type="search" class="gk-navbar__search-input" placeholder="Cari partner keahlian..."
                aria-label="Cari partner keahlian" autocomplete="off" value="${esc(path === "/matching" ? (currentQuery().get("keyword") || "") : "")}">
       </form>
       <div class="navbar-nav me-auto flex-wrap">${links}</div>
-      <span class="small text-muted me-3">${esc(currentUser()?.fullName ?? "")}${isAdmin() ? " (admin)" : ""}</span>
+      <span id="gk-current-user" class="small text-muted me-3 d-none d-xl-inline">${esc(currentUser()?.fullName ?? "")}${isAdmin() ? " (admin)" : ""}</span>
       <button id="gk-theme-toggle" type="button" class="gk-icon-btn me-2" aria-label="Ganti tema terang/gelap" title="Ganti tema">
         <i class="bi ${currentTheme() === "dark" ? "bi-sun-fill" : "bi-moon-stars-fill"}" aria-hidden="true"></i>
       </button>
@@ -89,6 +90,8 @@ async function refreshBadge() {
 async function render() {
   const path = currentPath();
   const r = match(path);
+  document.body.classList.toggle("gk-auth", r?.shell === false);
+  document.body.classList.toggle("gk-app", r?.shell === true);
   if (!r) { app.innerHTML = `<div class="container py-5">${alertBox("Halaman tidak ditemukan: " + path)}</div>`; return; }
 
   if (r.auth && !currentUser()) { navigate("/login"); return; }
@@ -124,7 +127,7 @@ async function render() {
 }
 
 window.addEventListener("hashchange", render);
-window.addEventListener("gk:unauthorized", () => navigate("/login"));
+window.addEventListener("gk:unauthorized", () => { logout(); navigate("/login"); });
 
 await loadMe();
 render();

@@ -5,11 +5,14 @@ import com.gakbisa.backend.config.AppExceptions.NotFoundException;
 import com.gakbisa.backend.config.AppExceptions.ValidationException;
 import com.gakbisa.backend.domain.BarterRequest;
 import com.gakbisa.backend.domain.BarterStatus;
+import com.gakbisa.backend.domain.LearningSession;
+import com.gakbisa.backend.domain.SessionStatus;
 import com.gakbisa.backend.domain.SkillType;
 import com.gakbisa.backend.domain.User;
 import com.gakbisa.backend.domain.UserSkill;
 import com.gakbisa.backend.dto.BarterCreateRequest;
 import com.gakbisa.backend.repository.BarterRequestRepository;
+import com.gakbisa.backend.repository.LearningSessionRepository;
 import com.gakbisa.backend.repository.UserRepository;
 import com.gakbisa.backend.repository.UserSkillRepository;
 import org.springframework.stereotype.Service;
@@ -30,13 +33,16 @@ public class BarterService {
     private final UserRepository users;
     private final UserSkillRepository userSkills;
     private final NotificationService notifications;
+    private final LearningSessionRepository sessions;
 
     public BarterService(BarterRequestRepository barter, UserRepository users,
-                         UserSkillRepository userSkills, NotificationService notifications) {
+                         UserSkillRepository userSkills, NotificationService notifications,
+                         LearningSessionRepository sessions) {
         this.barter = barter;
         this.users = users;
         this.userSkills = userSkills;
         this.notifications = notifications;
+        this.sessions = sessions;
     }
 
     @Transactional
@@ -81,7 +87,7 @@ public class BarterService {
 
     @Transactional
     public BarterRequest respond(UUID actorId, UUID barterId, boolean accept) {
-        BarterRequest b = require(barterId);
+        BarterRequest b = requireForUpdate(barterId);
         if (!b.getTargetUser().getId().equals(actorId)) {
             throw new ForbiddenException("Hanya penerima permintaan yang dapat merespons");
         }
@@ -94,18 +100,23 @@ public class BarterService {
 
     @Transactional
     public BarterRequest cancel(UUID actorId, UUID barterId) {
-        BarterRequest b = require(barterId);
+        BarterRequest b = requireForUpdate(barterId);
         if (!b.getRequester().getId().equals(actorId)) {
             throw new ForbiddenException("Hanya pengirim yang dapat membatalkan permintaan");
         }
         transition(b, BarterStatus.CANCELLED);
+        List<LearningSession> activeSessions = sessions.findByBarterRequestId(barterId).stream()
+            .filter(s -> s.getStatus() == SessionStatus.SCHEDULED || s.getStatus() == SessionStatus.ONGOING)
+            .toList();
+        activeSessions.forEach(s -> s.setStatus(SessionStatus.CANCELLED));
+        sessions.saveAll(activeSessions);
         return barter.save(b);
     }
 
     /** Dipakai SessionService ketika seluruh sesi barter selesai. */
     @Transactional
     public BarterRequest complete(UUID barterId) {
-        BarterRequest b = require(barterId);
+        BarterRequest b = requireForUpdate(barterId);
         transition(b, BarterStatus.COMPLETED);
         return barter.save(b);
     }
@@ -123,6 +134,12 @@ public class BarterService {
     @Transactional(readOnly = true)
     public BarterRequest require(UUID barterId) {
         return barter.findById(barterId).orElseThrow(() -> new NotFoundException("Permintaan barter tidak ditemukan"));
+    }
+
+    private BarterRequest requireForUpdate(UUID barterId) {
+        barter.findByIdForUpdate(barterId)
+            .orElseThrow(() -> new NotFoundException("Permintaan barter tidak ditemukan"));
+        return require(barterId);
     }
 
     /** Validasi state machine — pihak eksternal memanggil lewat metode layanan ini. */

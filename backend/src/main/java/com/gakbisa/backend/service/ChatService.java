@@ -26,16 +26,18 @@ public class ChatService {
     private final ChatMemberRepository members;
     private final ChatRoomKeyRepository roomKeys;
     private final ChatMessageRepository messages;
+    private final ChatMessageNonceRepository nonces;
 
     public ChatService(UserRepository users, UserKeyRepository userKeys, ChatRoomRepository rooms,
                        ChatMemberRepository members, ChatRoomKeyRepository roomKeys,
-                       ChatMessageRepository messages) {
+                       ChatMessageRepository messages, ChatMessageNonceRepository nonces) {
         this.users = users;
         this.userKeys = userKeys;
         this.rooms = rooms;
         this.members = members;
         this.roomKeys = roomKeys;
         this.messages = messages;
+        this.nonces = nonces;
     }
 
     @Transactional
@@ -254,14 +256,8 @@ public class ChatService {
         ChatRoom room = lockRoom(roomId);
         requireMembership(roomId, actorId);
         validateMessagePayload(request.messageType(), request.ciphertext(), request.iv(), request.attachmentPath());
-        if (request.keyVersion() != room.getCurrentKeyVersion()) {
-            throw new ValidationException("Pesan harus memakai versi kunci ruang yang terbaru");
-        }
+        requireWritableKey(room, request.keyVersion());
         String iv = canonicalIv(request.iv());
-        if (messages.existsByRoom_IdAndKeyVersionAndIv(
-            roomId, request.keyVersion(), iv)) {
-            throw new ValidationException("IV sudah pernah digunakan untuk versi kunci ini");
-        }
 
         ChatMessage message = new ChatMessage();
         message.setRoom(room);
@@ -276,6 +272,7 @@ public class ChatService {
                 .orElseThrow(() -> new NotFoundException("Pesan balasan tidak ditemukan"));
             message.setReplyTo(reply);
         }
+        reserveNonce(room, request.keyVersion(), iv);
         room.setUpdatedAt(Instant.now());
         return toMessageView(messages.save(message));
     }
@@ -305,6 +302,7 @@ public class ChatService {
     @Transactional
     public MessageView editMessage(UUID actorId, UUID roomId, UUID messageId, MessageEditRequest request) {
         requireActiveUser(actorId);
+        ChatRoom room = lockRoom(roomId);
         requireMembership(roomId, actorId);
         ChatMessage message = messages.findByIdAndRoom_Id(messageId, roomId)
             .orElseThrow(() -> new NotFoundException("Pesan tidak ditemukan"));
@@ -314,15 +312,10 @@ public class ChatService {
         if (message.isDeleted()) {
             throw new ValidationException("Pesan yang dihapus tidak dapat diubah");
         }
+        requireWritableKey(room, message.getKeyVersion());
         validateMessagePayload(message.getMessageType(), request.ciphertext(), request.iv(), message.getAttachmentPath());
         String iv = canonicalIv(request.iv());
-        if (iv.equals(message.getIv())) {
-            throw new ValidationException("IV baru harus berbeda saat mengubah pesan terenkripsi");
-        }
-        if (messages.existsByRoom_IdAndKeyVersionAndIvAndIdNot(
-            roomId, message.getKeyVersion(), iv, messageId)) {
-            throw new ValidationException("IV sudah pernah digunakan untuk versi kunci ini");
-        }
+        reserveNonce(room, message.getKeyVersion(), iv);
         message.setCiphertext(request.ciphertext());
         message.setIv(iv);
         message.setEditedAt(Instant.now());
@@ -332,6 +325,7 @@ public class ChatService {
     @Transactional
     public void deleteMessage(UUID actorId, UUID roomId, UUID messageId) {
         requireActiveUser(actorId);
+        lockRoom(roomId);
         requireMembership(roomId, actorId);
         ChatMessage message = messages.findByIdAndRoom_Id(messageId, roomId)
             .orElseThrow(() -> new NotFoundException("Pesan tidak ditemukan"));
@@ -342,6 +336,22 @@ public class ChatService {
             message.markDeleted();
             messages.save(message);
         }
+    }
+
+    private void requireWritableKey(ChatRoom room, int keyVersion) {
+        if (keyVersion != room.getCurrentKeyVersion()) {
+            throw new ValidationException("Pesan harus memakai versi kunci ruang yang terbaru");
+        }
+        if (keyVersion < room.getMinMessageKeyVersion()) {
+            throw new ValidationException("Ganti kunci ruang sebelum mengirim atau mengubah pesan");
+        }
+    }
+
+    private void reserveNonce(ChatRoom room, int keyVersion, String iv) {
+        if (nonces.existsByRoom_IdAndKeyVersionAndIv(room.getId(), keyVersion, iv)) {
+            throw new ValidationException("IV sudah pernah digunakan untuk versi kunci ini");
+        }
+        nonces.saveAndFlush(new ChatMessageNonce(room, keyVersion, iv));
     }
 
     private void rotateKeys(ChatRoom room, List<ChatMember> activeMembers,

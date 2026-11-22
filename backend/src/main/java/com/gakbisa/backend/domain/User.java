@@ -41,6 +41,9 @@ public class User {
     @Column(name = "avatar_path", columnDefinition = "text")
     private String avatarPath;
 
+    @Column(name = "banner_path", columnDefinition = "text")
+    private String bannerPath;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private AccountStatus status = AccountStatus.ACTIVE;

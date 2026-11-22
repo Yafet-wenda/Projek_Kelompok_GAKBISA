@@ -31,7 +31,8 @@ import java.util.UUID;
  *
  * - JaaS terkonfigurasi: meeting ditanam di halaman lewat iFrame API. JaaS mewajibkan
  *   JWT per peserta yang ditandatangani private key, jadi token dibuat di sini.
- * - JaaS belum terkonfigurasi (atau gagal): kembali ke tautan Jitsi publik / tautan eksternal.
+ * - JaaS belum terkonfigurasi: kembali ke tautan Jitsi publik / tautan eksternal.
+ *   Kegagalan JaaS terkonfigurasi ditolak, tidak diturunkan ke ruang publik.
  *
  * Hanya peserta sesi yang boleh mengambil akses (dicek lewat SessionService.viewFor).
  * JWT dibuat tanpa library tambahan: JSON dirangkai manual, tanda tangan RS256 memakai
@@ -75,9 +76,10 @@ public class JitsiMeetingService {
         }
 
         BarterRequest b = s.getBarterRequest();
-        User me = b.getRequester().getId().equals(actorId) ? b.getRequester() : b.getTargetUser();
+        boolean moderator = b.getRequester().getId().equals(actorId);
+        User me = moderator ? b.getRequester() : b.getTargetUser();
         try {
-            String jwt = signJwt(me);
+            String jwt = signJwt(me, s.getMeetingRoom(), moderator);
             return new MeetingAccess(
                 true,
                 JAAS_DOMAIN,
@@ -87,8 +89,8 @@ public class JitsiMeetingService {
                 me.getFullName(),
                 null);
         } catch (GeneralSecurityException | IOException | RuntimeException e) {
-            log.warn("JaaS tidak bisa dipakai, kembali ke Jitsi publik: {}", e.toString());
-            return linkOnly(publicLink);
+            log.warn("Gagal menyiapkan akses JaaS; akses meeting ditolak");
+            throw new ValidationException("Akses meeting tidak tersedia saat ini. Silakan coba lagi nanti.");
         }
     }
 
@@ -98,7 +100,7 @@ public class JitsiMeetingService {
 
     // ------------------------------------------------------------------ JWT
 
-    private String signJwt(User u) throws GeneralSecurityException, IOException {
+    private String signJwt(User u, String room, boolean moderator) throws GeneralSecurityException, IOException {
         long now = Instant.now().getEpochSecond();
         String appId = jaas.appId().trim();
         String keyId = jaas.keyId().trim();
@@ -109,14 +111,14 @@ public class JitsiMeetingService {
             + "\"aud\":\"jitsi\","
             + "\"iss\":\"chat\","
             + "\"sub\":" + q(appId) + ","
-            + "\"room\":\"*\","
+            + "\"room\":" + q(room) + ","
             + "\"nbf\":" + (now - 10) + ","
             + "\"exp\":" + (now + TOKEN_TTL_SECONDS) + ","
             + "\"context\":{"
             +   "\"user\":{\"id\":" + q(u.getId().toString())
             +     ",\"name\":" + q(u.getFullName())
             +     ",\"email\":" + q(u.getEmail())
-            +     ",\"moderator\":\"true\"},"
+            +     ",\"moderator\":" + q(Boolean.toString(moderator)) + "},"
             +   "\"features\":{\"livestreaming\":\"false\",\"outbound-call\":\"false\","
             +     "\"transcription\":\"false\",\"recording\":\"false\"},"
             +   "\"room\":{\"regex\":false}"

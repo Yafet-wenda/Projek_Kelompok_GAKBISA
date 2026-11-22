@@ -2,8 +2,12 @@ package com.gakbisa.backend.repository;
 
 import com.gakbisa.backend.domain.BarterRequest;
 import com.gakbisa.backend.domain.BarterStatus;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +23,12 @@ public interface BarterRequestRepository extends JpaRepository<BarterRequest, UU
 
     @EntityGraph(attributePaths = {"requester", "targetUser",
         "offeredUserSkill.skill", "wantedUserSkill.skill"})
-    Optional<BarterRequest> findById(UUID id);
+    @Query("select b from BarterRequest b where b.id = :id")
+    Optional<BarterRequest> findById(@Param("id") UUID id);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select b from BarterRequest b where b.id = :id")
+    Optional<BarterRequest> findByIdForUpdate(@Param("id") UUID id);
 
     boolean existsByRequesterIdAndTargetUserIdAndStatusInAndWantedUserSkill_Id(
         UUID requesterId, UUID targetUserId, List<BarterStatus> statuses, UUID wantedUserSkillId);

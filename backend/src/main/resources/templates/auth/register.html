@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Buat akun')}"></head>
+<body class="gk-auth">
+
+    <main class="gk-auth__stage">
+        <div class="gk-auth__shell">
+
+            <a class="gk-auth__mark" th:href="@{/}">
+                <img th:src="@{/images/gakbisa-logo.png}" alt="" width="30" height="30">
+                <span>GAKBISA</span>
+            </a>
+
+            <div class="gk-auth__head">
+                <h1 class="gk-auth__title">Buat akun</h1>
+                <p class="gk-auth__sub">
+                    Email dipakai untuk masuk. Nama dan kampusmu tampil di profil yang
+                    dilihat calon partner.
+                </p>
+            </div>
+
+            <div th:if="${error}" class="gk-auth__alert gk-auth__alert--error" role="alert">
+                <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i>
+                <span th:text="${error}"></span>
+            </div>
+
+            <form class="gk-auth__fields" th:action="@{/register}" method="post" th:object="${registerForm}">
+                <div>
+                    <label class="gk-auth__label" for="fullName">Nama lengkap</label>
+                    <input class="gk-auth__input" type="text" th:field="*{fullName}"
+                           th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid'"
+                           autocomplete="name" required autofocus>
+                    <p th:if="${#fields.hasErrors('fullName')}" class="gk-auth__error"
+                       th:errors="*{fullName}"></p>
+                </div>
+                <div>
+                    <label class="gk-auth__label" for="email">Email</label>
+                    <input class="gk-auth__input" type="email" th:field="*{email}"
+                           th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
+                           placeholder="nama@email.com" autocomplete="email" required>
+                    <p th:if="${#fields.hasErrors('email')}" class="gk-auth__error"
+                       th:errors="*{email}"></p>
+                </div>
+                <div class="gk-auth__pw">
+                    <label class="gk-auth__label" for="password">Password</label>
+                    <input class="gk-auth__input" type="password" th:field="*{password}"
+                           th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"
+                           autocomplete="new-password" required>
+                    <button class="gk-auth__toggle" type="button" aria-pressed="false"
+                            aria-controls="password">Lihat</button>
+                    <p th:if="${#fields.hasErrors('password')}" class="gk-auth__error"
+                       th:errors="*{password}"></p>
+                    <p class="gk-auth__hint" th:unless="${#fields.hasErrors('password')}">
+                        Minimal 8 karakter, maksimal 72.
+                    </p>
+                </div>
+                <div>
+                    <label class="gk-auth__label" for="campus">Kampus / prodi</label>
+                    <input class="gk-auth__input" type="text" th:field="*{campus}"
+                           th:classappend="${#fields.hasErrors('campus')} ? 'is-invalid'"
+                           autocomplete="organization">
+                    <p th:if="${#fields.hasErrors('campus')}" class="gk-auth__error"
+                       th:errors="*{campus}"></p>
+                    <p class="gk-auth__hint" th:unless="${#fields.hasErrors('campus')}">
+                        Boleh dikosongkan. Kalau diisi, tampil di profilmu.
+                    </p>
+                </div>
+                <button class="gk-auth__submit" type="submit">Daftar</button>
+            </form>
+
+            <p class="gk-auth__switch">Sudah pernah daftar? <a th:href="@{/login}">Masuk</a>.</p>
+
+        </div>
+
+        <p class="gk-auth__note">&copy; 2026 GAKBISA. Gantian Ajari, Kita Bisa!</p>
+    </main>
+
+    <script th:src="@{/js/forms.js}"></script>
+</body>
+</html>

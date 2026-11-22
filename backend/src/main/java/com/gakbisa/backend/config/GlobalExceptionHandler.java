@@ -5,6 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import jakarta.validation.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.Instant;
 
@@ -33,6 +36,30 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AppExceptions.UnauthorizedException.class)
     public ProblemDetail onUnauthorized(AppExceptions.UnauthorizedException e) {
         return problem(HttpStatus.UNAUTHORIZED, "Belum login", e.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ProblemDetail onMethodArgumentNotValid(MethodArgumentNotValidException e) {
+        String detail = e.getBindingResult().getFieldErrors().stream()
+            .findFirst()
+            .map(error -> error.getField() + ": " + error.getDefaultMessage())
+            .orElse("Data permintaan tidak valid");
+        return problem(HttpStatus.BAD_REQUEST, "Data tidak valid", detail);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ProblemDetail onConstraintViolation(ConstraintViolationException e) {
+        return problem(HttpStatus.BAD_REQUEST, "Data tidak valid", e.getMessage());
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ProblemDetail onIllegalArgument(IllegalArgumentException e) {
+        return problem(HttpStatus.BAD_REQUEST, "Data tidak valid", "Nilai parameter tidak dikenali");
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ProblemDetail onDataIntegrity(DataIntegrityViolationException e) {
+        return problem(HttpStatus.CONFLICT, "Data konflik", "Data bertabrakan dengan data yang sudah ada");
     }
 
     private ProblemDetail problem(HttpStatus status, String title, String detail) {

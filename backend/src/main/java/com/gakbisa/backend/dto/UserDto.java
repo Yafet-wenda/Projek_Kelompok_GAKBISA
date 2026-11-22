@@ -12,11 +12,14 @@ public record UserDto(
     String role,
     String bio,
     String campus,
+    String avatarPath,
+    String bannerPath,
     String status,
     Instant createdAt
 ) {
     public static UserDto from(User u) {
         return new UserDto(u.getId(), u.getFullName(), u.getEmail(), u.getRole().name(),
-            u.getBio(), u.getCampus(), u.getStatus().name(), u.getCreatedAt());
+            u.getBio(), u.getCampus(), u.getAvatarPath(), u.getBannerPath(),
+            u.getStatus().name(), u.getCreatedAt());
     }
 }

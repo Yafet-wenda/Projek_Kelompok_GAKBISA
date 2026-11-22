@@ -49,6 +49,29 @@ export async function api(path, { method = "GET", body, query, form } = {}) {
   }
 }
 
+export async function apiBlob(path, { signal } = {}) {
+  const t = token.get();
+  let res;
+  try {
+    res = await fetch(API_BASE + path, {
+      headers: t ? { Authorization: "Bearer " + t } : {},
+      signal,
+    });
+  } catch (e) {
+    if (signal?.aborted) throw e;
+    throw new ApiError(0, "Tidak dapat menghubungi server. Pastikan backend berjalan di " + API_BASE);
+  }
+  if (!res.ok) {
+    if (res.status === 401 && t) {
+      token.clear();
+      window.dispatchEvent(new Event("gk:unauthorized"));
+    }
+    const data = await res.json().catch(() => null);
+    throw new ApiError(res.status, data?.detail || data?.message || "Gagal memuat berkas", data);
+  }
+  return res.blob();
+}
+
 async function request(url, method, body, form) {
   const headers = { Accept: "application/json" };
   const t = token.get();

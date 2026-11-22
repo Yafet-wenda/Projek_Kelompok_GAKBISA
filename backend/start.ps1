@@ -73,5 +73,5 @@ if ($dbHost -in @('localhost', '127.0.0.1') -and $dbPort) {
 }
 
 $env:GAKBISA_ENV = $envFile
-Write-Host '  Backend    : memulai, http://localhost:8080 siap setelah beberapa detik (Ctrl+C untuk berhenti)'
+Write-Host '  Web + API  : memulai, buka http://localhost:8080 setelah muncul pesan siap (Ctrl+C untuk berhenti)'
 & (Join-Path $backendDir 'mvnw.cmd') -q spring-boot:run

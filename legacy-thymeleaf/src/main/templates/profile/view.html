@@ -115,7 +115,7 @@
 
             <div th:if="${!#lists.isEmpty(offerSkills)}" class="d-flex flex-wrap gap-2 p-1">
                 <span class="gk-badge gk-badge--OFFER" style="padding:6px 12px;font-size:13px;" th:each="us : ${offerSkills}">
-                    <i class="bi bi-stars text-primary me-1"></i>
+                    <i class="bi bi-award-fill text-primary me-1"></i>
                     <span th:text="${us.skill.name}">Skill</span>
                     <span th:if="${us.level}" style="opacity:0.8;font-weight:400;" th:text="'(' + ${us.level} + ')'"></span>
                 </span>

@@ -20,6 +20,8 @@ import com.gakbisa.backend.repository.SkillRepository;
 import com.gakbisa.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -143,6 +145,11 @@ public class AdminService {
         return reports.findByStatusWithReporter(status);
     }
 
+    @Transactional(readOnly = true)
+    public Page<Report> reportsByStatus(ReportStatus status, Pageable pageable) {
+        return reports.findByStatusWithReporter(status, pageable);
+    }
+
     /**
      * Laporan yang masih menunggu keputusan (OPEN + REVIEWING), terbaru duluan.
      * Dua query lalu diurut di memori: daftar moderasi selalu kecil dan ini dipakai
@@ -161,6 +168,11 @@ public class AdminService {
     @Transactional(readOnly = true)
     public List<User> listUsers() {
         return users.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<User> listUsers(Pageable pageable) {
+        return users.findAll(pageable);
     }
 
     @Transactional

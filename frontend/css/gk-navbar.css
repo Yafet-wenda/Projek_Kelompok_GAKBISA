@@ -37,6 +37,15 @@ body {
   body { padding-bottom: var(--gk-bottom-nav-height); }
 }
 
+body.gk-app {
+  padding-top: 0 !important;
+  padding-bottom: 0;
+}
+
+@media (max-width: 1199px) {
+  .gk-app-nav .navbar-nav { width: 100%; order: 1; }
+}
+
 .gk-navbar {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -85,19 +94,14 @@ body {
   box-shadow: var(--gk-ring);
 }
 
-/* Kotak "G" bergradasi biru sebagai icon mark */
 .gk-navbar__brand-mark {
-  display: inline-grid;
-  place-items: center;
-  width: 34px; height: 34px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--gk-primary) 0%, #0D4ED8 100%);
-  color: #fff;
-  font-size: 17px;
-  font-weight: 800;
-  letter-spacing: -.5px;
+  display: block;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
   flex-shrink: 0;
 }
+.gk-navbar__brand-mark--sm { width: 28px; height: 28px; }
 
 .gk-navbar__brand-name {
   font-size: 18px;

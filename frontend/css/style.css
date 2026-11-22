@@ -1260,7 +1260,7 @@ a:hover { text-decoration: none; color: var(--fb-blue-dark); }
 
 .form-control:focus, .form-select:focus {
   border-color: var(--fb-blue);
-  box-shadow: 0 0 0 0.2rem rgba(24, 119, 242, 0.25);
+  box-shadow: var(--gk-ring);
 }
 
 .card {

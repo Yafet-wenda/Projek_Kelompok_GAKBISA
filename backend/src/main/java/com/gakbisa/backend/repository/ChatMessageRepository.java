@@ -29,12 +29,6 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, UUID> 
 
     Optional<ChatMessage> findFirstByRoom_IdOrderByCreatedAtDescIdDesc(UUID roomId);
 
-    boolean existsByRoom_IdAndKeyVersionAndIv(UUID roomId, int keyVersion, String iv);
-
-    boolean existsByRoom_IdAndKeyVersionAndIvAndIdNot(
-        UUID roomId, int keyVersion, String iv, UUID messageId
-    );
-
     @Query("""
         select count(m) from ChatMessage m
         where m.room.id = :roomId
