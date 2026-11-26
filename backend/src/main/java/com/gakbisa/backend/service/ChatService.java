@@ -157,7 +157,7 @@ public class ChatService {
             return new RoomSummary(
                 room.getId(), room.getType(), room.getName(), room.getAvatarPath(),
                 room.getCurrentKeyVersion(), room.getUpdatedAt(),
-                latest.map(ChatMessage::getCreatedAt).orElse(null), unread
+                latest.map(message -> message.getCreatedAt()).orElse(null), unread
             );
         }).toList();
     }
@@ -360,7 +360,7 @@ public class ChatService {
             throw new ValidationException("Versi kunci ruang sudah mencapai batas");
         }
         int nextVersion = room.getCurrentKeyVersion() + 1;
-        List<User> recipients = activeMembers.stream().map(ChatMember::getUser).toList();
+        List<User> recipients = activeMembers.stream().map(member -> member.getUser()).toList();
         storeRoomKeys(room, nextVersion, recipients, envelopes);
         room.setCurrentKeyVersion(nextVersion);
         room.setUpdatedAt(Instant.now());
@@ -513,15 +513,12 @@ public class ChatService {
         if (blank(ciphertext) || ciphertext.length() > 2_000_000) {
             throw new ValidationException("Ciphertext pesan kosong atau terlalu besar");
         }
-        if (type != ChatMessageType.TEXT) {
-            throw new ValidationException("Pesan lampiran belum didukung; kirim ciphertext teks terlebih dahulu");
-        }
         if (validateBase64(ciphertext, "Ciphertext").length < 16) {
             throw new ValidationException("Ciphertext AES-GCM harus menyertakan authentication tag");
         }
         canonicalIv(iv);
         if (!blank(attachmentPath)) {
-            throw new ValidationException("Pesan teks tidak boleh menyertakan path lampiran");
+            throw new ValidationException("Lampiran chat harus dikirim sebagai ciphertext inline; path berkas tidak didukung");
         }
     }
 

@@ -109,7 +109,22 @@ class ChatServiceTest {
     }
 
     @Test
-    void doesNotAcceptAttachmentsWithoutAnUploadFlow() {
+    void acceptsEncryptedInlineFileAttachment() {
+        when(nonces.existsByRoom_IdAndKeyVersionAndIv(
+            roomId, 1, "AAAAAAAAAAAAAAAA")).thenReturn(false);
+        when(messages.save(any(ChatMessage.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        var saved = service.sendMessage(actorId, roomId,
+            new MessageRequest(1, ChatMessageType.FILE, "AAAAAAAAAAAAAAAAAAAAAA==",
+                "AAAAAAAAAAAAAAAA", null, null));
+
+        assertEquals(ChatMessageType.FILE, saved.messageType());
+        assertNull(saved.attachmentPath());
+        verify(messages).save(any(ChatMessage.class));
+    }
+
+    @Test
+    void doesNotAcceptUnencryptedStoragePathsForAttachments() {
         assertThrows(ValidationException.class, () -> service.sendMessage(actorId, roomId,
             new MessageRequest(1, ChatMessageType.FILE, "AAAAAAAAAAAAAAAAAAAAAA==",
                 "AAAAAAAAAAAAAAAA", "some-user-file", null)));

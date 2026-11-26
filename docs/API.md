@@ -110,6 +110,10 @@ Tampilkan `detail` (atau `message`) ke pengguna.
 | GET 🛡🆕 | `/api/admin/categories` | Kategori + nama keahlian |
 | POST 🛡 | `/api/admin/categories` · `/api/admin/skills` | Tambah kategori / keahlian |
 
+### Chat terenkripsi
+
+Endpoint `/api/chat/**` menggunakan JWT Bearer yang sama dengan endpoint API lainnya, bukan session cookie/CSRF. Klien mengenkripsi pesan dan lampiran (maksimal 1 MB) di browser, mengelola anggota grup dengan rotasi kunci, dan memeriksa percakapan berkala; detail format dan batasan ada di [panduan Chat E2EE](../backend/docs/chat-api.md).
+
 ## Contoh (curl)
 
 ```bash

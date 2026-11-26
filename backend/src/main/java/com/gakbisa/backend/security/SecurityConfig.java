@@ -71,7 +71,10 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource(
             @Value("${gakbisa.security.cors-allowed-origins:http://localhost:5173}") String origins) {
         CorsConfiguration cfg = new CorsConfiguration();
-        List<String> allowed = Arrays.stream(origins.split(",")).map(String::trim).filter(s -> !s.isEmpty()).toList();
+        List<String> allowed = Arrays.stream(origins.split(","))
+                .map(origin -> origin.trim())
+                .filter(origin -> !origin.isEmpty())
+                .toList();
         cfg.setAllowedOrigins(allowed);
         cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         cfg.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));

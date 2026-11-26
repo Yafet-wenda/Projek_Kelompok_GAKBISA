@@ -477,7 +477,10 @@ public class WebController {
         if (!"PUBLIC".equals(dto.getVisibility()) && !"PRIVATE".equals(dto.getVisibility())) {
             errors.rejectValue("visibility", "invalid", "Pilih visibilitas publik atau privat.");
         }
-        if (file == null || file.isEmpty()) errors.reject("file.required", "File portofolio wajib dipilih.");
+        if (file == null || file.isEmpty()) {
+            errors.reject("file.required", "File portofolio wajib dipilih.");
+            return "portfolio/upload";
+        }
         if (errors.hasErrors()) return "portfolio/upload";
         try {
             portfolioService.upload(uid,

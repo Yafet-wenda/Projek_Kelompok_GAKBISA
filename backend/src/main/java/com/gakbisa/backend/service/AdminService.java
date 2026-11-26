@@ -85,7 +85,7 @@ public class AdminService {
     public List<CategoryRow> categoriesWithSkills() {
         return categories.findAll().stream()
             .map(c -> new CategoryRow(c.getId(), c.getName(), c.getDescription(),
-                skills.findByCategory_Id(c.getId()).stream().map(Skill::getName).toList()))
+                skills.findByCategory_Id(c.getId()).stream().map(skill -> skill.getName()).toList()))
             .toList();
     }
 
@@ -159,7 +159,7 @@ public class AdminService {
     public List<Report> pendingReports(int limit) {
         List<Report> waiting = new ArrayList<>(reports.findByStatusWithReporter(ReportStatus.OPEN));
         waiting.addAll(reports.findByStatusWithReporter(ReportStatus.REVIEWING));
-        waiting.sort(Comparator.comparing(Report::getCreatedAt).reversed());
+        waiting.sort(Comparator.comparing((Report report) -> report.getCreatedAt()).reversed());
         return waiting.isEmpty() ? waiting : waiting.subList(0, Math.min(limit, waiting.size()));
     }
 

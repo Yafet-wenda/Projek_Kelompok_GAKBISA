@@ -196,6 +196,7 @@ class WebServingTest {
         MockHttpSession session = login(student);
         mvc.perform(get("/api/me").session(session)).andExpect(status().isUnauthorized())
             .andExpect(content().contentTypeCompatibleWith("application/json"));
+        mvc.perform(get("/api/chat/rooms").session(session)).andExpect(status().isUnauthorized());
         mvc.perform(get("/web/api/me").session(session)).andExpect(status().isOk())
             .andExpect(jsonPath("id").value(student.getId().toString()));
         mvc.perform(get("/web/api/me")).andExpect(status().isUnauthorized());
@@ -211,6 +212,7 @@ class WebServingTest {
         String body = response.getResponse().getContentAsString();
         String token = body.split("\"accessToken\":\"")[1].split("\"")[0];
         mvc.perform(get("/api/me").header("Authorization", "Bearer " + token)).andExpect(status().isOk());
+        mvc.perform(get("/api/chat/rooms").header("Authorization", "Bearer " + token)).andExpect(status().isOk());
         mvc.perform(get("/api/admin/users").header("Authorization", "Bearer " + token)).andExpect(status().isForbidden());
     }
 

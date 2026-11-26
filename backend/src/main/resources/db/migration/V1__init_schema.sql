@@ -13,7 +13,6 @@ CREATE TABLE users (
     bio           TEXT,
     campus        VARCHAR(150),
     avatar_path   TEXT,
-    banner_path   TEXT,
     status        VARCHAR(20)  NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'SUSPENDED')),
     created_at    TIMESTAMPTZ  NOT NULL DEFAULT now()
 );

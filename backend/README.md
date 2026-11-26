@@ -97,7 +97,7 @@ masuk katalog di kategori `Lainnya` — admin yang memindahkannya ke kategori ya
 | `DB_SSL_MODE` | `disable` / `require` | `require` wajib untuk Supabase, `disable` untuk lokal |
 | `SUPABASE_URL` | `https://xxxx.supabase.co` | Basis URL project |
 | `SUPABASE_SERVICE_KEY` | `eyJ...` | Service role key untuk Storage API — **hanya di backend, jangan pernah dikirim ke browser** |
-| `STORAGE_BUCKET` | `portfolio-files` | Nama bucket portofolio |
+| `STORAGE_BUCKET` | `portofolio-files` | Nama bucket portofolio |
 
 > **Keamanan:** `.env` sudah ada di `.gitignore`. Jangan pernah commit kunci service.
 
@@ -143,7 +143,7 @@ db/migration/  V1__init.sql (DDL kanonik, selaras bagian database/QA)
 | Ulasan + reputasi (1 ulasan/sesi) | `service/ReviewService` |
 | Notifikasi in-app | `service/NotificationService` |
 | Laporan + moderasi admin | `service/ReportService`, `service/AdminService` |
-| Upload portofolio ke Supabase Storage (validasi MIME/ukuran 10MB, hapus file yatim) | `service/SupabaseStorageService`, `service/PortfolioService` |
+| Upload portofolio ke Supabase Storage (validasi tipe/ukuran sesuai konfigurasi, hapus file yatim) | `service/SupabaseStorageService`, `service/PortfolioService` |
 | Pagination & batas hasil pencarian | `SkillService`, `MatchingService` |
 
 ## Pengujian
