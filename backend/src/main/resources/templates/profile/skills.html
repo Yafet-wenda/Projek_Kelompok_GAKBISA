@@ -1,172 +1,186 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head('Keahlian kamu')}"></head>
+<head th:replace="~{fragments/head :: head('Keahlian Anda')}"></head>
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
-<div class="gk-layout container-fluid">
+<div class="app-shell">
     <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
 
-    <main class="gk-main">
+    <div class="app-body app-body--single">
+        <main class="app-main">
 
-        <div class="gk-page-header">
-            <div class="gk-page-header__text">
-                <h1 class="gk-page-header__title">Keahlian kamu</h1>
+            <header class="page-head">
+                <span class="eyebrow">Profil keahlian <span>&#9679;</span></span>
+                <h1 class="display">Keahlian <em>Anda.</em></h1>
+                <p class="lede">
+                    Daftar keahlian yang Anda ajarkan dan yang ingin Anda pelajari. Sistem
+                    rekomendasi memakai daftar ini untuk mencari partner paling cocok.
+                </p>
+            </header>
+
+            <div th:if="${success}" class="notice notice--success" role="status">
+                <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
+                <span th:text="${success}"></span>
             </div>
-        </div>
-
-        <!-- Alert messages -->
-        <div th:if="${success}" class="gk-alert gk-alert--success">
-            <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
-            <span th:text="${success}"></span>
-        </div>
-        <div th:if="${error}" class="gk-alert gk-alert--danger">
-            <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
-            <span th:text="${error}"></span>
-        </div>
-
-        <!-- Keahlian yang diajarkan -->
-        <div class="gk-card mb-4">
-            <div class="gk-card__header">
-                <h2 class="gk-card__title">Yang bisa kamu ajarkan</h2>
-                <span class="text-muted small" th:text="${offerSkills.size()} + ' keahlian'">0 keahlian</span>
+            <div th:if="${error}" class="notice notice--danger" role="alert">
+                <th:block th:replace="~{fragments/icons :: icon('alert')}"></th:block>
+                <span th:text="${error}"></span>
             </div>
 
-            <div class="list-group list-group-flush m-3" th:unless="${#lists.isEmpty(offerSkills)}">
-                <div class="list-group-item d-flex justify-content-between align-items-center gap-3 px-0"
-                     th:each="us : ${offerSkills}">
-                    <div class="min-w-0">
-                        <div class="fw-semibold" th:text="${us.skill.name}">Skill</div>
-                        <div class="text-muted small" th:if="${us.notes}" th:text="${us.notes}">catatan</div>
+            <section class="panel">
+                <div class="panel-head">
+                    <div>
+                        <span class="kicker">Ditawarkan</span>
+                        <h2>Yang bisa Anda ajarkan</h2>
                     </div>
-                    <div class="d-flex align-items-center gap-3 text-nowrap">
-                        <span class="text-muted small" th:if="${us.level}"
-                              th:text="${us.level.name() == 'BEGINNER' ? 'pemula'
-                                     : us.level.name() == 'INTERMEDIATE' ? 'menengah' : 'mahir'}">pemula</span>
-                        <form th:action="@{/profile/skills/{id}/delete(id=${us.id})}" method="post" class="m-0">
-                            <button type="submit" class="gk-btn gk-btn--ghost gk-btn--sm text-danger"
-                                    aria-label="Hapus keahlian ini" data-confirm="Hapus keahlian ini?">Hapus</button>
-                        </form>
-                    </div>
+                    <span class="muted small" th:text="${offerSkills.size()} + ' keahlian'">0 keahlian</span>
                 </div>
-            </div>
-
-            <p class="text-muted small mx-0 mb-0" th:if="${#lists.isEmpty(offerSkills)}">
-                Masih kosong. Isi lewat form di bawah.
-            </p>
-        </div>
-
-        <!-- Keahlian yang dicari -->
-        <div class="gk-card mb-4">
-            <div class="gk-card__header">
-                <h2 class="gk-card__title">Yang ingin kamu pelajari</h2>
-                <span class="text-muted small" th:text="${wantSkills.size()} + ' keahlian'">0 keahlian</span>
-            </div>
-
-            <div class="list-group list-group-flush m-3" th:unless="${#lists.isEmpty(wantSkills)}">
-                <div class="list-group-item d-flex justify-content-between align-items-center gap-3 px-0"
-                     th:each="us : ${wantSkills}">
-                    <div class="min-w-0">
-                        <div class="fw-semibold" th:text="${us.skill.name}">Skill</div>
-                        <div class="text-muted small" th:if="${us.notes}" th:text="${us.notes}">catatan</div>
-                    </div>
-                    <div class="d-flex align-items-center gap-3 text-nowrap">
-                        <span class="text-muted small" th:if="${us.level}"
-                              th:text="${us.level.name() == 'BEGINNER' ? 'pemula'
-                                     : us.level.name() == 'INTERMEDIATE' ? 'menengah' : 'mahir'}">pemula</span>
-                        <form th:action="@{/profile/skills/{id}/delete(id=${us.id})}" method="post" class="m-0">
-                            <button type="submit" class="gk-btn gk-btn--ghost gk-btn--sm text-danger"
-                                    aria-label="Hapus keahlian ini" data-confirm="Hapus keahlian ini?">Hapus</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <p class="text-muted small mx-0 mb-0" th:if="${#lists.isEmpty(wantSkills)}">
-                Masih kosong. Isi lewat form di bawah.
-            </p>
-        </div>
-
-        <!-- Form tambah keahlian -->
-        <div class="gk-card p-4">
-            <div class="gk-card__header mb-3 pb-2">
-                <h2 class="gk-card__title">Tambah keahlian</h2>
-            </div>
-
-            <form th:action="@{/profile/skills}" method="post" th:object="${userSkillDto}">
-                <div class="row g-3">
-                    <!-- Penyaring katalog -->
-                    <div class="col-md-6">
-                        <label class="form-label" for="categorySelect">Saring katalog</label>
-                        <select id="categorySelect" class="form-select">
-                            <option value="">Semua kategori</option>
-                            <option th:each="cat : ${categories}"
-                                    th:value="${cat.id}"
-                                    th:text="${cat.name}">Kategori</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label" for="skillSelect">Pilih dari katalog</label>
-                        <select th:field="*{skillId}" id="skillSelect" class="form-select">
-                            <option value="">Tidak ketemu, ketik sendiri</option>
-                            <option th:each="s : ${skills}"
-                                    th:value="${s.id}"
-                                    th:attr="data-cat=${s.category?.id}"
-                                    th:text="${s.name} + (${s.category != null} ? ' (' + ${s.category.name} + ')' : '')">Keahlian</option>
-                        </select>
-                        <div th:if="${#fields.hasErrors('skillId')}" class="text-danger small mt-1"
-                             th:errors="*{skillId}"></div>
-                    </div>
-
-                    <!-- Nama bebas diketik: katalog kosong tidak lagi jadi jalan buntu. -->
-                    <div class="col-md-6">
-                        <label class="form-label" for="skillName">Atau ketik namanya</label>
-                        <input type="text" th:field="*{skillName}" class="form-control"
-                               placeholder="mis. Blender" autocomplete="off">
-                    </div>
-
-                    <div class="col-md-4">
-                        <span class="form-label d-block">Untuk apa <span class="text-danger">*</span></span>
-                        <div class="d-flex gap-3 mt-2">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" th:field="*{type}"
-                                       value="OFFER" id="typeOffer">
-                                <label class="form-check-label" for="typeOffer">Kamu ajarkan</label>
+                <div class="panel-body">
+                    <div th:unless="${#lists.isEmpty(offerSkills)}">
+                        <div class="skill-row" th:each="us : ${offerSkills}">
+                            <div>
+                                <div class="skill-row__name" th:text="${us.skill.name}">Keahlian</div>
+                                <div class="skill-row__note" th:if="${us.notes}" th:text="${us.notes}">Catatan</div>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" th:field="*{type}"
-                                       value="WANT" id="typeWant">
-                                <label class="form-check-label" for="typeWant">Kamu pelajari</label>
+                            <div class="skill-row__side">
+                                <span class="tag tag--neutral" th:if="${us.level}"
+                                      th:text="${@label.level(us.level)}">Pemula</span>
+                                <form th:action="@{/profile/skills/{id}/delete(id=${us.id})}" method="post" style="margin:0;">
+                                    <button type="submit" class="btn btn--danger btn--sm"
+                                            aria-label="Hapus keahlian ini" data-confirm="Hapus keahlian ini?">
+                                        <th:block th:replace="~{fragments/icons :: icon('trash')}"></th:block>
+                                        Hapus
+                                    </button>
+                                </form>
                             </div>
                         </div>
-                        <div th:if="${#fields.hasErrors('type')}" class="text-danger small mt-1"
-                             th:errors="*{type}"></div>
                     </div>
+                    <p class="muted small" style="margin:0;" th:if="${#lists.isEmpty(offerSkills)}">
+                        Masih kosong. Isi lewat formulir di bawah.
+                    </p>
+                </div>
+            </section>
 
-                    <div class="col-md-4">
-                        <label class="form-label" for="level">Tingkat</label>
-                        <select th:field="*{level}" class="form-select">
-                            <option value="BEGINNER">Pemula</option>
-                            <option value="INTERMEDIATE">Menengah</option>
-                            <option value="ADVANCED">Mahir</option>
-                        </select>
+            <section class="panel" style="margin-top:28px;">
+                <div class="panel-head">
+                    <div>
+                        <span class="kicker">Dicari</span>
+                        <h2>Yang ingin Anda pelajari</h2>
                     </div>
+                    <span class="muted small" th:text="${wantSkills.size()} + ' keahlian'">0 keahlian</span>
+                </div>
+                <div class="panel-body">
+                    <div th:unless="${#lists.isEmpty(wantSkills)}">
+                        <div class="skill-row" th:each="us : ${wantSkills}">
+                            <div>
+                                <div class="skill-row__name" th:text="${us.skill.name}">Keahlian</div>
+                                <div class="skill-row__note" th:if="${us.notes}" th:text="${us.notes}">Catatan</div>
+                            </div>
+                            <div class="skill-row__side">
+                                <span class="tag tag--neutral" th:if="${us.level}"
+                                      th:text="${@label.level(us.level)}">Pemula</span>
+                                <form th:action="@{/profile/skills/{id}/delete(id=${us.id})}" method="post" style="margin:0;">
+                                    <button type="submit" class="btn btn--danger btn--sm"
+                                            aria-label="Hapus keahlian ini" data-confirm="Hapus keahlian ini?">
+                                        <th:block th:replace="~{fragments/icons :: icon('trash')}"></th:block>
+                                        Hapus
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="muted small" style="margin:0;" th:if="${#lists.isEmpty(wantSkills)}">
+                        Masih kosong. Isi lewat formulir di bawah.
+                    </p>
+                </div>
+            </section>
 
-                    <div class="col-md-4">
-                        <label class="form-label" for="notes">Catatan</label>
-                        <input type="text" th:field="*{notes}" class="form-control"
-                               placeholder="mis. dipakai untuk tugas akhir">
+            <section class="panel" style="margin-top:28px;">
+                <div class="panel-head">
+                    <div>
+                        <span class="kicker">Tambah baru</span>
+                        <h2>Tambah keahlian</h2>
                     </div>
                 </div>
+                <div class="panel-body">
+                    <form th:action="@{/profile/skills}" method="post" th:object="${userSkillDto}">
+                        <div class="form-grid">
+                            <div class="field">
+                                <label for="categorySelect">Saring katalog</label>
+                                <select id="categorySelect">
+                                    <option value="">Semua kategori</option>
+                                    <option th:each="cat : ${categories}"
+                                            th:value="${cat.id}" th:text="${cat.name}">Kategori</option>
+                                </select>
+                            </div>
 
-                <div class="mt-4 pt-2 border-top">
-                    <button type="submit" class="gk-btn gk-btn--primary">Tambah</button>
+                            <div class="field">
+                                <label for="skillSelect">Pilih dari katalog</label>
+                                <select th:field="*{skillId}" id="skillSelect">
+                                    <option value="">Tidak ketemu, ketik sendiri</option>
+                                    <option th:each="s : ${skills}"
+                                            th:value="${s.id}"
+                                            th:attr="data-cat=${s.category?.id}"
+                                            th:text="${s.name} + (${s.category != null} ? ' (' + ${s.category.name} + ')' : '')">Keahlian</option>
+                                </select>
+                                <p th:if="${#fields.hasErrors('skillId')}" class="field__error" th:errors="*{skillId}"></p>
+                                <p class="field__hint">Katalog kosong bukan jalan buntu; ketik nama bebas di bawah.</p>
+                            </div>
+
+                            <div class="field span-2">
+                                <label for="skillName">Atau ketik namanya</label>
+                                <input id="skillName" type="text" th:field="*{skillName}"
+                                       placeholder="mis. Blender" autocomplete="off">
+                            </div>
+
+                            <div class="field span-2">
+                                <span class="field__label">Untuk apa <span style="color:var(--red);">*</span></span>
+                                <div class="choice-grid">
+                                    <label class="choice" for="typeOffer">
+                                        <input type="radio" th:field="*{type}" value="OFFER" id="typeOffer">
+                                        <span>Anda ajarkan</span>
+                                    </label>
+                                    <label class="choice" for="typeWant">
+                                        <input type="radio" th:field="*{type}" value="WANT" id="typeWant">
+                                        <span>Anda pelajari</span>
+                                    </label>
+                                </div>
+                                <p th:if="${#fields.hasErrors('type')}" class="field__error" th:errors="*{type}"></p>
+                            </div>
+
+                            <div class="field">
+                                <label for="level">Tingkat</label>
+                                <select th:field="*{level}" id="level">
+                                    <option value="BEGINNER">Pemula</option>
+                                    <option value="INTERMEDIATE">Menengah</option>
+                                    <option value="ADVANCED">Mahir</option>
+                                </select>
+                            </div>
+
+                            <div class="field">
+                                <label for="notes">Catatan</label>
+                                <input id="notes" type="text" th:field="*{notes}"
+                                       placeholder="mis. dipakai untuk tugas akhir">
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn--dark">
+                                <th:block th:replace="~{fragments/icons :: icon('plus')}"></th:block>
+                                Tambah keahlian
+                            </button>
+                            <a th:href="@{/matching}" class="btn btn--ghost">
+                                <th:block th:replace="~{fragments/icons :: icon('users')}"></th:block>
+                                Cari partner
+                            </a>
+                        </div>
+                    </form>
                 </div>
-            </form>
-        </div>
+            </section>
 
-    </main>
+        </main>
+    </div>
 </div>
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>

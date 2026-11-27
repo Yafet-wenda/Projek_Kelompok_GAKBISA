@@ -4,241 +4,162 @@
 <body>
 
 <!--
-  ╔══════════════════════════════════════════════════════════════════════╗
-  ║  GAKBISA Navbar — design-system token layer                          ║
-  ║  Tinggi 64px, tiga zona: [logo+search] | [nav-center] | [actions]   ║
-  ║  Responsif: nav-center ke bottom-bar di mobile (≤768px)              ║
-  ╚══════════════════════════════════════════════════════════════════════╝
-  Penanda aktif ditangani JS di navbar.js (baca window.location.pathname).
-  Tidak ada logika route baru — murni presentasi.
+  Bilah atas: merek, pencarian, tautan utama, notifikasi, menu akun.
+  Penanda aktif ditangani gk-navbar.js lewat atribut data-path.
 -->
-
 <th:block th:fragment="navbar">
-<nav class="gk-navbar" role="navigation" aria-label="Navigasi utama">
+<header class="site-nav">
+  <div class="site-nav__inner">
 
-  <!-- ── Zona kiri: logo + search ──────────────────────────────────── -->
-  <div class="gk-navbar__left">
+    <div class="site-nav__left">
+      <button class="icon-btn rail-toggle" id="gk-sidebar-toggle" type="button"
+              aria-label="Buka menu navigasi" aria-controls="gkSidebar" aria-expanded="false"
+              sec:authorize="isAuthenticated()">
+        <th:block th:replace="~{fragments/icons :: icon('menu')}"></th:block>
+      </button>
 
-    <!-- Sidebar drawer toggle for mobile / tablet (<= 992px) -->
-    <button class="gk-icon-btn d-lg-none me-1"
-            id="gk-sidebar-toggle"
-            type="button"
-            aria-label="Buka navigasi samping"
-            sec:authorize="isAuthenticated()"
-            title="Menu">
-      <i class="bi bi-list" style="font-size: 22px;" aria-hidden="true"></i>
-    </button>
+      <a th:href="@{/}" class="brand" aria-label="GAKBISA — beranda">
+        <span class="brand-mark">
+          <th:block th:replace="~{fragments/icons :: icon('brand')}"></th:block>
+        </span>
+        <span class="brand-name">GAKBISA</span>
+      </a>
 
-    <!-- Logo / brand -->
-    <a th:href="@{/}" class="gk-navbar__brand" aria-label="GAKBISA - beranda">
-      <img class="gk-navbar__brand-mark" th:src="@{/images/gakbisa-logo-64.png}" alt="" aria-hidden="true">
-      <span class="gk-navbar__brand-name">GAKBISA</span>
-    </a>
-
-    <!-- Search bar (desktop only — muncul ≥ 768px) -->
-    <div class="gk-navbar__search" sec:authorize="isAuthenticated()">
-      <i class="bi bi-search gk-navbar__search-icon" aria-hidden="true"></i>
-      <form th:action="@{/matching}" method="get" role="search" class="d-flex align-items-center flex-grow-1 m-0" style="min-width:0;">
-        <input id="gk-nav-search"
-               type="search"
-               name="keyword"
-               class="gk-navbar__search-input"
-               placeholder="Cari partner keahlian..."
-               autocomplete="off"
-               aria-label="Cari partner keahlian">
-      </form>
+      <nav class="nav-links" sec:authorize="isAuthenticated()" aria-label="Navigasi utama">
+        <a th:href="@{/catalog}" data-path="/catalog">Katalog</a>
+        <a th:href="@{/matching}" data-path="/matching">Cari partner</a>
+        <a th:href="@{/barter}" data-path="/barter">Barter</a>
+        <a th:href="@{/sessions}" data-path="/sessions">Sesi</a>
+      </nav>
     </div>
 
-  </div>
+    <div class="site-nav__right">
 
-  <!-- ── Zona kanan: ikon aksi + avatar ────────────────────────────── -->
-  <div class="gk-navbar__right">
-
-    <!-- ─── Authenticated ─────────────────────────────────────────── -->
-    <div sec:authorize="isAuthenticated()" class="d-flex align-items-center gap-2">
-
-      <!-- Tombol search mobile (ikon, collapse ≤768px) -->
-      <button class="gk-navbar__mobile-search-btn gk-icon-btn d-md-none"
-              type="button"
-              aria-label="Cari partner keahlian"
-              id="gk-mobile-search-toggle">
-        <i class="bi bi-search" aria-hidden="true"></i>
-      </button>
-
-      <!-- Theme toggle (Dark/Light mode) -->
-      <button class="gk-icon-btn gk-theme-toggle"
-              id="gk-theme-toggle"
-              type="button"
-              aria-label="Ganti tema gelap atau terang"
-              data-bs-toggle="tooltip"
-              data-bs-placement="bottom"
-              title="Ganti Tema">
-        <i class="bi bi-moon-stars-fill gk-theme-icon" aria-hidden="true"></i>
-      </button>
-
-      <!-- Notifikasi -->
-      <div class="dropdown">
-        <button class="gk-icon-btn"
-                id="gkNotifDropdown"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-                aria-label="Notifikasi"
-                data-bs-placement="bottom"
-                title="Notifikasi">
-          <i class="bi bi-bell-fill" aria-hidden="true"></i>
-          <!-- Badge dihitung dari /web/api/notifications. -->
-          <span class="gk-navbar__notif-badge" id="gk-notif-badge" aria-live="polite" hidden>0</span>
-        </button>
-
-        <div class="dropdown-menu dropdown-menu-end gk-dropdown" aria-labelledby="gkNotifDropdown" style="width:340px;">
-          <div class="gk-dropdown__header">
-            <span class="gk-dropdown__title">Notifikasi</span>
-            <a th:href="@{/notifications}" class="gk-dropdown__link-sm">Lihat semua</a>
-          </div>
-          <hr class="dropdown-divider my-1">
-          <a th:href="@{/notifications}" class="gk-dropdown__item">
-            <span class="gk-dropdown__item-icon" style="background:var(--gk-primary-muted);color:var(--gk-primary);">
-              <i class="bi bi-bell" aria-hidden="true"></i>
-            </span>
-            <div>
-              <div class="gk-dropdown__item-title">Buka halaman notifikasi</div>
-              <div class="gk-dropdown__item-sub">Lihat semua pemberitahuan masuk</div>
-            </div>
-          </a>
+      <th:block sec:authorize="isAuthenticated()">
+        <div class="nav-search">
+          <th:block th:replace="~{fragments/icons :: icon('search')}"></th:block>
+          <form th:action="@{/matching}" method="get" role="search">
+            <input id="gk-nav-search" type="search" name="keyword"
+                   placeholder="Cari keahlian atau partner" autocomplete="off"
+                   aria-label="Cari partner keahlian">
+          </form>
         </div>
-      </div>
 
-      <!-- Avatar / Profile dropdown -->
-      <div class="dropdown">
-        <button class="gk-navbar__avatar-btn"
-                id="gkProfileDropdown"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-                aria-label="Menu akun">
-          <!-- Inisial nama dirender dari Spring Security via Thymeleaf -->
-          <span class="gk-avatar gk-avatar--sm gk-navbar__avatar"
-                th:text="${#strings.toUpperCase(#strings.substring(#authentication.principal.user.fullName, 0, 1))}"
-                aria-hidden="true">G</span>
+        <button class="icon-btn nav-search-btn" id="gk-mobile-search-toggle" type="button"
+                aria-label="Cari partner keahlian" aria-expanded="false">
+          <th:block th:replace="~{fragments/icons :: icon('search')}"></th:block>
         </button>
 
-        <ul class="dropdown-menu dropdown-menu-end gk-dropdown" aria-labelledby="gkProfileDropdown" style="min-width:240px;">
-          <!-- Identitas pengguna -->
-          <li>
-            <a th:href="@{/profile}" class="gk-dropdown__item gk-dropdown__item--profile">
-              <span class="gk-avatar gk-avatar--md"
-                    th:text="${#strings.toUpperCase(#strings.substring(#authentication.principal.user.fullName, 0, 1))}">G</span>
-              <div class="min-w-0">
-                <div class="gk-dropdown__item-title fw-bold" sec:authentication="name">Pengguna</div>
-                <div class="gk-dropdown__item-sub">Lihat profil Anda</div>
+        <div class="menu">
+          <button class="icon-btn" type="button" data-menu-toggle
+                  aria-label="Notifikasi" aria-haspopup="true" aria-expanded="false">
+            <th:block th:replace="~{fragments/icons :: icon('bell')}"></th:block>
+            <span class="nav-badge" id="gk-notif-badge" aria-live="polite" hidden>0</span>
+          </button>
+          <div class="menu-panel menu-panel--wide">
+            <div class="menu-panel__head">
+              <span>Notifikasi</span>
+              <a th:href="@{/notifications}">Lihat semua</a>
+            </div>
+            <a th:href="@{/notifications}" class="menu-item">
+              <th:block th:replace="~{fragments/icons :: icon('inbox')}"></th:block>
+              <span>Kotak masuk pemberitahuan</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="menu">
+          <button class="nav-avatar" type="button" data-menu-toggle
+                  aria-label="Menu akun" aria-haspopup="true" aria-expanded="false">
+            <img th:if="${#authentication.principal.user.avatarPath != null}"
+                 th:src="${#authentication.principal.user.avatarPath}" alt="">
+            <span th:if="${#authentication.principal.user.avatarPath == null}"
+                  th:text="${#strings.toUpperCase(#strings.substring(#authentication.principal.user.fullName, 0, 1))}">G</span>
+          </button>
+          <div class="menu-panel">
+            <div class="menu-user">
+              <span class="avatar avatar--sm" aria-hidden="true">
+                <img th:if="${#authentication.principal.user.avatarPath != null}"
+                     th:src="${#authentication.principal.user.avatarPath}" alt="">
+                <span th:if="${#authentication.principal.user.avatarPath == null}"
+                      th:text="${#strings.toUpperCase(#strings.substring(#authentication.principal.user.fullName, 0, 1))}">G</span>
+              </span>
+              <div style="min-width:0;">
+                <div class="menu-user__name" sec:authentication="name">Pengguna</div>
+                <div class="menu-user__meta">Akun GAKBISA</div>
               </div>
+            </div>
+            <a th:href="@{/profile}" class="menu-item">
+              <th:block th:replace="~{fragments/icons :: icon('user')}"></th:block>
+              <span>Profil saya</span>
             </a>
-          </li>
-          <li><hr class="dropdown-divider my-1"></li>
-
-          <li>
-            <a th:href="@{/profile/skills}" class="gk-dropdown__item">
-              <span class="gk-dropdown__item-icon" style="background:var(--gk-primary-muted);color:var(--gk-primary);">
-                <i class="bi bi-award-fill" aria-hidden="true"></i>
-              </span>
-              Kelola Keahlian
+            <a th:href="@{/profile/skills}" class="menu-item">
+              <th:block th:replace="~{fragments/icons :: icon('award')}"></th:block>
+              <span>Keahlian saya</span>
             </a>
-          </li>
-          <li>
-            <a th:href="@{/portfolio}" class="gk-dropdown__item">
-              <span class="gk-dropdown__item-icon" style="background:var(--gk-primary-muted);color:var(--gk-primary);">
-                <i class="bi bi-collection" aria-hidden="true"></i>
-              </span>
-              Portofolio Saya
+            <a th:href="@{/portfolio}" class="menu-item">
+              <th:block th:replace="~{fragments/icons :: icon('folder')}"></th:block>
+              <span>Portofolio</span>
             </a>
-          </li>
-
-          <!-- Admin only -->
-          <li sec:authorize="hasRole('ADMIN')">
-            <a th:href="@{/admin}" class="gk-dropdown__item">
-              <span class="gk-dropdown__item-icon" style="background:#fff3e0;color:#f57c00;">
-                <i class="bi bi-gear-fill" aria-hidden="true"></i>
-              </span>
-              Panel Admin
+            <a th:href="@{/admin}" class="menu-item" sec:authorize="hasRole('ADMIN')">
+              <th:block th:replace="~{fragments/icons :: icon('settings')}"></th:block>
+              <span>Panel admin</span>
             </a>
-          </li>
-
-          <li><hr class="dropdown-divider my-1"></li>
-
-          <li>
-            <form th:action="@{/logout}" method="post" style="margin:0;">
+            <form th:action="@{/logout}" method="post">
               <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-              <button type="submit" class="gk-dropdown__item gk-dropdown__item--danger w-100 border-0 text-start">
-                <span class="gk-dropdown__item-icon" style="background:var(--gk-danger-muted);color:var(--gk-danger);">
-                  <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
-                </span>
-                Keluar
+              <button type="submit" class="menu-item menu-item--danger">
+                <th:block th:replace="~{fragments/icons :: icon('logout')}"></th:block>
+                <span>Keluar</span>
               </button>
             </form>
-          </li>
-        </ul>
-      </div>
+          </div>
+        </div>
+      </th:block>
+
+      <th:block sec:authorize="!isAuthenticated()">
+        <a th:href="@{/login}" class="btn btn--line btn--sm">Masuk</a>
+        <a th:href="@{/register}" class="btn btn--dark btn--sm">Daftar gratis</a>
+      </th:block>
 
     </div>
-
-    <!-- ─── Not authenticated ──────────────────────────────────────── -->
-    <div sec:authorize="!isAuthenticated()" class="d-flex align-items-center gap-2">
-      <button class="gk-icon-btn gk-theme-toggle"
-              type="button"
-              aria-label="Ganti tema gelap atau terang"
-              title="Ganti Tema">
-        <i class="bi bi-moon-stars-fill gk-theme-icon" aria-hidden="true"></i>
-      </button>
-      <a th:href="@{/login}"
-         class="gk-btn gk-btn--ghost gk-btn--sm">Masuk</a>
-      <a th:href="@{/register}"
-         class="gk-btn gk-btn--primary gk-btn--sm">Daftar Gratis</a>
-    </div>
-
   </div>
-</nav>
+</header>
 
-<!-- ── Mobile search bar (muncul di bawah navbar saat tombol search diklik) -->
-<div class="gk-mobile-search" id="gk-mobile-search" hidden sec:authorize="isAuthenticated()">
-  <form th:action="@{/matching}" method="get" role="search" class="gk-mobile-search__form">
-    <i class="bi bi-search" aria-hidden="true"></i>
-    <input type="search"
-           name="keyword"
-           class="gk-mobile-search__input"
-           placeholder="Cari partner keahlian..."
-           autocomplete="off"
+<div class="mobile-search" id="gk-mobile-search" hidden sec:authorize="isAuthenticated()">
+  <form th:action="@{/matching}" method="get" role="search">
+    <th:block th:replace="~{fragments/icons :: icon('search')}"></th:block>
+    <input class="gk-mobile-search__input" type="search" name="keyword"
+           placeholder="Cari keahlian atau partner" autocomplete="off"
            aria-label="Cari partner keahlian">
-    <button type="button" class="gk-mobile-search__close" id="gk-mobile-search-close" aria-label="Tutup pencarian">
-      <i class="bi bi-x-lg" aria-hidden="true"></i>
+    <button class="icon-btn" id="gk-mobile-search-close" type="button" aria-label="Tutup pencarian">
+      <th:block th:replace="~{fragments/icons :: icon('x')}"></th:block>
     </button>
   </form>
 </div>
 
-<!-- ── Bottom navigation bar (mobile ≤768px, authenticated only) ──────── -->
-<nav class="gk-bottom-nav" sec:authorize="isAuthenticated()" aria-label="Navigasi bawah">
-  <a th:href="@{/dashboard}"   class="gk-bottom-nav__item" data-path="/dashboard"  aria-label="Dashboard">
-    <i class="bi bi-house-fill" aria-hidden="true"></i>
+<nav class="bottom-nav" sec:authorize="isAuthenticated()" aria-label="Navigasi bawah">
+  <a th:href="@{/dashboard}" data-path="/dashboard">
+    <th:block th:replace="~{fragments/icons :: icon('home')}"></th:block>
     <span>Beranda</span>
   </a>
-  <a th:href="@{/matching}"    class="gk-bottom-nav__item" data-path="/matching"   aria-label="Cari Partner">
-    <i class="bi bi-people-fill" aria-hidden="true"></i>
+  <a th:href="@{/matching}" data-path="/matching">
+    <th:block th:replace="~{fragments/icons :: icon('users')}"></th:block>
     <span>Partner</span>
   </a>
-  <a th:href="@{/barter}"      class="gk-bottom-nav__item" data-path="/barter"    aria-label="Barter">
-    <i class="bi bi-arrow-left-right" aria-hidden="true"></i>
+  <a th:href="@{/barter}" data-path="/barter">
+    <th:block th:replace="~{fragments/icons :: icon('swap')}"></th:block>
     <span>Barter</span>
   </a>
-  <a th:href="@{/sessions}"    class="gk-bottom-nav__item" data-path="/sessions"  aria-label="Sesi Belajar">
-    <i class="bi bi-calendar-event-fill" aria-hidden="true"></i>
+  <a th:href="@{/sessions}" data-path="/sessions">
+    <th:block th:replace="~{fragments/icons :: icon('calendar')}"></th:block>
     <span>Sesi</span>
   </a>
-  <a th:href="@{/portfolio}"   class="gk-bottom-nav__item" data-path="/portfolio" aria-label="Portofolio">
-    <i class="bi bi-collection-fill" aria-hidden="true"></i>
+  <a th:href="@{/portfolio}" data-path="/portfolio">
+    <th:block th:replace="~{fragments/icons :: icon('folder')}"></th:block>
     <span>Karya</span>
   </a>
 </nav>
-
 </th:block>
+
 </body>
 </html>

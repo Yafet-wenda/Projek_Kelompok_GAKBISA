@@ -17,7 +17,7 @@
   const gridSkill = document.getElementById("grid-keahlian");
   const chipBox = document.getElementById("kategori-chips");
   const cari = document.getElementById("cari");
-  const CHIP = "btn btn-sm rounded-pill btn-outline-primary";
+  const CHIP = "chip";
 
   /* ---------- kategori ---------- */
   async function muatKategori() {
@@ -30,20 +30,20 @@
                   data-id="${c.id}" title="${c.description || ""}">${c.name}</button>`)}
       `;
     } catch (e) {
-      chipBox.innerHTML = html`<span class="text-muted small">Kategori gagal dimuat (${e.message}).</span>`;
+      chipBox.innerHTML = html`<span class="muted small">Kategori gagal dimuat (${e.message}).</span>`;
     }
   }
 
   /* ---------- keahlian ---------- */
   function kartuSkill(s) {
     return html`
-      <div class="list-group-item">
-        <div class="d-flex justify-content-between align-items-start gap-3">
-          <div class="min-w-0">
-            <h3 class="h6 mb-1">${s.name}</h3>
-            ${s.description ? html`<p class="text-muted small mb-0">${s.description}</p>` : ""}
+      <div class="list-item">
+        <div class="item-head">
+          <div style="min-width:0;">
+            <div class="item-title">${s.name}</div>
+            ${s.description ? html`<div class="item-body">${s.description}</div>` : ""}
           </div>
-          ${s.category ? html`<span class="gk-badge gk-badge--neutral text-nowrap">${s.category}</span>` : ""}
+          ${s.category ? html`<span class="tag tag--neutral">${s.category}</span>` : ""}
         </div>
       </div>`;
   }
@@ -64,7 +64,7 @@
         : isi.map(kartuSkill).join("");
       if (!isi.length && !append) {
         gridSkill.innerHTML = html`
-          <div class="list-group-item text-muted small py-4">
+          <div class="list-item muted small">
             Tidak ada yang cocok. Hapus kata kunci atau kembali ke "Semua kategori".
           </div>`;
       }
@@ -75,7 +75,7 @@
         dari > 1 ? `${total} keahlian, halaman ${halamanIni} dari ${dari}` : `${total} keahlian`;
       document.getElementById("muat-lagi").hidden = state.halaman + 1 >= state.totalHalaman;
     } catch (e) {
-      gridSkill.innerHTML = html`<div class="gk-alert gk-alert--danger">
+      gridSkill.innerHTML = html`<div class="notice notice--danger" style="margin:20px;">
         Daftar keahlian tidak bisa dimuat: ${e.message}</div>`;
     } finally {
       state.loading = false;
@@ -118,29 +118,27 @@
         const pemilik = profil[i];
         const gambar = /^image\//.test(p.mimeType || "");
         return html`
-          <div class="col">
-            <article class="gk-card gk-card--interactive h-100">
-              <div class="gk-card__thumb d-flex align-items-center justify-content-center text-muted small">
-                ${gambar && p.visibility === "PUBLIC"
-                  ? html`<img src="/web/portfolios/${p.id}/content" alt="Pratinjau ${p.title}"
-                              class="img-fluid" loading="lazy">`
-                  : html`<span><i class="bi bi-file-earmark me-1" aria-hidden="true"></i>${p.fileName}</span>`}
+          <article class="work-card">
+            <div class="work-card__thumb">
+              ${gambar && p.visibility === "PUBLIC"
+                ? html`<img src="/web/portfolios/${p.id}/content" alt="Pratinjau ${p.title}" loading="lazy">`
+                : html`<span class="muted mini" style="padding:0 14px;text-align:center;">${p.fileName}</span>`}
+            </div>
+            <div class="work-card__body">
+              <h3 class="work-card__title">${p.title}</h3>
+              <p class="work-card__desc">oleh ${pemilik.fullName}
+                ${pemilik.averageRating ? html` &middot; ${pemilik.averageRating} / 5` : ""}</p>
+              <div class="work-card__actions">
+                <button class="btn btn--line btn--sm" type="button" data-karya="${p.id}">Lihat detail</button>
               </div>
-              <div class="p-3">
-                <h3 class="h6 mb-1">${p.title}</h3>
-                <p class="text-muted small mb-3">oleh ${pemilik.fullName}
-                  ${pemilik.averageRating ? html` (★ ${pemilik.averageRating})` : ""}</p>
-                <button class="gk-btn gk-btn--ghost gk-btn--sm" type="button"
-                        data-karya="${p.id}">Lihat detail</button>
-              </div>
-            </article>
-          </div>`;
+            </div>
+          </article>`;
       }).join("");
       grid.dataset.isi = JSON.stringify(isi.map((p, i) => ({ ...p, pemilikNama: profil[i].fullName,
         pemilikKampus: profil[i].campus, pemilikOffers: profil[i].offers })));
     } catch (e) {
-      grid.innerHTML = html`<div class="col-12">
-        <div class="gk-alert gk-alert--danger">Galeri karya tidak bisa dimuat: ${e.message}</div></div>`;
+      grid.innerHTML = html`<div style="grid-column:1/-1;">
+        <div class="notice notice--danger">Galeri karya tidak bisa dimuat: ${e.message}</div></div>`;
     }
   }
 
@@ -154,43 +152,40 @@
     document.getElementById("dlg-judul").textContent = p.title;
     const bisaLihat = p.visibility === "PUBLIC";
     isiEl.innerHTML = html`
-      <p class="text-muted">${p.description || "Pemilik belum menambahkan keterangan."}</p>
-      <div class="d-flex align-items-center gap-3 py-2 border-top border-bottom">
-        <div class="gk-avatar gk-avatar--md">${inisial(p.pemilikNama)}</div>
-        <div class="min-w-0">
-          <div class="fw-semibold">${p.pemilikNama}
-            <span class="text-muted small">${p.pemilikKampus || ""}</span></div>
-          <div class="text-muted small">Mengajarkan: ${(p.pemilikOffers || []).join(", ") || "belum dicantumkan"}</div>
+      <p class="muted">${p.description || "Pemilik belum menambahkan keterangan."}</p>
+      <div class="person" style="padding:14px 0;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);">
+        <span class="avatar avatar--sm">${inisial(p.pemilikNama)}</span>
+        <div class="person__body">
+          <div class="person__name">${p.pemilikNama}</div>
+          <div class="person__meta">${p.pemilikKampus || "Kampus belum diisi"}</div>
         </div>
       </div>
-      <dl class="small mt-3 mb-0">
+      <p class="small muted" style="margin-top:12px;">Mengajarkan:
+        ${(p.pemilikOffers || []).join(", ") || "belum dicantumkan"}</p>
+      <dl class="kv" style="margin-top:14px;">
         ${[["Berkas", p.fileName], ["Ukuran", ukuran(p.fileSize)],
            ["Tipe berkas", p.mimeType], ["Diunggah", tanggal(p.createdAt)]]
           .map(([k, v]) => html`
-            <div class="d-flex justify-content-between gap-3 py-1 border-bottom">
-              <dt class="text-muted fw-normal">${k}</dt>
-              <dd class="mb-0 text-end" style="overflow-wrap:anywhere;">${v}</dd>
-            </div>`) }
+            <div><dt>${k}</dt><dd>${v}</dd></div>`)}
       </dl>
       ${/^image\//.test(p.mimeType || "") && bisaLihat
-        ? html`<img class="img-fluid rounded mt-3" src="/web/portfolios/${p.id}/content"
-                    alt="Pratinjau ${p.title}">`
+        ? html`<img class="img-fluid rounded" style="margin-top:14px;"
+                    src="/web/portfolios/${p.id}/content" alt="Pratinjau ${p.title}">`
         : ""}
       ${/^video\/(mp4|webm)$/.test(p.mimeType || "") && bisaLihat
-        ? html`<video class="img-fluid rounded mt-3" controls preload="metadata"
+        ? html`<video class="img-fluid rounded" style="margin-top:14px;" controls preload="metadata"
                       src="/web/portfolios/${p.id}/content" aria-label="${p.title}"></video>`
         : ""}
       ${bisaLihat
-        ? html`<div class="d-flex flex-wrap gap-2 mt-3">
-            <a class="gk-btn gk-btn--primary gk-btn--sm" href="/web/portfolios/${p.id}/content"
+        ? html`<div class="wrap" style="margin-top:16px;">
+            <a class="btn btn--dark btn--sm" href="/web/portfolios/${p.id}/content"
                target="_blank" rel="noopener noreferrer">Buka berkas</a>
-            <a class="gk-btn gk-btn--ghost gk-btn--sm" href="/web/portfolios/${p.id}/content"
+            <a class="btn btn--line btn--sm" href="/web/portfolios/${p.id}/content"
                download="${p.fileName}">Unduh</a>
-            <a class="gk-btn gk-btn--ghost gk-btn--sm" href="/profile/${p.ownerId}">Lihat profil pemilik</a>
+            <a class="btn btn--ghost btn--sm" href="/profile/${p.ownerId}">Profil pemilik</a>
           </div>`
-        : html`<p class="gk-alert gk-alert--info mt-3 mb-0">
-            Berkas ini tidak tersedia untuk publik.</p>`}
-      ${!state.login ? html`<p class="text-muted small mt-3">Masuk untuk mengajak pemiliknya barter.</p>` : ""}
+        : html`<div class="notice notice--info" style="margin-top:16px;">Berkas ini tidak tersedia untuk publik.</div>`}
+      ${!state.login ? html`<p class="muted small" style="margin-top:14px;">Masuk untuk mengajak pemiliknya barter.</p>` : ""}
     `;
     dlg.showModal();
   }
@@ -229,8 +224,8 @@
     const btn = e.target.closest("[data-karya]");
     if (btn) bukaDetail(btn.dataset.karya);
   });
-  document.querySelector("[data-tutup]").addEventListener("click",
-    () => document.getElementById("detail-karya").close());
+  document.querySelectorAll("[data-tutup]").forEach((btn) =>
+    btn.addEventListener("click", () => document.getElementById("detail-karya").close()));
 
   /* ---------- mulai ---------- */
   api.get("/web/api/me").then(() => { state.login = true; }).catch(() => { state.login = false; })

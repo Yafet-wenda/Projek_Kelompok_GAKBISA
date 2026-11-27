@@ -24,7 +24,6 @@
     link.href = url;
     link.target = '_blank';
     link.rel = 'noopener noreferrer';
-    link.className = 'text-white fw-bold';
     link.textContent = 'Buka pertemuan';
     msg.appendChild(link);
   }

@@ -1,24 +1,21 @@
 /**
  * gk-sidebar.js
- * Tugas:
- * 1. Tandai item aktif di sidebar berdasarkan window.location.pathname
- * 2. Handle buka/tutup drawer sidebar di mobile & tablet (<=992px)
- * 3. Tutup drawer saat klik backdrop, tombol close, atau tombol Escape
+ * Tugas: tandai tautan rel yang aktif dan kendalikan rel sebagai laci
+ * di layar sempit (<=1024px).
  */
 
 (function () {
   'use strict';
 
-  function markActiveSidebar() {
+  function markActive() {
     const path = window.location.pathname;
-    const items = document.querySelectorAll('.gk-sidebar-item[data-path]');
+    const items = document.querySelectorAll('.rail-link[data-path]');
 
     items.forEach(function (item) {
-      const itemPath = item.getAttribute('data-path');
-      if (!itemPath) return;
+      const target = item.getAttribute('data-path');
+      if (!target) return;
 
-      // Exact match or prefix match for subpaths (e.g. /barter/123 -> /barter)
-      const isActive = path === itemPath || (itemPath !== '/' && path.startsWith(itemPath + '/'));
+      const isActive = path === target || path.startsWith(target + '/');
       item.classList.toggle('active', isActive);
 
       if (isActive) {
@@ -29,35 +26,35 @@
     });
   }
 
-  function initSidebarDrawer() {
-    const sidebar = document.getElementById('gkSidebar');
+  function initDrawer() {
+    const rail = document.getElementById('gkSidebar');
     const backdrop = document.getElementById('gkSidebarBackdrop');
     const toggleBtn = document.getElementById('gk-sidebar-toggle');
     const closeBtn = document.getElementById('gkSidebarClose');
 
-    if (!sidebar) {
-      if (toggleBtn) toggleBtn.classList.add('d-none');
+    if (!rail) {
+      if (toggleBtn) toggleBtn.hidden = true;
       return;
     }
 
     function openDrawer() {
-      sidebar.classList.add('is-open');
+      rail.classList.add('is-open');
       if (backdrop) backdrop.classList.add('is-open');
-      document.body.style.overflow = 'hidden';
+      document.body.classList.add('no-scroll');
       if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
     }
 
     function closeDrawer() {
-      sidebar.classList.remove('is-open');
+      rail.classList.remove('is-open');
       if (backdrop) backdrop.classList.remove('is-open');
-      document.body.style.overflow = '';
+      document.body.classList.remove('no-scroll');
       if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'false');
     }
 
     if (toggleBtn) {
-      toggleBtn.addEventListener('click', function (e) {
-        e.preventDefault();
-        if (sidebar.classList.contains('is-open')) {
+      toggleBtn.addEventListener('click', function (event) {
+        event.preventDefault();
+        if (rail.classList.contains('is-open')) {
           closeDrawer();
         } else {
           openDrawer();
@@ -66,33 +63,26 @@
     }
 
     if (closeBtn) {
-      closeBtn.addEventListener('click', function (e) {
-        e.preventDefault();
+      closeBtn.addEventListener('click', function (event) {
+        event.preventDefault();
         closeDrawer();
       });
     }
 
-    if (backdrop) {
-      backdrop.addEventListener('click', closeDrawer);
-    }
+    if (backdrop) backdrop.addEventListener('click', closeDrawer);
 
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && sidebar.classList.contains('is-open')) {
-        closeDrawer();
-      }
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && rail.classList.contains('is-open')) closeDrawer();
     });
 
-    // Close drawer when screen is resized to desktop (>992px)
     window.addEventListener('resize', function () {
-      if (window.innerWidth > 992 && sidebar.classList.contains('is-open')) {
-        closeDrawer();
-      }
+      if (window.innerWidth > 1024 && rail.classList.contains('is-open')) closeDrawer();
     });
   }
 
   function init() {
-    markActiveSidebar();
-    initSidebarDrawer();
+    markActive();
+    initDrawer();
   }
 
   if (document.readyState === 'loading') {
@@ -101,4 +91,3 @@
     init();
   }
 })();
-

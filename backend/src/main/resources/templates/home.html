@@ -1,112 +1,193 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/head :: head('Selamat Datang')}"></head>
-<body class="fb-landing" style="padding-top:0;">
+<head th:replace="~{fragments/head :: head('Beranda')}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
-    <!-- Minimal landing nav -->
-    <div class="landing-nav d-flex justify-content-between align-items-center px-4" style="height:56px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.08);position:fixed;top:0;left:0;right:0;z-index:999;">
-        <span class="landing-brand" style="font-size:32px;font-weight:900;color:var(--gk-primary);letter-spacing:-2px;">GAKBISA</span>
-        <div class="d-flex gap-2">
-            <a th:href="@{/login}" class="btn btn-outline-primary btn-sm fw-semibold">Login</a>
-            <a th:href="@{/register}" class="btn btn-primary btn-sm fw-semibold">Daftar</a>
-        </div>
-    </div>
-
-    <!-- Main content -->
-    <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:80px 24px 40px;background:#F0F2F5;flex-wrap:wrap;gap:40px;">
-
-        <!-- Left: Hero text -->
-        <div style="max-width:480px;">
-            <h1 style="font-size:52px;font-weight:800;color:var(--gk-primary);line-height:1.05;margin-bottom:16px;">
-                Gantian Ajari,<br>Kita Bisa!
-            </h1>
-            <p style="font-size:22px;color:#050505;line-height:1.5;margin-bottom:0;">
-                Platform pertukaran keahlian pengguna. Temukan partner belajar, tukar ilmu, dan kembangkan kemampuan bersama — <strong>gratis, selalu.</strong>
+<main>
+    <section class="landing-hero">
+        <div>
+            <span class="eyebrow">Pertukaran keahlian antarpengguna <span>&#9679;</span></span>
+            <h1 class="display">Gantian ajari,<br><em>kita bisa.</em></h1>
+            <p class="hero-lede">
+                GAKBISA mempertemukan orang yang ingin mengajar dengan orang yang ingin
+                belajar. Tidak ada biaya kursus di sini: yang ditukar adalah waktu,
+                keahlian, dan kesediaan saling membantu.
             </p>
-            <div class="d-flex flex-wrap gap-3 mt-4">
-                <div class="d-flex align-items-center gap-2" style="font-size:14px;color:#65676B;">
-                    <i class="bi bi-people-fill text-primary"></i> Partner matching otomatis
-                </div>
-                <div class="d-flex align-items-center gap-2" style="font-size:14px;color:#65676B;">
-                    <i class="bi bi-camera-video-fill text-primary"></i> Video meeting terintegrasi
-                </div>
-                <div class="d-flex align-items-center gap-2" style="font-size:14px;color:#65676B;">
-                    <i class="bi bi-shield-check-fill text-primary"></i> Sistem barter terstruktur
-                </div>
+
+            <div th:if="${param.error}" class="notice notice--danger" role="alert">
+                <th:block th:replace="~{fragments/icons :: icon('alert')}"></th:block>
+                <span>Email atau password tidak cocok. Coba lagi atau buat akun baru.</span>
+            </div>
+            <div th:if="${param.logout}" class="notice notice--success" role="status">
+                <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
+                <span>Sesi berakhir. Anda sudah keluar dari akun.</span>
+            </div>
+            <div th:if="${success}" class="notice notice--success" role="status" th:text="${success}"></div>
+
+            <div class="hero-actions">
+                <th:block sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/register}" class="btn btn--dark">
+                        Buat akun gratis
+                        <th:block th:replace="~{fragments/icons :: icon('arrow-up-right')}"></th:block>
+                    </a>
+                    <a th:href="@{/login}" class="link">Sudah punya akun? Masuk</a>
+                </th:block>
+                <th:block sec:authorize="isAuthenticated()">
+                    <a th:href="@{/dashboard}" class="btn btn--dark">
+                        Lanjut ke ringkasan
+                        <th:block th:replace="~{fragments/icons :: icon('arrow-right')}"></th:block>
+                    </a>
+                    <a th:href="@{/matching}" class="link">Cari partner hari ini</a>
+                </th:block>
+            </div>
+
+            <div class="hero-note">
+                <span>
+                    <th:block th:replace="~{fragments/icons :: icon('users')}"></th:block>
+                    Pencocokan keahlian dua arah
+                </span>
+                <span>
+                    <th:block th:replace="~{fragments/icons :: icon('video')}"></th:block>
+                    Ruang belajar daring terpadu
+                </span>
+                <span>
+                    <th:block th:replace="~{fragments/icons :: icon('shield')}"></th:block>
+                    Tanpa biaya, tanpa langganan
+                </span>
             </div>
         </div>
 
-        <!-- Right: Login card (for unauthenticated) or redirect (for authenticated) -->
-        <div sec:authorize="!isAuthenticated()" class="login-card" style="background:#fff;border-radius:12px;padding:28px;box-shadow:0 2px 16px rgba(0,0,0,0.12);width:360px;min-width:300px;">
-            <div th:if="${param.error}" class="fb-alert fb-alert-error mb-3">
-                <i class="bi bi-exclamation-circle-fill"></i> Email atau password salah.
+        <div class="hero-art" aria-hidden="true">
+            <span class="hero-art__orbit hero-art__orbit--a"></span>
+            <span class="hero-art__orbit hero-art__orbit--b"></span>
+            <span class="hero-art__orbit hero-art__orbit--c"></span>
+            <div class="hero-art__core">
+                <span class="brand-mark">
+                    <th:block th:replace="~{fragments/icons :: icon('brand')}"></th:block>
+                </span>
+                <strong>GAKBISA</strong>
+                <span>Satu keahlian, dua arah</span>
             </div>
-            <div th:if="${param.logout}" class="fb-alert fb-alert-success mb-3">
-                <i class="bi bi-check-circle-fill"></i> Anda telah berhasil logout.
-            </div>
-            <div th:if="${success}" class="fb-alert fb-alert-success mb-3" th:text="${success}"></div>
+            <span class="orbit-tag orbit-tag--offer">Keahlian ditawarkan</span>
+            <span class="orbit-tag orbit-tag--want">Keahlian dicari</span>
+            <span class="orbit-tag orbit-tag--review">Ulasan sesi</span>
+        </div>
+    </section>
 
-            <a th:href="@{/login}" class="btn btn-primary w-100 fw-bold" style="font-size:18px;padding:10px;">
-                Masuk
-            </a>
-            <hr style="margin:16px 0;border-color:#CED0D4;">
-            <div class="text-center">
-                <a th:href="@{/register}"
-                   class="btn btn-success fw-bold px-4"
-                   style="font-size:16px;">
-                    Buat Akun Baru
+    <section class="landing-section landing-section--tint">
+        <div class="landing-inner">
+            <div class="landing-section__head">
+                <div>
+                    <span class="eyebrow">Alur kerja <span>&#9679;</span></span>
+                    <h2>Tiga langkah, lalu sesi belajar pertama Anda.</h2>
+                </div>
+                <p>
+                    Semua proses berjalan di dalam satu akun: menulis keahlian,
+                    menemukan pasangan yang tepat, dan mengatur jadwal pertemuan.
+                </p>
+            </div>
+
+            <div class="steps">
+                <article class="step">
+                    <span class="step-no">LANGKAH 01</span>
+                    <h3>Tulis keahlian Anda</h3>
+                    <p>
+                        Tandai keahlian yang siap Anda ajarkan dan yang ingin Anda
+                        pelajari. Lengkapi dengan tingkat kemampuan dan catatan singkat.
+                    </p>
+                </article>
+                <article class="step">
+                    <span class="step-no">LANGKAH 02</span>
+                    <h3>Temukan pasangan belajar</h3>
+                    <p>
+                        Sistem memberi skor kecocokan 100 poin berdasarkan irisan
+                        keahlian, kampus, dan rekam jejak ulasan sebelumnya.
+                    </p>
+                </article>
+                <article class="step">
+                    <span class="step-no">LANGKAH 03</span>
+                    <h3>Atur sesi dan mulai</h3>
+                    <p>
+                        Kirim permintaan barter, sepakati waktu, lalu bertemu di ruang
+                        video. Setelah sesi tuntas, berikan ulasan untuk menjaga mutu.
+                    </p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="landing-section">
+        <div class="landing-inner">
+            <div class="landing-section__head">
+                <div>
+                    <span class="eyebrow">Yang menjaga pertukaran tetap sehat <span>&#9679;</span></span>
+                    <h2>Identitas jelas, penilaian terbuka.</h2>
+                </div>
+                <p>
+                    Kepercayaan dibangun dari informasi yang jujur dan catatan sesi
+                    yang dapat ditinjau kembali.
+                </p>
+            </div>
+
+            <div class="feature-grid">
+                <article class="feature">
+                    <span class="feature__icon">
+                        <th:block th:replace="~{fragments/icons :: icon('user')}"></th:block>
+                    </span>
+                    <h3>Profil dan portofolio</h3>
+                    <p>
+                        Bio, kampus, dan karya yang diunggah memberi gambaran nyata
+                        sebelum Anda memulai percakapan.
+                    </p>
+                </article>
+                <article class="feature">
+                    <span class="feature__icon">
+                        <th:block th:replace="~{fragments/icons :: icon('chart')}"></th:block>
+                    </span>
+                    <h3>Skor kecocokan terbuka</h3>
+                    <p>
+                        Setiap rekomendasi menyertakan alasan perhitungan, sehingga
+                        Anda tahu mengapa seseorang muncul di daftar.
+                    </p>
+                </article>
+                <article class="feature">
+                    <span class="feature__icon">
+                        <th:block th:replace="~{fragments/icons :: icon('video')}"></th:block>
+                    </span>
+                    <h3>Ruang belajar daring</h3>
+                    <p>
+                        Jadwal, ruang Jitsi, dan catatan selesai tersimpan bersama
+                        riwayat barter, tanpa aplikasi tambahan.
+                    </p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="landing-cta">
+        <div class="landing-cta__inner">
+            <div>
+                <h2>Mulai dari <em>satu keahlian</em> yang Anda kuasai.</h2>
+                <p>Daftar gratis, lengkapi profil, lalu lihat siapa yang cocok belajar bersama Anda.</p>
+            </div>
+            <th:block sec:authorize="!isAuthenticated()">
+                <a th:href="@{/register}" class="btn btn--green">
+                    Daftar sekarang
+                    <th:block th:replace="~{fragments/icons :: icon('arrow-right')}"></th:block>
                 </a>
-            </div>
+            </th:block>
+            <th:block sec:authorize="isAuthenticated()">
+                <a th:href="@{/profile/skills}" class="btn btn--green">
+                    Kelola keahlian
+                    <th:block th:replace="~{fragments/icons :: icon('arrow-right')}"></th:block>
+                </a>
+            </th:block>
         </div>
+    </section>
+</main>
 
-        <!-- Authenticated: redirect box -->
-        <div sec:authorize="isAuthenticated()" class="login-card" style="background:#fff;border-radius:12px;padding:28px;box-shadow:0 2px 16px rgba(0,0,0,0.12);width:360px;text-align:center;">
-            <i class="bi bi-check-circle-fill text-success" style="font-size:48px;display:block;margin-bottom:12px;"></i>
-            <h5 style="font-weight:700;">Anda sudah login!</h5>
-            <p style="color:#65676B;">Lanjutkan ke dashboard Anda.</p>
-            <a th:href="@{/dashboard}" class="btn btn-primary w-100 fw-bold" style="font-size:16px;">
-                Ke Dashboard
-            </a>
-        </div>
-    </div>
-
-    <!-- Feature cards at bottom -->
-    <div style="background:#fff;padding:40px 24px;">
-        <div class="container">
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="text-center p-4">
-                        <div style="width:64px;height:64px;border-radius:50%;background:var(--gk-primary-muted);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;color:var(--gk-primary);">
-                            <i class="bi bi-person-badge-fill"></i>
-                        </div>
-                        <h5 class="fw-bold">Buat Profil Keahlian</h5>
-                        <p style="color:#65676B;font-size:14px;">Tampilkan keahlian yang kamu kuasai dan yang ingin kamu pelajari. Upload portofolio terbaikmu.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="text-center p-4">
-                        <div style="width:64px;height:64px;border-radius:50%;background:var(--gk-primary-muted);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;color:var(--gk-primary);">
-                            <i class="bi bi-cpu-fill"></i>
-                        </div>
-                        <h5 class="fw-bold">Matching Otomatis</h5>
-                        <p style="color:#65676B;font-size:14px;">Sistem kami mencocokan keahlian yang kamu tawarkan dengan kebutuhan belajar orang lain secara cerdas.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="text-center p-4">
-                        <div style="width:64px;height:64px;border-radius:50%;background:var(--gk-primary-muted);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;color:var(--gk-primary);">
-                            <i class="bi bi-camera-video-fill"></i>
-                        </div>
-                        <h5 class="fw-bold">Belajar via Video</h5>
-                        <p style="color:#65676B;font-size:14px;">Setelah sepakat barter, jadwalkan sesi dan belajar bersama lewat video meeting yang terintegrasi.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <footer th:replace="~{fragments/footer :: footer}"></footer>
-    <script th:src="@{/js/app.js}"></script>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 </body>
 </html>

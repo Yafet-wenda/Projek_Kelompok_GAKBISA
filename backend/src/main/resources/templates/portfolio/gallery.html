@@ -4,167 +4,175 @@
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
-<div class="gk-layout container-fluid">
+<div class="app-shell">
     <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
 
-    <main class="gk-main">
+    <div class="app-body">
+        <main class="app-main">
 
-        <!-- Flash alerts -->
-        <div th:if="${success}" class="gk-alert gk-alert--success">
-            <i class="bi bi-check-circle-fill"></i>
-            <span th:text="${success}"></span>
-        </div>
-        <div th:if="${error}" class="gk-alert gk-alert--danger">
-            <i class="bi bi-exclamation-circle-fill"></i>
-            <span th:text="${error}"></span>
-        </div>
+            <header class="page-head page-head--split">
+                <div>
+                    <span class="eyebrow">Galeri karya <span>&#9679;</span></span>
+                    <h1 class="display"
+                        th:text="${portfolioOwner != null} ? 'Portofolio ' + ${portfolioOwner.fullName} : 'Portofolio saya'">Portofolio saya</h1>
+                    <p class="lede">Kumpulan karya, proyek, dan bukti keahlian nyata.</p>
+                </div>
+                <div class="page-head__aside" th:if="${portfolioOwner == null}">
+                    <a th:href="@{/portfolio/upload}" class="btn btn--dark btn--sm">
+                        <th:block th:replace="~{fragments/icons :: icon('upload')}"></th:block>
+                        Unggah karya
+                    </a>
+                </div>
+            </header>
 
-        <!-- Page Header -->
-        <div class="gk-page-header">
-            <div class="gk-page-header__icon">
-                <i class="bi bi-collection-fill"></i>
+            <div th:if="${success}" class="notice notice--success" role="status">
+                <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
+                <span th:text="${success}"></span>
             </div>
-            <div class="flex-grow-1">
-                <h1 class="gk-page-header__title"
-                    th:text="${portfolioOwner != null} ? 'Portofolio ' + ${portfolioOwner.fullName} : 'Portofolio Saya'">Portofolio Saya</h1>
-                <p class="gk-page-header__subtitle">Kumpulan karya, proyek, dan bukti keahlian nyata</p>
+            <div th:if="${error}" class="notice notice--danger" role="alert">
+                <th:block th:replace="~{fragments/icons :: icon('alert')}"></th:block>
+                <span th:text="${error}"></span>
             </div>
-            <div th:if="${portfolioOwner == null}">
-                <a th:href="@{/portfolio/upload}" class="gk-btn gk-btn--primary">
-                    <i class="bi bi-upload me-1"></i>Upload Karya
-                </a>
-            </div>
-        </div>
 
-        <!-- Empty state -->
-        <div th:if="${#lists.isEmpty(portfolios)}" class="gk-card p-4">
-            <div class="gk-empty">
-                <div class="gk-empty__icon"><i class="bi bi-collection"></i></div>
-                <h3 class="gk-empty__title">Belum Ada Portofolio</h3>
-                <p class="gk-empty__desc" th:if="${portfolioOwner == null}">
-                    Upload karya terbaikmu untuk meyakinkan calon partner barter dan menunjukkan kualitas keahlianmu.
-                </p>
-                <p class="gk-empty__desc" th:if="${portfolioOwner != null}">
-                    Pengguna ini belum mempublikasikan karya portofolio.
-                </p>
-                <div class="gk-empty__action" th:if="${portfolioOwner == null}">
-                    <a th:href="@{/portfolio/upload}" class="gk-btn gk-btn--primary">
-                        <i class="bi bi-upload me-1"></i>Upload Karya Sekarang
+            <div th:if="${#lists.isEmpty(portfolios)}" class="panel">
+                <div class="empty">
+                    <span class="empty__icon">
+                        <th:block th:replace="~{fragments/icons :: icon('folder')}"></th:block>
+                    </span>
+                    <h3>Belum ada portofolio</h3>
+                    <p th:if="${portfolioOwner == null}">
+                        Unggah karya terbaik Anda untuk meyakinkan calon partner barter
+                        dan menunjukkan kualitas keahlian Anda.
+                    </p>
+                    <p th:if="${portfolioOwner != null}">
+                        Pengguna ini belum mempublikasikan karya portofolio.
+                    </p>
+                    <a th:if="${portfolioOwner == null}" th:href="@{/portfolio/upload}" class="btn btn--dark btn--sm">
+                        <th:block th:replace="~{fragments/icons :: icon('upload')}"></th:block>
+                        Unggah karya sekarang
                     </a>
                 </div>
             </div>
-        </div>
 
-        <!-- Portfolio grid -->
-        <div th:if="${!#lists.isEmpty(portfolios)}" class="row g-3">
-            <div class="col-sm-6 col-lg-4" th:each="p : ${portfolios}">
-                <div class="gk-card h-100 d-flex flex-column" style="overflow: hidden;">
-                    <!-- Thumbnail preview -->
-                    <div style="height: 180px; background: linear-gradient(135deg, var(--gk-primary), #00A86B); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;">
+            <div th:if="${!#lists.isEmpty(portfolios)}" class="work-grid">
+                <article class="work-card" th:each="p : ${portfolios}">
+                    <div class="work-card__thumb">
                         <img th:if="${p.mimeType != null and #strings.startsWith(p.mimeType, 'image/')}"
                              th:src="@{'/web/portfolios/' + ${p.id} + '/content'}"
-                             alt="Portfolio Thumbnail"
-                             style="width: 100%; height: 100%; object-fit: cover;">
-                        <i th:if="${p.mimeType == null or #strings.startsWith(p.mimeType, 'application/pdf')}"
-                           class="bi bi-file-pdf" style="font-size: 52px; color: rgba(255,255,255,0.85);"></i>
+                             alt="Pratinjau karya" loading="lazy">
+                        <th:block th:if="${p.mimeType == null or #strings.startsWith(p.mimeType, 'application/pdf')}">
+                            <th:block th:replace="~{fragments/icons :: icon('file')}"></th:block>
+                        </th:block>
                         <video th:if="${p.mimeType == 'video/mp4' or p.mimeType == 'video/webm'}" controls preload="metadata"
-                               th:src="@{/web/portfolios/{id}/content(id=${p.id})}" style="width:100%; height:100%;"
+                               th:src="@{/web/portfolios/{id}/content(id=${p.id})}"
                                th:aria-label="${p.title}"></video>
                     </div>
 
-                    <!-- Card Body -->
-                    <div class="p-3 d-flex flex-column flex-grow-1">
-                        <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
-                            <h3 class="fw-bold m-0 text-truncate" style="font-size: var(--gk-text-sm); color: var(--gk-ink);" th:text="${p.title}">Judul Karya</h3>
-                            <span class="gk-badge gk-badge--sm flex-shrink-0"
-                                  th:classappend="'gk-badge--' + ${p.visibility}"
-                                  th:text="${p.visibility}">PUBLIC</span>
+                    <div class="work-card__body">
+                        <div class="wrap" style="justify-content:space-between;gap:8px;">
+                            <h3 class="work-card__title" th:text="${p.title}">Judul karya</h3>
+                            <span class="tag tag--neutral" th:text="${@label.visibility(p.visibility)}">Publik</span>
                         </div>
 
-                        <p th:if="${p.description}" class="text-muted small mb-3 flex-grow-1" style="line-height: 1.5;"
-                           th:text="${#strings.abbreviate(p.description, 80)}"></p>
-                        <div th:if="${p.description == null or p.description.isEmpty()}" class="flex-grow-1"></div>
+                        <p th:if="${p.description}" class="work-card__desc"
+                           th:text="${#strings.abbreviate(p.description, 80)}">Deskripsi karya</p>
 
-                        <div class="d-flex align-items-center text-muted small mb-3" style="font-size: var(--gk-text-xs);">
-                            <i class="bi bi-calendar3 me-1"></i>
-                            <span th:text="${#temporals.format(p.createdAt, 'dd MMM yyyy')}">Tanggal</span>
+                        <div class="work-card__meta">
+                            <span>
+                                <th:block th:replace="~{fragments/icons :: icon('calendar')}"></th:block>
+                                <span th:text="${#temporals.format(p.createdAt, 'dd MMM yyyy')}">Tanggal</span>
+                            </span>
                         </div>
 
-                        <div class="d-flex flex-wrap gap-2 mb-2">
+                        <div class="work-card__actions">
                             <a th:href="@{/web/portfolios/{id}/content(id=${p.id})}" target="_blank" rel="noopener noreferrer"
-                               class="gk-btn gk-btn--secondary gk-btn--sm">Buka berkas</a>
+                               class="btn btn--line btn--sm">Buka berkas</a>
                             <a th:href="@{/web/portfolios/{id}/content(id=${p.id})}" th:download="${p.fileName}"
-                               class="gk-btn gk-btn--ghost gk-btn--sm">Unduh</a>
-                        </div>
-                        <th:block sec:authorize="isAuthenticated()">
-                            <div th:if="${portfolioOwner != null and portfolioOwner.id != #authentication.principal.user.id}">
-                                <button type="button" th:data-dialog-open="'report-' + ${p.id}"
-                                        class="gk-btn gk-btn--ghost gk-btn--sm mb-2">Laporkan karya</button>
-                                <dialog th:id="'report-' + ${p.id}" th:aria-labelledby="'report-title-' + ${p.id}"
-                                        class="rounded-3 p-4" style="max-width:440px; width:calc(100% - 32px); background:var(--gk-card-bg); color:var(--gk-ink); border:1px solid var(--gk-border);">
-                                    <h2 th:id="'report-title-' + ${p.id}" class="h5">Laporkan karya</h2>
-                                    <p class="small" th:text="${p.title}"></p>
-                                    <form th:action="@{/reports}" method="post">
-                                        <input type="hidden" name="targetType" value="PORTFOLIO">
-                                        <input type="hidden" name="targetId" th:value="${p.id}">
-                                        <label th:for="'report-reason-' + ${p.id}" class="form-label">Alasan laporan</label>
-                                        <textarea th:id="'report-reason-' + ${p.id}" name="reason" class="form-control mb-3" rows="3" maxlength="2000" required></textarea>
-                                        <button type="submit" class="gk-btn gk-btn--primary">Kirim laporan</button>
-                                        <button type="button" data-dialog-close class="gk-btn gk-btn--secondary">Batal</button>
-                                    </form>
-                                </dialog>
-                            </div>
-                        </th:block>
+                               class="btn btn--ghost btn--sm">Unduh</a>
 
-                        <!-- Actions (Only for owner) -->
-                        <div th:if="${portfolioOwner == null}" class="d-flex gap-2 pt-2" style="border-top: 1px solid var(--gk-border);">
-                            <a th:href="@{'/portfolio/' + ${p.id} + '/edit'}"
-                               class="gk-btn gk-btn--secondary gk-btn--sm flex-grow-1">
-                                <i class="bi bi-pencil me-1"></i>Edit
-                            </a>
-                            <form th:action="@{'/portfolio/' + ${p.id} + '/delete'}" method="post" class="m-0">
-                                <button type="submit" class="gk-btn gk-btn--danger gk-btn--sm"
-                                        aria-label="Hapus portofolio"
-                                        data-confirm="Hapus portofolio ini? Tindakan ini tidak bisa dibatalkan.">
-                                    <i class="bi bi-trash3" aria-hidden="true"></i>
-                                </button>
-                            </form>
+                            <th:block th:if="${portfolioOwner == null}">
+                                <a th:href="@{'/portfolio/' + ${p.id} + '/edit'}" class="btn btn--line btn--sm">
+                                    <th:block th:replace="~{fragments/icons :: icon('edit')}"></th:block>
+                                    Edit
+                                </a>
+                                <form th:action="@{'/portfolio/' + ${p.id} + '/delete'}" method="post" style="margin:0;">
+                                    <button type="submit" class="btn btn--danger btn--sm"
+                                            aria-label="Hapus portofolio"
+                                            data-confirm="Hapus portofolio ini? Tindakan ini tidak bisa dibatalkan.">
+                                        <th:block th:replace="~{fragments/icons :: icon('trash')}"></th:block>
+                                    </button>
+                                </form>
+                            </th:block>
+
+                            <th:block sec:authorize="isAuthenticated()">
+                                <th:block th:if="${portfolioOwner != null and portfolioOwner.id != #authentication.principal.user.id}">
+                                    <button type="button" th:data-dialog-open="'report-' + ${p.id}"
+                                            class="btn btn--ghost btn--sm">Laporkan karya</button>
+                                    <dialog th:id="'report-' + ${p.id}" th:aria-labelledby="'report-title-' + ${p.id}"
+                                            class="dialog">
+                                        <div class="dialog__head">
+                                            <h2 th:id="'report-title-' + ${p.id}">Laporkan karya</h2>
+                                        </div>
+                                        <p class="muted small" th:text="${p.title}">Judul karya</p>
+                                        <form th:action="@{/reports}" method="post">
+                                            <input type="hidden" name="targetType" value="PORTFOLIO">
+                                            <input type="hidden" name="targetId" th:value="${p.id}">
+                                            <div class="field">
+                                                <label th:for="'report-reason-' + ${p.id}">Alasan laporan</label>
+                                                <textarea th:id="'report-reason-' + ${p.id}" name="reason"
+                                                          rows="3" maxlength="2000" required></textarea>
+                                            </div>
+                                            <div class="dialog__foot">
+                                                <button type="submit" class="btn btn--dark btn--sm">Kirim laporan</button>
+                                                <button type="button" data-dialog-close class="btn btn--line btn--sm">Batal</button>
+                                            </div>
+                                        </form>
+                                    </dialog>
+                                </th:block>
+                            </th:block>
                         </div>
                     </div>
+                </article>
+            </div>
+
+        </main>
+
+        <aside class="app-aside">
+            <section class="panel" th:if="${portfolioOwner == null}">
+                <div class="kicker">Tips portofolio</div>
+                <div class="stack" style="margin-top:14px;gap:12px;">
+                    <div class="wrap" style="align-items:flex-start;">
+                        <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
+                        <span class="muted small">Unggah karya nyata seperti desain UI/UX, potongan kode, atau dokumen tugas.</span>
+                    </div>
+                    <div class="wrap" style="align-items:flex-start;">
+                        <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
+                        <span class="muted small">Tulis penjelasan singkat mengenai peran dan alat atau teknologi yang Anda gunakan.</span>
+                    </div>
+                    <div class="wrap" style="align-items:flex-start;">
+                        <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
+                        <span class="muted small">Set visibilitas ke <strong>Publik</strong> agar dapat dilihat calon mitra barter.</span>
+                    </div>
                 </div>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- RIGHT PANEL -->
-    <aside class="gk-sidebar-right">
-        <div class="gk-card p-3 mb-3" th:if="${portfolioOwner == null}">
-            <h6 class="fw-bold mb-3 d-flex align-items-center gap-2" style="font-size: var(--gk-text-sm); color: var(--gk-ink);">
-                <i class="bi bi-lightbulb-fill text-warning"></i>
-                Tips Portofolio
-            </h6>
-            <ul class="d-flex flex-column gap-2 p-0 m-0 list-unstyled text-muted" style="font-size: var(--gk-text-xs); line-height: 1.6;">
-                <li class="d-flex align-items-start gap-2">
-                    <i class="bi bi-check-circle text-success mt-1"></i>
-                    <span>Unggah karya nyata seperti desain UI/UX, potongan kode, atau dokumen tugas.</span>
-                </li>
-                <li class="d-flex align-items-start gap-2">
-                    <i class="bi bi-check-circle text-success mt-1"></i>
-                    <span>Tulis penjelasan singkat mengenai peran dan alat/teknologi yang kamu gunakan.</span>
-                </li>
-                <li class="d-flex align-items-start gap-2">
-                    <i class="bi bi-check-circle text-success mt-1"></i>
-                    <span>Set status ke <strong>PUBLIC</strong> agar dapat dilihat oleh mitra calon barter.</span>
-                </li>
-            </ul>
-            <div class="mt-3 pt-3" style="border-top: 1px solid var(--gk-border);">
-                <a th:href="@{/portfolio/upload}" class="gk-btn gk-btn--primary w-100 gk-btn--sm">
-                    <i class="bi bi-upload me-1"></i>Upload Karya Baru
+                <a th:href="@{/portfolio/upload}" class="btn btn--dark btn--sm btn--block" style="margin-top:18px;">
+                    <th:block th:replace="~{fragments/icons :: icon('upload')}"></th:block>
+                    Unggah karya baru
                 </a>
-            </div>
-        </div>
-    </aside>
+            </section>
+
+            <section class="panel" th:if="${portfolioOwner != null}">
+                <div class="kicker">Pemilik karya</div>
+                <p class="muted small" style="margin:12px 0 16px;line-height:1.65;">
+                    Lihat tawaran keahlian dan reputasi <strong th:text="${portfolioOwner.fullName}">pemilik</strong>
+                    pada halaman profilnya.
+                </p>
+                <a th:href="@{'/profile/' + ${portfolioOwner.id}}" class="btn btn--line btn--sm btn--block">
+                    <th:block th:replace="~{fragments/icons :: icon('user')}"></th:block>
+                    Buka profil
+                </a>
+            </section>
+        </aside>
+    </div>
 </div>
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>

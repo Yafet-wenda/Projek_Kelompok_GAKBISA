@@ -1,59 +1,76 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/head :: head('Masuk')}"></head>
-<body class="gk-auth">
+<body class="auth">
 
-    <main class="gk-auth__stage">
-        <div class="gk-auth__shell">
+<header class="auth-top">
+    <a th:href="@{/}" class="brand" aria-label="GAKBISA — beranda">
+        <span class="brand-mark">
+            <th:block th:replace="~{fragments/icons :: icon('brand')}"></th:block>
+        </span>
+        <span class="brand-name">GAKBISA</span>
+    </a>
+    <p class="auth-top__aside">Belum punya akun? <a th:href="@{/register}">Daftar</a></p>
+</header>
 
-            <a class="gk-auth__mark" th:href="@{/}">
-                <img th:src="@{/images/gakbisa-logo.png}" alt="" width="30" height="30">
-                <span>GAKBISA</span>
-            </a>
+<main class="auth-grid">
+    <section class="auth-intro">
+        <span class="eyebrow">Masuk ke ruang belajar <span>&#9679;</span></span>
+        <h1 class="display">Melanjutkan <em>pertukaran.</em></h1>
+        <p class="auth-intro__lede">
+            Keahlian, jadwal sesi, dan riwayat barter Anda menunggu di dalam.
+            Masuk untuk melihat siapa yang cocok belajar bersama Anda hari ini.
+        </p>
+        <p class="auth-footnote">
+            GAKBISA / 2026 &mdash; gantian ajari, kita bisa.
+        </p>
+    </section>
 
-            <div class="gk-auth__head">
-                <h1 class="gk-auth__title">Masuk</h1>
+    <section>
+        <div class="form-card">
+            <h2 class="form-card__title">Masuk</h2>
+            <p class="form-card__sub">Gunakan email dan password yang terdaftar.</p>
+
+            <div th:if="${param.error}" class="notice notice--danger" role="alert">
+                <th:block th:replace="~{fragments/icons :: icon('alert')}"></th:block>
+                <span>Email atau password tidak cocok. Periksa kembali, atau daftar bila belum punya akun.</span>
             </div>
-            <div th:if="${param.error}" class="gk-auth__alert gk-auth__alert--error" role="alert">
-                <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i>
-                <span>Email atau password-nya salah. Kalau belum punya akun, daftar dulu.</span>
+            <div th:if="${param.logout}" class="notice notice--success" role="status">
+                <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
+                <span>Sesi berakhir. Anda sudah keluar dari akun.</span>
             </div>
-            <div th:if="${param.logout}" class="gk-auth__alert gk-auth__alert--success" role="status">
-                <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
-                <span>Kamu sudah keluar.</span>
+            <div th:if="${param.registered}" class="notice notice--success" role="status">
+                <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
+                <span>Akun sudah dibuat. Masuk, lalu tambahkan keahlian agar bisa dicarikan partner.</span>
             </div>
-            <div th:if="${param.registered}" class="gk-auth__alert gk-auth__alert--success" role="status">
-                <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
-                <span>Akunmu sudah jadi. Masuk, lalu isi keahlian supaya ada bahan untuk mencarikan partner.</span>
-            </div>
-            <div th:if="${success}" class="gk-auth__alert gk-auth__alert--success" role="status">
-                <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+            <div th:if="${success}" class="notice notice--success" role="status">
+                <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
                 <span th:text="${success}"></span>
             </div>
 
-            <form class="gk-auth__fields" th:action="@{/login}" method="post">
-                <div>
-                    <label class="gk-auth__label" for="email">Email</label>
-                    <input class="gk-auth__input" type="email" id="email" name="email"
+            <form class="auth-form" th:action="@{/login}" method="post">
+                <div class="field">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email"
                            autocomplete="email" placeholder="nama@email.com" required autofocus>
                 </div>
-                <div class="gk-auth__pw">
-                    <label class="gk-auth__label" for="password">Password</label>
-                    <input class="gk-auth__input" type="password" id="password" name="password"
-                           autocomplete="current-password" required>
-                    <button class="gk-auth__toggle" type="button" aria-pressed="false"
-                            aria-controls="password">Lihat</button>
+                <div class="field">
+                    <label for="password">Password</label>
+                    <div class="pwd">
+                        <input type="password" id="password" name="password"
+                               autocomplete="current-password" required>
+                        <button class="pwd-toggle" type="button" aria-pressed="false"
+                                aria-controls="password">Lihat</button>
+                    </div>
                 </div>
-                <button class="gk-auth__submit" type="submit">Masuk</button>
+                <button class="btn btn--dark" type="submit">Masuk</button>
             </form>
 
-            <p class="gk-auth__switch">Belum punya akun? <a th:href="@{/register}">Daftar</a>.</p>
-
+            <p class="form-note">Belum punya akun? <a th:href="@{/register}">Buat akun gratis</a>.</p>
         </div>
+    </section>
+</main>
 
-        <p class="gk-auth__note">&copy; 2026 GAKBISA. Gantian Ajari, Kita Bisa!</p>
-    </main>
-
-    <script th:src="@{/js/forms.js}"></script>
+<script th:src="@{/js/forms.js}"></script>
 </body>
 </html>

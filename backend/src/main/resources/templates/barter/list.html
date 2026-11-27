@@ -1,301 +1,290 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head('Permintaan Barter')}"></head>
+<head th:replace="~{fragments/head :: head('Permintaan barter')}"></head>
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
-<div class="gk-layout container-fluid">
+<div class="app-shell">
     <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
 
-    <main class="gk-main">
+    <div class="app-body">
+        <main class="app-main">
 
-        <!-- Flash alerts -->
-        <div th:if="${success}" class="gk-alert gk-alert--success">
-            <i class="bi bi-check-circle-fill"></i>
-            <span th:text="${success}"></span>
-        </div>
-        <div th:if="${error}" class="gk-alert gk-alert--danger">
-            <i class="bi bi-exclamation-circle-fill"></i>
-            <span th:text="${error}"></span>
-        </div>
+            <header class="page-head">
+                <span class="eyebrow">Siklus barter <span>&#9679;</span></span>
+                <h1 class="display">Permintaan <em>barter.</em></h1>
+                <p class="lede">
+                    Tawaran pertukaran keahlian yang masuk ke akun Anda, dan yang Anda
+                    kirimkan kepada orang lain. Setiap tawaran berjalan dari menunggu,
+                    diterima, lalu menjadi sesi belajar.
+                </p>
+            </header>
 
-        <!-- Page Header -->
-        <div class="gk-page-header">
-            <div class="gk-page-header__icon">
-                <i class="bi bi-arrow-left-right"></i>
+            <div th:if="${success}" class="notice notice--success" role="status">
+                <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
+                <span th:text="${success}"></span>
             </div>
-            <div>
-                <h1 class="gk-page-header__title">Permintaan Barter</h1>
-                <p class="gk-page-header__subtitle">Kelola tawaran pertukaran keahlian yang kamu terima dan yang kamu kirimkan</p>
+            <div th:if="${error}" class="notice notice--danger" role="alert">
+                <th:block th:replace="~{fragments/icons :: icon('alert')}"></th:block>
+                <span th:text="${error}"></span>
             </div>
-        </div>
 
-        <!-- Segmented Tabs -->
-        <div class="gk-tabs">
-            <button type="button" class="gk-tab-btn active" onclick="showTab('received', this)">
-                <i class="bi bi-inbox-fill"></i>
-                <span>Permintaan Masuk</span>
-                <span th:if="${!#lists.isEmpty(receivedBarters)}"
-                      class="gk-badge gk-badge--danger gk-badge--sm"
-                      th:text="${receivedBarters.size()}">0</span>
-            </button>
-            <button type="button" class="gk-tab-btn" onclick="showTab('sent', this)">
-                <i class="bi bi-send-fill"></i>
-                <span>Permintaan Terkirim</span>
-                <span th:if="${!#lists.isEmpty(sentBarters)}"
-                      class="gk-badge gk-badge--primary gk-badge--sm"
-                      th:text="${sentBarters.size()}">0</span>
-            </button>
-        </div>
+            <div class="tabs" role="tablist">
+                <button type="button" class="tab active" role="tab" aria-selected="true"
+                        onclick="showTab('received', this)">
+                    <th:block th:replace="~{fragments/icons :: icon('inbox')}"></th:block>
+                    <span>Permintaan masuk</span>
+                    <span class="tag tag--warn" th:if="${!#lists.isEmpty(receivedBarters)}"
+                          th:text="${receivedBarters.size()}">0</span>
+                </button>
+                <button type="button" class="tab" role="tab" aria-selected="false"
+                        onclick="showTab('sent', this)">
+                    <th:block th:replace="~{fragments/icons :: icon('send')}"></th:block>
+                    <span>Permintaan terkirim</span>
+                    <span class="tag tag--neutral" th:if="${!#lists.isEmpty(sentBarters)}"
+                          th:text="${sentBarters.size()}">0</span>
+                </button>
+            </div>
 
-        <!-- TAB 1: RECEIVED BARTERS -->
-        <div id="tab-received">
-            <div th:if="${#lists.isEmpty(receivedBarters)}" class="gk-card p-4">
-                <div class="gk-empty">
-                    <div class="gk-empty__icon"><i class="bi bi-inbox"></i></div>
-                    <h3 class="gk-empty__title">Belum Ada Permintaan Masuk</h3>
-                    <p class="gk-empty__desc">Tawaran dari pengguna lain yang tertarik dengan keahlianmu akan muncul di sini. Lengkapi profilmu agar rekan lain lebih cepat menemukanmu.</p>
-                    <div class="gk-empty__action">
-                        <a th:href="@{/profile/skills}" class="gk-btn gk-btn--primary">
-                            <i class="bi bi-plus-lg me-1"></i>Kelola Keahlian Saya
+            <div id="tab-received">
+                <div th:if="${#lists.isEmpty(receivedBarters)}" class="panel">
+                    <div class="empty">
+                        <span class="empty__icon">
+                            <th:block th:replace="~{fragments/icons :: icon('inbox')}"></th:block>
+                        </span>
+                        <h3>Belum ada permintaan masuk</h3>
+                        <p>
+                            Tawaran dari pengguna lain akan tampil di sini setelah profil
+                            dan keahlian Anda lengkap.
+                        </p>
+                        <a th:href="@{/profile/skills}" class="btn btn--dark btn--sm">
+                            <th:block th:replace="~{fragments/icons :: icon('plus')}"></th:block>
+                            Kelola keahlian
                         </a>
                     </div>
                 </div>
-            </div>
 
-            <div class="gk-card p-3 mb-3" th:each="barter : ${receivedBarters}">
-                <div class="d-flex align-items-start gap-3">
-                    <!-- Requester avatar -->
-                    <div class="gk-avatar gk-avatar--lg flex-shrink-0">
-                        <span th:text="${#strings.substring(barter.requester.fullName,0,1)}">A</span>
-                    </div>
-
-                    <div class="flex-grow-1 min-w-0">
-                        <!-- Top meta & status badge -->
-                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
-                            <div>
-                                <a th:href="@{'/profile/' + ${barter.requester.id}}"
-                                   class="text-decoration-none fw-bold"
-                                   style="color: var(--gk-ink); font-size: var(--gk-text-base);"
-                                   th:text="${barter.requester.fullName}">Nama</a>
-                                <span class="small text-muted ms-1"
-                                      th:if="${barter.requester.campus != null and !barter.requester.campus.isEmpty()}"
-                                      th:text="'· ' + ${barter.requester.campus}">· Kampus</span>
+                <div th:if="${!#lists.isEmpty(receivedBarters)}" class="panel">
+                    <div class="list">
+                        <article class="list-item" th:each="barter : ${receivedBarters}">
+                            <div class="item-head">
+                                <div class="person">
+                                    <span class="avatar">
+                                        <span th:text="${#strings.toUpperCase(#strings.substring(barter.requester.fullName,0,1))}">A</span>
+                                    </span>
+                                    <div class="person__body">
+                                        <a th:href="@{'/profile/' + ${barter.requester.id}}" class="person__name"
+                                           th:text="${barter.requester.fullName}">Nama</a>
+                                        <div class="person__meta"
+                                             th:text="${barter.requester.campus ?: 'Pengguna GAKBISA'}">Kampus</div>
+                                    </div>
+                                </div>
+                                <span class="tag" th:attr="data-status=${barter.status}" th:text="${@label.status(barter.status)}">Status</span>
                             </div>
-                            <span class="gk-badge"
-                                  th:classappend="'gk-badge--' + ${barter.status}"
-                                  th:text="${barter.status}">STATUS</span>
-                        </div>
 
-                        <!-- Exchange Visual Card -->
-                        <div class="p-3 rounded-3 my-2" style="background: var(--gk-grey-50); border: 1px solid var(--gk-border);">
-                            <div class="row align-items-center g-2">
-                                <div class="col">
-                                    <div class="text-uppercase" style="font-size: 0.6875rem; font-weight: 700; color: var(--gk-ink-3); letter-spacing: 0.05em;">Dia Tawarkan</div>
-                                    <div class="d-flex align-items-center gap-1 mt-1">
-                                        <span class="gk-badge gk-badge--OFFER" th:text="${barter.offeredUserSkill?.skill?.name ?: '-'}">Skill</span>
-                                        <span th:if="${barter.offeredUserSkill?.level != null}" class="text-muted small" th:text="'(' + ${barter.offeredUserSkill.level} + ')'"></span>
-                                    </div>
+                            <div class="exchange" style="margin-top:14px;">
+                                <div class="exchange__side">
+                                    <span class="exchange__label">Dia menawarkan</span>
+                                    <span class="exchange__value">
+                                        <span class="tag tag--offer" th:text="${barter.offeredUserSkill?.skill?.name ?: '-'}">Keahlian</span>
+                                        <span class="muted mini" th:if="${barter.offeredUserSkill?.level != null}"
+                                              th:text="${@label.level(barter.offeredUserSkill.level)}"></span>
+                                    </span>
                                 </div>
-                                <div class="col-auto text-center px-2">
-                                    <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--gk-primary-muted); color: var(--gk-primary); display: flex; align-items: center; justify-content: center; font-size: 14px;">
-                                        <i class="bi bi-arrow-left-right"></i>
-                                    </div>
+                                <div class="exchange__arrow">
+                                    <th:block th:replace="~{fragments/icons :: icon('swap')}"></th:block>
                                 </div>
-                                <div class="col text-end">
-                                    <div class="text-uppercase" style="font-size: 0.6875rem; font-weight: 700; color: var(--gk-ink-3); letter-spacing: 0.05em;">Dia Ingin Pelajari</div>
-                                    <div class="d-flex align-items-center justify-content-end gap-1 mt-1">
-                                        <span class="gk-badge gk-badge--WANT" th:text="${barter.wantedUserSkill?.skill?.name ?: '-'}">Skill</span>
-                                        <span th:if="${barter.wantedUserSkill?.level != null}" class="text-muted small" th:text="'(' + ${barter.wantedUserSkill.level} + ')'"></span>
-                                    </div>
+                                <div class="exchange__side exchange__side--right">
+                                    <span class="exchange__label">Dia ingin mempelajari</span>
+                                    <span class="exchange__value">
+                                        <span class="tag tag--want" th:text="${barter.wantedUserSkill?.skill?.name ?: '-'}">Keahlian</span>
+                                        <span class="muted mini" th:if="${barter.wantedUserSkill?.level != null}"
+                                              th:text="${@label.level(barter.wantedUserSkill.level)}"></span>
+                                    </span>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Message if present -->
-                        <div th:if="${barter.message}" class="p-2 px-3 rounded-2 mb-2" style="background: var(--gk-card-bg); border-left: 3px solid var(--gk-primary); font-size: var(--gk-text-sm); color: var(--gk-ink-2);">
-                            <i class="bi bi-chat-quote-fill me-1 text-primary opacity-50"></i>
-                            <span th:text="${barter.message}"></span>
-                        </div>
+                            <p th:if="${barter.message}" class="quote" th:text="${barter.message}"></p>
 
-                        <!-- Date -->
-                        <div class="text-muted small mb-3">
-                            <i class="bi bi-clock me-1"></i>
-                            <span th:text="${#temporals.format(barter.createdAt, 'dd MMM yyyy HH:mm')}"></span>
-                        </div>
+                            <div class="item-meta">
+                                <span>
+                                    <th:block th:replace="~{fragments/icons :: icon('clock')}"></th:block>
+                                    <span th:text="${#temporals.format(barter.createdAt, 'dd MMM yyyy HH:mm')}">Waktu</span>
+                                </span>
+                            </div>
 
-                        <!-- Action Buttons -->
-                        <div class="d-flex gap-2 flex-wrap">
-                            <a th:href="@{'/barter/' + ${barter.id}}"
-                               class="gk-btn gk-btn--secondary gk-btn--sm">
-                                <i class="bi bi-eye me-1"></i>Detail
-                            </a>
-                            <th:block th:if="${barter.status.name() == 'PENDING'}">
-                                <form th:action="@{'/barter/' + ${barter.id} + '/accept'}" method="post" class="m-0">
-                                    <button type="submit" class="gk-btn gk-btn--sm text-white" style="background: var(--gk-success); border-color: var(--gk-success);">
-                                        <i class="bi bi-check-lg me-1"></i>Terima
-                                    </button>
-                                </form>
-                                <form th:action="@{'/barter/' + ${barter.id} + '/reject'}" method="post" class="m-0">
-                                    <button type="submit" class="gk-btn gk-btn--danger gk-btn--sm"
-                                            data-confirm="Tolak permintaan barter ini?">
-                                        <i class="bi bi-x-lg me-1"></i>Tolak
-                                    </button>
-                                </form>
-                            </th:block>
-                        </div>
+                            <div class="item-actions">
+                                <a th:href="@{'/barter/' + ${barter.id}}" class="btn btn--line btn--sm">
+                                    <th:block th:replace="~{fragments/icons :: icon('eye')}"></th:block>
+                                    Detail
+                                </a>
+                                <th:block th:if="${barter.status.name() == 'PENDING'}">
+                                    <form th:action="@{'/barter/' + ${barter.id} + '/accept'}" method="post">
+                                        <button type="submit" class="btn btn--green btn--sm">
+                                            <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
+                                            Terima
+                                        </button>
+                                    </form>
+                                    <form th:action="@{'/barter/' + ${barter.id} + '/reject'}" method="post">
+                                        <button type="submit" class="btn btn--danger btn--sm"
+                                                data-confirm="Tolak permintaan barter ini?">
+                                            <th:block th:replace="~{fragments/icons :: icon('x')}"></th:block>
+                                            Tolak
+                                        </button>
+                                    </form>
+                                </th:block>
+                            </div>
+                        </article>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- TAB 2: SENT BARTERS -->
-        <div id="tab-sent" style="display:none;">
-            <div th:if="${#lists.isEmpty(sentBarters)}" class="gk-card p-4">
-                <div class="gk-empty">
-                    <div class="gk-empty__icon"><i class="bi bi-send"></i></div>
-                    <h3 class="gk-empty__title">Belum Ada Permintaan Terkirim</h3>
-                    <p class="gk-empty__desc">Cari pengguna atau rekan yang memiliki keahlian yang ingin kamu pelajari, lalu kirimkan tawaran barter pertamamu!</p>
-                    <div class="gk-empty__action">
-                        <a th:href="@{/matching}" class="gk-btn gk-btn--primary">
-                            <i class="bi bi-search me-1"></i>Cari Partner Sekarang
+            <div id="tab-sent" style="display:none;">
+                <div th:if="${#lists.isEmpty(sentBarters)}" class="panel">
+                    <div class="empty">
+                        <span class="empty__icon">
+                            <th:block th:replace="~{fragments/icons :: icon('send')}"></th:block>
+                        </span>
+                        <h3>Belum ada permintaan terkirim</h3>
+                        <p>
+                            Temukan pengguna yang menguasai keahlian yang ingin Anda
+                            pelajari, lalu kirim tawaran barter pertama.
+                        </p>
+                        <a th:href="@{/matching}" class="btn btn--dark btn--sm">
+                            <th:block th:replace="~{fragments/icons :: icon('search')}"></th:block>
+                            Cari partner
                         </a>
                     </div>
                 </div>
-            </div>
 
-            <div class="gk-card p-3 mb-3" th:each="barter : ${sentBarters}">
-                <div class="d-flex align-items-start gap-3">
-                    <div class="gk-avatar gk-avatar--lg flex-shrink-0">
-                        <span th:text="${#strings.substring(barter.targetUser.fullName,0,1)}">A</span>
-                    </div>
-
-                    <div class="flex-grow-1 min-w-0">
-                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
-                            <div>
-                                <a th:href="@{'/profile/' + ${barter.targetUser.id}}"
-                                   class="text-decoration-none fw-bold"
-                                   style="color: var(--gk-ink); font-size: var(--gk-text-base);"
-                                   th:text="${barter.targetUser.fullName}">Nama</a>
-                                <span class="small text-muted ms-1"
-                                      th:if="${barter.targetUser.campus != null and !barter.targetUser.campus.isEmpty()}"
-                                      th:text="'· ' + ${barter.targetUser.campus}">· Kampus</span>
+                <div th:if="${!#lists.isEmpty(sentBarters)}" class="panel">
+                    <div class="list">
+                        <article class="list-item" th:each="barter : ${sentBarters}">
+                            <div class="item-head">
+                                <div class="person">
+                                    <span class="avatar">
+                                        <span th:text="${#strings.toUpperCase(#strings.substring(barter.targetUser.fullName,0,1))}">A</span>
+                                    </span>
+                                    <div class="person__body">
+                                        <a th:href="@{'/profile/' + ${barter.targetUser.id}}" class="person__name"
+                                           th:text="${barter.targetUser.fullName}">Nama</a>
+                                        <div class="person__meta"
+                                             th:text="${barter.targetUser.campus ?: 'Pengguna GAKBISA'}">Kampus</div>
+                                    </div>
+                                </div>
+                                <span class="tag" th:attr="data-status=${barter.status}" th:text="${@label.status(barter.status)}">Status</span>
                             </div>
-                            <span class="gk-badge"
-                                  th:classappend="'gk-badge--' + ${barter.status}"
-                                  th:text="${barter.status}">STATUS</span>
-                        </div>
 
-                        <!-- Exchange Visual Card -->
-                        <div class="p-3 rounded-3 my-2" style="background: var(--gk-grey-50); border: 1px solid var(--gk-border);">
-                            <div class="row align-items-center g-2">
-                                <div class="col">
-                                    <div class="text-uppercase" style="font-size: 0.6875rem; font-weight: 700; color: var(--gk-ink-3); letter-spacing: 0.05em;">Kamu Tawarkan</div>
-                                    <div class="d-flex align-items-center gap-1 mt-1">
-                                        <span class="gk-badge gk-badge--OFFER" th:text="${barter.offeredUserSkill?.skill?.name ?: '-'}">Skill</span>
-                                        <span th:if="${barter.offeredUserSkill?.level != null}" class="text-muted small" th:text="'(' + ${barter.offeredUserSkill.level} + ')'"></span>
-                                    </div>
+                            <div class="exchange" style="margin-top:14px;">
+                                <div class="exchange__side">
+                                    <span class="exchange__label">Anda menawarkan</span>
+                                    <span class="exchange__value">
+                                        <span class="tag tag--offer" th:text="${barter.offeredUserSkill?.skill?.name ?: '-'}">Keahlian</span>
+                                        <span class="muted mini" th:if="${barter.offeredUserSkill?.level != null}"
+                                              th:text="${@label.level(barter.offeredUserSkill.level)}"></span>
+                                    </span>
                                 </div>
-                                <div class="col-auto text-center px-2">
-                                    <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--gk-primary-muted); color: var(--gk-primary); display: flex; align-items: center; justify-content: center; font-size: 14px;">
-                                        <i class="bi bi-arrow-left-right"></i>
-                                    </div>
+                                <div class="exchange__arrow">
+                                    <th:block th:replace="~{fragments/icons :: icon('swap')}"></th:block>
                                 </div>
-                                <div class="col text-end">
-                                    <div class="text-uppercase" style="font-size: 0.6875rem; font-weight: 700; color: var(--gk-ink-3); letter-spacing: 0.05em;">Ingin Kamu Pelajari</div>
-                                    <div class="d-flex align-items-center justify-content-end gap-1 mt-1">
-                                        <span class="gk-badge gk-badge--WANT" th:text="${barter.wantedUserSkill?.skill?.name ?: '-'}">Skill</span>
-                                        <span th:if="${barter.wantedUserSkill?.level != null}" class="text-muted small" th:text="'(' + ${barter.wantedUserSkill.level} + ')'"></span>
-                                    </div>
+                                <div class="exchange__side exchange__side--right">
+                                    <span class="exchange__label">Ingin Anda pelajari</span>
+                                    <span class="exchange__value">
+                                        <span class="tag tag--want" th:text="${barter.wantedUserSkill?.skill?.name ?: '-'}">Keahlian</span>
+                                        <span class="muted mini" th:if="${barter.wantedUserSkill?.level != null}"
+                                              th:text="${@label.level(barter.wantedUserSkill.level)}"></span>
+                                    </span>
                                 </div>
                             </div>
-                        </div>
 
-                        <div th:if="${barter.message}" class="p-2 px-3 rounded-2 mb-2" style="background: var(--gk-card-bg); border-left: 3px solid var(--gk-primary); font-size: var(--gk-text-sm); color: var(--gk-ink-2);">
-                            <i class="bi bi-chat-quote-fill me-1 text-primary opacity-50"></i>
-                            <span th:text="${barter.message}"></span>
-                        </div>
+                            <p th:if="${barter.message}" class="quote" th:text="${barter.message}"></p>
 
-                        <div class="text-muted small mb-3">
-                            <i class="bi bi-clock me-1"></i>
-                            <span th:text="${#temporals.format(barter.createdAt, 'dd MMM yyyy HH:mm')}"></span>
-                        </div>
+                            <div class="item-meta">
+                                <span>
+                                    <th:block th:replace="~{fragments/icons :: icon('clock')}"></th:block>
+                                    <span th:text="${#temporals.format(barter.createdAt, 'dd MMM yyyy HH:mm')}">Waktu</span>
+                                </span>
+                            </div>
 
-                        <div class="d-flex gap-2 flex-wrap">
-                            <a th:href="@{'/barter/' + ${barter.id}}"
-                               class="gk-btn gk-btn--secondary gk-btn--sm">
-                                <i class="bi bi-eye me-1"></i>Detail
-                            </a>
-                            <th:block th:if="${barter.status.name() == 'PENDING'}">
-                                <form th:action="@{'/barter/' + ${barter.id} + '/cancel'}" method="post" class="m-0">
-                                    <button type="submit" class="gk-btn gk-btn--danger gk-btn--sm"
+                            <div class="item-actions">
+                                <a th:href="@{'/barter/' + ${barter.id}}" class="btn btn--line btn--sm">
+                                    <th:block th:replace="~{fragments/icons :: icon('eye')}"></th:block>
+                                    Detail
+                                </a>
+                                <form th:if="${barter.status.name() == 'PENDING'}"
+                                      th:action="@{'/barter/' + ${barter.id} + '/cancel'}" method="post">
+                                    <button type="submit" class="btn btn--danger btn--sm"
                                             data-confirm="Batalkan permintaan barter ini?">
-                                        <i class="bi bi-x-circle me-1"></i>Batalkan
+                                        <th:block th:replace="~{fragments/icons :: icon('x')}"></th:block>
+                                        Batalkan
                                     </button>
                                 </form>
-                            </th:block>
-                        </div>
+                            </div>
+                        </article>
                     </div>
                 </div>
             </div>
-        </div>
 
-    </main>
+        </main>
 
-    <!-- RIGHT PANEL: GUIDES & SHORTCUTS -->
-    <aside class="gk-sidebar-right">
-        <div class="gk-card p-3 mb-3">
-            <h6 class="fw-bold mb-3 d-flex align-items-center gap-2" style="font-size: var(--gk-text-sm); color: var(--gk-ink);">
-                <i class="bi bi-lightbulb-fill text-warning"></i>
-                Status Siklus Barter
-            </h6>
-            <div class="d-flex flex-column gap-2" style="font-size: var(--gk-text-xs); line-height: 1.5;">
-                <div class="d-flex align-items-center gap-2">
-                    <span class="gk-badge gk-badge--PENDING gk-badge--sm" style="min-width: 80px; justify-content: center;">PENDING</span>
-                    <span class="text-muted">Menunggu konfirmasi partner</span>
+        <aside class="app-aside">
+            <section class="panel">
+                <div class="kicker">Status siklus barter</div>
+                <div class="stack" style="margin-top:14px;gap:12px;">
+                    <div class="wrap">
+                        <span class="tag" data-status="PENDING">Menunggu</span>
+                        <span class="muted mini">Menunggu konfirmasi partner</span>
+                    </div>
+                    <div class="wrap">
+                        <span class="tag" data-status="ACCEPTED">Diterima</span>
+                        <span class="muted mini">Disetujui, siap dijadwalkan</span>
+                    </div>
+                    <div class="wrap">
+                        <span class="tag" data-status="COMPLETED">Selesai</span>
+                        <span class="muted mini">Sesi belajar tuntas</span>
+                    </div>
+                    <div class="wrap">
+                        <span class="tag" data-status="REJECTED">Ditolak</span>
+                        <span class="muted mini">Tawaran ditolak</span>
+                    </div>
+                    <div class="wrap">
+                        <span class="tag" data-status="CANCELLED">Dibatalkan</span>
+                        <span class="muted mini">Dibatalkan pengirim</span>
+                    </div>
                 </div>
-                <div class="d-flex align-items-center gap-2">
-                    <span class="gk-badge gk-badge--ACCEPTED gk-badge--sm" style="min-width: 80px; justify-content: center;">ACCEPTED</span>
-                    <span class="text-muted">Disetujui & siap jadwalkan sesi</span>
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                    <span class="gk-badge gk-badge--COMPLETED gk-badge--sm" style="min-width: 80px; justify-content: center;">COMPLETED</span>
-                    <span class="text-muted">Sesi belajar selesai terlaksana</span>
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                    <span class="gk-badge gk-badge--REJECTED gk-badge--sm" style="min-width: 80px; justify-content: center;">REJECTED</span>
-                    <span class="text-muted">Tawaran ditolak rekan</span>
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                    <span class="gk-badge gk-badge--CANCELLED gk-badge--sm" style="min-width: 80px; justify-content: center;">CANCELLED</span>
-                    <span class="text-muted">Dibatalkan oleh pengirim</span>
-                </div>
-            </div>
-        </div>
+            </section>
 
-        <div class="gk-card p-3">
-            <h6 class="fw-bold mb-2" style="font-size: var(--gk-text-sm); color: var(--gk-ink);">Ingin Cari Rekan Lain?</h6>
-            <p class="text-muted small mb-3">Temukan partner dengan keahlian yang ingin kamu pelajari.</p>
-            <a th:href="@{/matching}" class="gk-btn gk-btn--primary w-100">
-                <i class="bi bi-search me-1"></i>Cari Partner Baru
-            </a>
-        </div>
-    </aside>
+            <section class="panel">
+                <div class="kicker">Butuh rekan lain?</div>
+                <p class="muted small" style="margin:12px 0 16px;">
+                    Lihat rekomendasi yang dihitung dari keahlian tawar dan cari Anda.
+                </p>
+                <a th:href="@{/matching}" class="btn btn--dark btn--sm btn--block">
+                    <th:block th:replace="~{fragments/icons :: icon('users')}"></th:block>
+                    Cari partner baru
+                </a>
+            </section>
+        </aside>
+    </div>
 </div>
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 <script th:src="@{/js/app.js}"></script>
 <script>
-function showTab(tabName, btn) {
-    var rec = document.getElementById('tab-received');
-    var snt = document.getElementById('tab-sent');
-    if (rec) rec.style.display = tabName === 'received' ? 'block' : 'none';
-    if (snt) snt.style.display = tabName === 'sent' ? 'block' : 'none';
-    document.querySelectorAll('.gk-tab-btn, .fb-tab-btn').forEach(function(b) {
-        b.classList.remove('active');
-    });
-    if (btn) btn.classList.add('active');
-}
+    function showTab(name, btn) {
+        var received = document.getElementById('tab-received');
+        var sent = document.getElementById('tab-sent');
+        if (received) received.style.display = name === 'received' ? 'block' : 'none';
+        if (sent) sent.style.display = name === 'sent' ? 'block' : 'none';
+        document.querySelectorAll('.tabs .tab').forEach(function (tab) {
+            tab.classList.remove('active');
+            tab.setAttribute('aria-selected', 'false');
+        });
+        if (btn) {
+            btn.classList.add('active');
+            btn.setAttribute('aria-selected', 'true');
+        }
+    }
 </script>
 </body>
 </html>

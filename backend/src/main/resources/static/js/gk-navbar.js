@@ -1,47 +1,72 @@
 /**
  * gk-navbar.js
- * Tugas: (1) tandai item aktif di navbar + bottom-nav berdasar URL,
- *        (2) tampilkan badge notifikasi unread-count dari API,
- *        (3) toggle mobile search bar.
+ * Tugas: (1) tandai tautan aktif di bilah atas dan navigasi bawah,
+ *        (2) buka/tutup panel menu (notifikasi dan akun),
+ *        (3) tampilkan jumlah notifikasi belum dibaca,
+ *        (4) toggle bilah pencarian di layar sempit.
  *
  * Badge dibaca melalui sesi web di /web/api/notifications.
- * Semua DOM manipulation murni presentasi; tidak menyentuh state/bisnis.
  */
 
 (function () {
   'use strict';
 
-  /* ── 1. Tandai item aktif berdasarkan window.location.pathname ─────────── */
   function markActive() {
     const path = window.location.pathname;
+    const links = document.querySelectorAll('.nav-links a[data-path], .bottom-nav a[data-path]');
 
-    // Kumpulkan semua nav-tab (desktop) dan bottom-nav item (mobile)
-    const tabs = document.querySelectorAll('.gk-nav-tab[data-path], .gk-bottom-nav__item[data-path]');
+    links.forEach(function (link) {
+      const target = link.getAttribute('data-path');
+      if (!target) return;
 
-    tabs.forEach(function (tab) {
-      const tabPath = tab.getAttribute('data-path');
-      if (!tabPath) return;
-
-      // Cocokkan dengan prefix agar /barter/123 tetap menandai tab /barter
-      const isActive = path === tabPath || path.startsWith(tabPath + '/');
-      tab.classList.toggle('active', isActive);
+      const isActive = path === target || path.startsWith(target + '/');
+      link.classList.toggle('active', isActive);
 
       if (isActive) {
-        tab.setAttribute('aria-current', 'page');
+        link.setAttribute('aria-current', 'page');
       } else {
-        tab.removeAttribute('aria-current');
+        link.removeAttribute('aria-current');
       }
     });
   }
 
-  /* ── 2. Fetch unread notification count ──────────────────────────────────
-     Endpoint: GET /web/api/notifications
-     Response JSON: [ { "id": "...", "read": false, ... }, ... ]
-     Badge disembunyikan bila count = 0.
-  ─────────────────────────────────────────────────────────────────────────── */
+  function initMenus() {
+    const toggles = document.querySelectorAll('[data-menu-toggle]');
+
+    function closeAll(except) {
+      document.querySelectorAll('.menu.is-open').forEach(function (menu) {
+        if (menu === except) return;
+        menu.classList.remove('is-open');
+        const btn = menu.querySelector('[data-menu-toggle]');
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+      });
+    }
+
+    toggles.forEach(function (btn) {
+      btn.addEventListener('click', function (event) {
+        event.stopPropagation();
+        const menu = btn.closest('.menu');
+        if (!menu) return;
+
+        const willOpen = !menu.classList.contains('is-open');
+        closeAll(menu);
+        menu.classList.toggle('is-open', willOpen);
+        btn.setAttribute('aria-expanded', String(willOpen));
+      });
+    });
+
+    document.addEventListener('click', function () {
+      closeAll(null);
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') closeAll(null);
+    });
+  }
+
   function loadNotifBadge() {
     const badge = document.getElementById('gk-notif-badge');
-    if (!badge) return; // belum login / fragment tidak ada
+    if (!badge) return;
 
     fetch('/web/api/notifications', {
       credentials: 'same-origin',
@@ -62,25 +87,21 @@
         badge.hidden = count === 0;
       })
       .catch(function () {
-        // Gagal fetch (belum auth, CSRF, dll.) — sembunyikan badge saja
         badge.hidden = true;
       });
   }
 
-  /* ── 3. Mobile search toggle ─────────────────────────────────────────────
-     Tombol ikon search di kanan navbar membuka/menutup bar di bawah navbar.
-  ─────────────────────────────────────────────────────────────────────────── */
   function initMobileSearch() {
     var toggleBtn = document.getElementById('gk-mobile-search-toggle');
-    var closeBtn  = document.getElementById('gk-mobile-search-close');
+    var closeBtn = document.getElementById('gk-mobile-search-close');
     var searchBar = document.getElementById('gk-mobile-search');
-    var input     = searchBar && searchBar.querySelector('.gk-mobile-search__input');
+    var input = searchBar && searchBar.querySelector('.gk-mobile-search__input');
 
     if (!toggleBtn || !searchBar) return;
 
     function openSearch() {
       searchBar.hidden = false;
-      if (input) { input.focus(); }
+      if (input) input.focus();
       toggleBtn.setAttribute('aria-expanded', 'true');
     }
 
@@ -90,69 +111,25 @@
     }
 
     toggleBtn.addEventListener('click', function () {
-      if (searchBar.hidden) { openSearch(); } else { closeSearch(); }
-    });
-
-    if (closeBtn) { closeBtn.addEventListener('click', closeSearch); }
-
-    // Tutup saat tekan Escape
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && !searchBar.hidden) { closeSearch(); }
-    });
-  }
-
-  /* ── 4. Theme Toggle (Light / Dark mode) ──────────────────────────────── */
-  function initThemeToggle() {
-    function updateIcons(isDark) {
-      document.querySelectorAll('.gk-theme-icon').forEach(function (icon) {
-        if (isDark) {
-          icon.classList.remove('bi-moon-stars-fill');
-          icon.classList.add('bi-sun-fill');
-        } else {
-          icon.classList.remove('bi-sun-fill');
-          icon.classList.add('bi-moon-stars-fill');
-        }
-      });
-    }
-
-    var currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-    updateIcons(currentTheme === 'dark');
-
-    document.querySelectorAll('.gk-theme-toggle').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', theme);
-        document.documentElement.setAttribute('data-bs-theme', theme);
-        try {
-          localStorage.setItem('gk-theme', theme);
-        } catch (e) {}
-        updateIcons(theme === 'dark');
-      });
-    });
-  }
-
-  /* ── 5. Bootstrap tooltip init ───────────────────────────────────────────
-     Tooltip muncul pada hover .gk-nav-tab (data-bs-toggle="tooltip").
-     Diinisialisasi setelah Bootstrap dimuat.
-  ─────────────────────────────────────────────────────────────────────────── */
-  function initTooltips() {
-    if (typeof bootstrap === 'undefined' || !bootstrap.Tooltip) return;
-    var els = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    els.forEach(function (el) {
-      // Hanya aktifkan tooltip di desktop (pointer: fine)
-      if (window.matchMedia('(pointer: fine)').matches) {
-        new bootstrap.Tooltip(el, { trigger: 'hover' });
+      if (searchBar.hidden) {
+        openSearch();
+      } else {
+        closeSearch();
       }
     });
+
+    if (closeBtn) closeBtn.addEventListener('click', closeSearch);
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && !searchBar.hidden) closeSearch();
+    });
   }
 
-  /* ── Inisialisasi ─────────────────────────────────────────────────────── */
   function init() {
     markActive();
+    initMenus();
     loadNotifBadge();
     initMobileSearch();
-    initThemeToggle();
-    initTooltips();
   }
 
   if (document.readyState === 'loading') {
@@ -161,4 +138,3 @@
     init();
   }
 })();
-

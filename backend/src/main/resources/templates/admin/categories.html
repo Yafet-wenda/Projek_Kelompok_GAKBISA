@@ -1,121 +1,136 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head('Admin - Kategori & Keahlian')}"></head>
+<head th:replace="~{fragments/head :: head('Admin - Kategori dan keahlian')}"></head>
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
-<div class="gk-layout container-fluid">
+<div class="app-shell">
     <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
 
-    <main class="gk-main">
+    <div class="app-body">
+        <main class="app-main">
 
-        <!-- Flash alerts -->
-        <div th:if="${success}" class="gk-alert gk-alert--success">
-            <i class="bi bi-check-circle-fill"></i>
-            <span th:text="${success}"></span>
-        </div>
-        <div th:if="${error}" class="gk-alert gk-alert--danger">
-            <i class="bi bi-exclamation-circle-fill"></i>
-            <span th:text="${error}"></span>
-        </div>
+            <header class="page-head">
+                <span class="eyebrow">Administrasi <span>&#9679;</span></span>
+                <h1 class="display">Kategori dan <em>keahlian.</em></h1>
+                <p class="lede">Daftar topik yang bisa ditawarkan dan dicari pengguna saat barter.</p>
+            </header>
 
-        <!-- Page Header -->
-        <div class="gk-page-header">
-            <div class="gk-page-header__icon" style="background: var(--gk-success-muted); color: var(--gk-success);">
-                <i class="bi bi-tags-fill"></i>
+            <div th:if="${success}" class="notice notice--success" role="status">
+                <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
+                <span th:text="${success}"></span>
             </div>
-            <div class="flex-grow-1">
-                <h1 class="gk-page-header__title">Kategori &amp; Keahlian</h1>
-                <p class="gk-page-header__subtitle">Daftar topik yang bisa ditawarkan dan dicari pengguna saat barter</p>
-            </div>
-        </div>
-
-        <!-- Tambah kategori -->
-        <div class="gk-card p-4 mb-4">
-            <h2 class="fw-bold mb-3" style="font-size: var(--gk-text-base); color: var(--gk-ink);">Tambah Kategori</h2>
-            <form th:action="@{/admin/categories}" method="post" class="row g-2 align-items-end">
-                <div class="col-12 col-md-4">
-                    <label class="form-label fw-bold small text-muted mb-1" for="catName">Nama Kategori</label>
-                    <input id="catName" name="name" type="text" class="form-control" maxlength="80" required
-                           placeholder="mis. Pemrograman">
-                </div>
-                <div class="col-12 col-md-6">
-                    <label class="form-label fw-bold small text-muted mb-1" for="catDesc">Deskripsi (opsional)</label>
-                    <input id="catDesc" name="description" type="text" class="form-control"
-                           placeholder="Satu baris penjelasan untuk pengguna baru">
-                </div>
-                <div class="col-12 col-md-2">
-                    <button type="submit" class="gk-btn gk-btn--primary gk-btn--block">
-                        <i class="bi bi-plus-lg me-1"></i>Simpan
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        <!-- Daftar kategori -->
-        <div class="gk-card p-0" style="overflow: hidden;">
-            <div th:if="${#lists.isEmpty(categories)}" class="p-4">
-                <div class="gk-empty">
-                    <div class="gk-empty__icon"><i class="bi bi-tags"></i></div>
-                    <h3 class="gk-empty__title">Belum Ada Kategori</h3>
-                    <p class="gk-empty__desc">Tambahkan kategori pertama di atas. Keahlian hanya bisa dibuat di bawah sebuah kategori.</p>
-                </div>
+            <div th:if="${error}" class="notice notice--danger" role="alert">
+                <th:block th:replace="~{fragments/icons :: icon('alert')}"></th:block>
+                <span th:text="${error}"></span>
             </div>
 
-            <section th:each="c : ${categories}" class="p-4" style="border-top: 1px solid var(--gk-border);">
-                <div class="d-flex align-items-baseline gap-2 flex-wrap mb-1">
-                    <h2 class="fw-bold m-0" style="font-size: var(--gk-text-base); color: var(--gk-ink);" th:text="${c.name}">Kategori</h2>
-                    <span class="text-muted" style="font-size: var(--gk-text-xs);"
-                          th:text="${#lists.size(c.skills)} + ' keahlian'">0 keahlian</span>
+            <section class="panel">
+                <div class="panel-head">
+                    <div>
+                        <span class="kicker">Tambah baru</span>
+                        <h2>Tambah kategori</h2>
+                    </div>
                 </div>
-                <p th:unless="${#strings.isEmpty(c.description)}" class="text-muted mb-3" style="font-size: var(--gk-text-sm);"
-                   th:text="${c.description}">Deskripsi kategori</p>
-
-                <ul th:if="${!#lists.isEmpty(c.skills)}" class="list-unstyled d-flex flex-wrap gap-2 mb-3 p-0">
-                    <li th:each="s : ${c.skills}" class="gk-badge gk-badge--neutral" style="padding:6px 12px;font-size:13px;"
-                        th:text="${s}">Keahlian</li>
-                </ul>
-                <p th:if="${#lists.isEmpty(c.skills)}" class="text-muted mb-3" style="font-size: var(--gk-text-sm);">
-                    Belum ada keahlian di kategori ini.
-                </p>
-
-                <form th:action="@{'/admin/categories/' + ${c.id} + '/skills'}" method="post" class="row g-2 align-items-end">
-                    <div class="col-12 col-md-4">
-                        <label class="form-label fw-bold small text-muted mb-1"
-                               th:for="'skill-' + ${c.id}">Tambah Keahlian</label>
-                        <input th:id="'skill-' + ${c.id}" name="name" type="text" class="form-control"
-                               maxlength="100" required placeholder="mis. Java Spring Boot">
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <label class="form-label fw-bold small text-muted mb-1"
-                               th:for="'skillDesc-' + ${c.id}">Deskripsi (opsional)</label>
-                        <input th:id="'skillDesc-' + ${c.id}" name="description" type="text" class="form-control"
-                               placeholder="Singkat saja, muncul di katalog">
-                    </div>
-                    <div class="col-12 col-md-2">
-                        <button type="submit" class="gk-btn gk-btn--secondary gk-btn--block">
-                            <i class="bi bi-plus-lg me-1"></i>Tambah
-                        </button>
-                    </div>
-                </form>
+                <div class="panel-body">
+                    <form th:action="@{/admin/categories}" method="post">
+                        <div class="form-grid">
+                            <div class="field">
+                                <label for="catName">Nama kategori</label>
+                                <input id="catName" name="name" type="text" maxlength="80" required
+                                       placeholder="mis. Pemrograman">
+                            </div>
+                            <div class="field">
+                                <label for="catDesc">Deskripsi (opsional)</label>
+                                <input id="catDesc" name="description" type="text"
+                                       placeholder="Satu baris penjelasan untuk pengguna baru">
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn--dark">
+                                <th:block th:replace="~{fragments/icons :: icon('plus')}"></th:block>
+                                Simpan kategori
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </section>
-        </div>
 
-    </main>
-
-    <!-- RIGHT PANEL -->
-    <aside class="gk-sidebar-right">
-        <div class="gk-card p-3 mb-3">
-            <h6 class="fw-bold mb-3 d-flex align-items-center gap-2" style="font-size: var(--gk-text-sm); color: var(--gk-ink);">
-                <i class="bi bi-info-circle text-primary"></i>
-                Cara Kerja Kategori
-            </h6>
-            <div class="d-flex flex-column gap-2 text-muted small" style="font-size: var(--gk-text-xs); line-height: 1.6;">
-                <p class="m-0">Nama kategori dan keahlian dibandingkan tanpa melihat huruf besar; menyimpan nama yang sudah ada akan memperbarui barisnya, bukan menduplikasi.</p>
-                <p class="m-0">Setiap keahlian menempel pada satu kategori, jadi ia muncul di tempat yang tepat ketika pengguna mencari topik untuk barter.</p>
+            <div th:if="${#lists.isEmpty(categories)}" class="panel" style="margin-top:28px;">
+                <div class="empty">
+                    <span class="empty__icon">
+                        <th:block th:replace="~{fragments/icons :: icon('layers')}"></th:block>
+                    </span>
+                    <h3>Belum ada kategori</h3>
+                    <p>
+                        Tambahkan kategori pertama di atas. Keahlian hanya bisa dibuat
+                        di bawah sebuah kategori.
+                    </p>
+                </div>
             </div>
-        </div>
-    </aside>
+
+            <div th:if="${!#lists.isEmpty(categories)}" class="panel" style="margin-top:28px;">
+                <div class="list">
+                    <article class="list-item" th:each="c : ${categories}">
+                        <div class="item-head">
+                            <div>
+                                <h3 class="item-title" th:text="${c.name}">Kategori</h3>
+                                <p th:unless="${#strings.isEmpty(c.description)}" class="item-body"
+                                   th:text="${c.description}">Deskripsi kategori</p>
+                            </div>
+                            <span class="tag tag--neutral" th:text="${#lists.size(c.skills)} + ' keahlian'">0 keahlian</span>
+                        </div>
+
+                        <div th:if="${!#lists.isEmpty(c.skills)}" class="wrap" style="margin-top:10px;">
+                            <span class="tag tag--offer" th:each="s : ${c.skills}" th:text="${s}">Keahlian</span>
+                        </div>
+                        <p th:if="${#lists.isEmpty(c.skills)}" class="muted small" style="margin-top:8px;">
+                            Belum ada keahlian di kategori ini.
+                        </p>
+
+                        <form th:action="@{'/admin/categories/' + ${c.id} + '/skills'}" method="post"
+                              style="margin-top:16px;padding-top:16px;border-top:1px solid var(--line-soft);">
+                            <div class="form-grid">
+                                <div class="field">
+                                    <label th:for="'skill-' + ${c.id}">Tambah keahlian</label>
+                                    <input th:id="'skill-' + ${c.id}" name="name" type="text"
+                                           maxlength="100" required placeholder="mis. Java Spring Boot">
+                                </div>
+                                <div class="field">
+                                    <label th:for="'skillDesc-' + ${c.id}">Deskripsi (opsional)</label>
+                                    <input th:id="'skillDesc-' + ${c.id}" name="description" type="text"
+                                           placeholder="Singkat saja, muncul di katalog">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn--line btn--sm">
+                                <th:block th:replace="~{fragments/icons :: icon('plus')}"></th:block>
+                                Tambah keahlian
+                            </button>
+                        </form>
+                    </article>
+                </div>
+            </div>
+
+        </main>
+
+        <aside class="app-aside">
+            <section class="panel">
+                <div class="kicker">Cara kerja kategori</div>
+                <p class="muted small" style="margin:12px 0 0;line-height:1.65;">
+                    Nama kategori dan keahlian dibandingkan tanpa melihat huruf besar; menyimpan
+                    nama yang sudah ada akan memperbarui barisnya, bukan menduplikasi.
+                </p>
+                <p class="muted small" style="margin:10px 0 0;line-height:1.65;">
+                    Setiap keahlian menempel pada satu kategori, jadi ia muncul di tempat yang
+                    tepat ketika pengguna mencari topik untuk barter.
+                </p>
+                <a th:href="@{/catalog}" class="btn btn--line btn--sm btn--block" style="margin-top:16px;">
+                    <th:block th:replace="~{fragments/icons :: icon('grid')}"></th:block>
+                    Lihat katalog publik
+                </a>
+            </section>
+        </aside>
+    </div>
 </div>
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>

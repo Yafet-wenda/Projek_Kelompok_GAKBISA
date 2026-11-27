@@ -4,122 +4,112 @@
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
-<div class="gk-layout container-fluid">
+<div class="app-shell">
     <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
 
-    <main class="gk-main">
+    <div class="app-body">
+        <main class="app-main">
 
-        <!-- Flash alerts -->
-        <div th:if="${success}" class="gk-alert gk-alert--success">
-            <i class="bi bi-check-circle-fill"></i>
-            <span th:text="${success}"></span>
-        </div>
-        <div th:if="${error}" class="gk-alert gk-alert--danger">
-            <i class="bi bi-exclamation-circle-fill"></i>
-            <span th:text="${error}"></span>
-        </div>
-
-        <div class="gk-card p-4">
-            <!-- Header -->
-            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pb-3 mb-3" style="border-bottom: 1px solid var(--gk-border);">
-                <div class="gk-page-header m-0 p-0" style="border-bottom: none;">
-                    <div class="gk-page-header__icon">
-                        <i class="bi bi-bell-fill"></i>
-                    </div>
-                    <div>
-                        <h1 class="gk-page-header__title" style="font-size: var(--gk-text-lg);">Pusat Notifikasi</h1>
-                        <p class="gk-page-header__subtitle">Pemberitahuan aktivitas barter, sesi, dan akunmu</p>
-                    </div>
+            <header class="page-head page-head--split">
+                <div>
+                    <span class="eyebrow">Pusat notifikasi <span>&#9679;</span></span>
+                    <h1 class="display">Kabar <em>terbaru.</em></h1>
+                    <p class="lede">Pemberitahuan aktivitas barter, sesi belajar, dan akun Anda.</p>
                 </div>
+                <div class="page-head__aside" th:if="${!#lists.isEmpty(notifications)}">
+                    <form th:action="@{/notifications/read-all}" method="post" style="margin:0;">
+                        <button type="submit" class="btn btn--line btn--sm">
+                            <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
+                            Tandai semua dibaca
+                        </button>
+                    </form>
+                </div>
+            </header>
 
-                <form th:if="${!#lists.isEmpty(notifications)}" th:action="@{/notifications/read-all}" method="post" class="m-0">
-                    <button type="submit" class="gk-btn gk-btn--secondary gk-btn--sm">
-                        <i class="bi bi-check2-all me-1"></i>Tandai Semua Dibaca
-                    </button>
-                </form>
+            <div th:if="${success}" class="notice notice--success" role="status">
+                <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
+                <span th:text="${success}"></span>
+            </div>
+            <div th:if="${error}" class="notice notice--danger" role="alert">
+                <th:block th:replace="~{fragments/icons :: icon('alert')}"></th:block>
+                <span th:text="${error}"></span>
             </div>
 
-            <!-- Empty state -->
-            <div th:if="${#lists.isEmpty(notifications)}" class="py-4">
-                <div class="gk-empty">
-                    <div class="gk-empty__icon"><i class="bi bi-bell-slash"></i></div>
-                    <h3 class="gk-empty__title">Belum Ada Notifikasi</h3>
-                    <p class="gk-empty__desc">Kamu akan menerima pemberitahuan setiap ada tawaran barter masuk, sesi belajar baru dijadwalkan, atau ulasan yang diberikan.</p>
+            <div th:if="${#lists.isEmpty(notifications)}" class="panel">
+                <div class="empty">
+                    <span class="empty__icon">
+                        <th:block th:replace="~{fragments/icons :: icon('bell')}"></th:block>
+                    </span>
+                    <h3>Belum ada notifikasi</h3>
+                    <p>
+                        Anda akan menerima pemberitahuan setiap ada tawaran barter masuk,
+                        sesi belajar baru dijadwalkan, atau ulasan yang diberikan.
+                    </p>
                 </div>
             </div>
 
-            <!-- Notification list -->
-            <div th:if="${!#lists.isEmpty(notifications)}" class="d-flex flex-column gap-2">
-                <div th:each="notif : ${notifications}"
-                     class="p-3 rounded-3 d-flex align-items-start gap-3 transition-all"
-                     th:style="${!notif.isRead} ? 'background: var(--gk-primary-muted); border-left: 3px solid var(--gk-primary); border: 1px solid var(--gk-primary); border-left-width: 3px;' : 'background: var(--gk-card-bg); border: 1px solid var(--gk-border);'">
-
-                    <!-- Dynamic Icon based on type -->
-                    <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                         style="width: 38px; height: 38px; font-size: 16px;"
-                         th:styleappend="${notif.type == 'BARTER'} ? 'background: var(--gk-primary); color: white;' : (${notif.type == 'SESSION'} ? 'background: var(--gk-success); color: white;' : (${notif.type == 'REVIEW'} ? 'background: var(--gk-warning); color: white;' : 'background: var(--gk-grey-200); color: var(--gk-ink-2);'))">
-                        <i th:class="${notif.type == 'BARTER'} ? 'bi bi-arrow-left-right' : (${notif.type == 'SESSION'} ? 'bi bi-calendar-event' : (${notif.type == 'REVIEW'} ? 'bi bi-star-fill' : 'bi bi-bell'))"></i>
-                    </div>
-
-                    <!-- Content -->
-                    <div class="flex-grow-1 min-w-0">
-                        <div class="d-flex justify-content-between align-items-start gap-2">
-                            <h4 class="fw-bold m-0 text-truncate" style="font-size: var(--gk-text-sm); color: var(--gk-ink);" th:text="${notif.title}">Judul Notifikasi</h4>
-                            <span th:if="${!notif.isRead}"
-                                  style="width: 8px; height: 8px; background: var(--gk-primary); border-radius: 50%; display: inline-block; flex-shrink: 0; margin-top: 5px;"></span>
+            <div th:if="${!#lists.isEmpty(notifications)}" class="panel">
+                <div class="list">
+                    <article class="list-item" th:each="notif : ${notifications}"
+                             th:with="icoName=${notif.type == 'BARTER' ? 'swap' : (notif.type == 'SESSION' ? 'calendar' : (notif.type == 'REVIEW' ? 'star' : 'bell'))}">
+                        <div class="item-head">
+                            <div class="person" style="align-items:flex-start;">
+                                <span class="avatar">
+                                    <th:block th:replace="~{fragments/icons :: icon(${icoName})}"></th:block>
+                                </span>
+                                <div class="person__body">
+                                    <div class="person__name" style="white-space:normal;"
+                                         th:text="${notif.title}">Judul notifikasi</div>
+                                    <div class="person__meta" style="white-space:normal;line-height:1.6;"
+                                         th:text="${notif.body}">Isi pesan notifikasi</div>
+                                </div>
+                            </div>
+                            <span class="unread-dot" th:unless="${notif.isRead}" aria-label="Belum dibaca"></span>
                         </div>
-                        <p class="m-0 mt-1" style="font-size: var(--gk-text-xs); color: var(--gk-ink-2); line-height: 1.5;" th:text="${notif.body}">Isi pesan notifikasi...</p>
-                        <div class="mt-2 text-muted" style="font-size: 0.6875rem;">
-                            <i class="bi bi-clock me-1"></i>
-                            <span th:text="${#temporals.format(notif.createdAt, 'dd MMM yyyy HH:mm')}">Waktu</span>
+
+                        <div class="item-meta">
+                            <span>
+                                <th:block th:replace="~{fragments/icons :: icon('clock')}"></th:block>
+                                <span th:text="${#temporals.format(notif.createdAt, 'dd MMM yyyy HH:mm')}">Waktu</span>
+                            </span>
+                            <span class="tag tag--neutral" th:if="${!notif.isRead}">Baru</span>
                         </div>
-                    </div>
 
-                    <!-- Actions -->
-                    <div th:if="${!notif.isRead}" class="flex-shrink-0">
-                        <form th:action="@{'/notifications/' + ${notif.id} + '/read'}" method="post" class="m-0">
-                            <button type="submit" class="gk-btn gk-btn--ghost gk-btn--sm"
-                                    aria-label="Tandai notifikasi ini telah dibaca"
-                                    title="Tandai telah dibaca" style="padding: 4px 8px;">
-                                <i class="bi bi-check2 text-primary" aria-hidden="true"></i>
-                            </button>
-                        </form>
-                    </div>
+                        <div class="item-actions" th:if="${!notif.isRead}">
+                            <form th:action="@{'/notifications/' + ${notif.id} + '/read'}" method="post" style="margin:0;">
+                                <button type="submit" class="btn btn--line btn--sm"
+                                        aria-label="Tandai notifikasi ini telah dibaca">
+                                    <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
+                                    Tandai dibaca
+                                </button>
+                            </form>
+                        </div>
+                    </article>
                 </div>
             </div>
-        </div>
 
-    </main>
+        </main>
 
-    <!-- RIGHT PANEL -->
-    <aside class="gk-sidebar-right">
-        <div class="gk-card p-3 mb-3">
-            <h6 class="fw-bold mb-3 d-flex align-items-center gap-2" style="font-size: var(--gk-text-sm); color: var(--gk-ink);">
-                <i class="bi bi-info-circle-fill text-primary"></i>
-                Kategori Notifikasi
-            </h6>
-            <div class="d-flex flex-column gap-2" style="font-size: var(--gk-text-xs); line-height: 1.5;">
-                <div class="d-flex align-items-center gap-2">
-                    <div style="width: 24px; height: 24px; border-radius: 50%; background: var(--gk-primary-muted); color: var(--gk-primary); display: flex; align-items: center; justify-content: center; font-size: 11px;">
-                        <i class="bi bi-arrow-left-right"></i>
+        <aside class="app-aside">
+            <section class="panel">
+                <div class="kicker">Kategori notifikasi</div>
+                <div class="stack" style="margin-top:14px;gap:14px;">
+                    <div class="wrap" style="align-items:flex-start;">
+                        <th:block th:replace="~{fragments/icons :: icon('swap')}"></th:block>
+                        <span class="muted small"><strong>Barter:</strong> tawaran baru, diterima, atau dibatalkan.</span>
                     </div>
-                    <span><strong>Barter:</strong> Tawaran baru, diterima, atau dibatalkan</span>
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                    <div style="width: 24px; height: 24px; border-radius: 50%; background: var(--gk-success-muted); color: var(--gk-success); display: flex; align-items: center; justify-content: center; font-size: 11px;">
-                        <i class="bi bi-calendar-event"></i>
+                    <div class="wrap" style="align-items:flex-start;">
+                        <th:block th:replace="~{fragments/icons :: icon('calendar')}"></th:block>
+                        <span class="muted small"><strong>Sesi belajar:</strong> jadwal meeting dan pengingat.</span>
                     </div>
-                    <span><strong>Sesi Belajar:</strong> Jadwal meeting dan pengingat</span>
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                    <div style="width: 24px; height: 24px; border-radius: 50%; background: var(--gk-warning-muted); color: var(--gk-warning); display: flex; align-items: center; justify-content: center; font-size: 11px;">
-                        <i class="bi bi-star-fill"></i>
+                    <div class="wrap" style="align-items:flex-start;">
+                        <th:block th:replace="~{fragments/icons :: icon('star')}"></th:block>
+                        <span class="muted small"><strong>Ulasan:</strong> rating dan masukan dari rekan belajar.</span>
                     </div>
-                    <span><strong>Ulasan:</strong> Rating dan feedback dari rekan</span>
                 </div>
-            </div>
-        </div>
-    </aside>
+            </section>
+        </aside>
+    </div>
 </div>
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>

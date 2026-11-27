@@ -5,270 +5,242 @@
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
-<div class="gk-layout container-fluid">
+<div class="app-shell">
     <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
 
-    <main class="gk-main">
-        <div th:if="${success}" class="gk-alert gk-alert--success" role="status" th:text="${success}"></div>
-        <div th:if="${error}" class="gk-alert gk-alert--danger" role="alert" th:text="${error}"></div>
+    <div class="app-body">
+        <main class="app-main">
 
-        <!-- Profile Hero Card -->
-        <div class="gk-card p-0 mb-4 overflow-hidden">
-            <!-- Refined Cover Banner with subtle pattern & depth -->
-            <div class="gk-profile-banner"
-                 style="height: 160px; background: linear-gradient(135deg, var(--gk-primary) 0%, var(--gk-primary-dark) 50%, var(--gk-primary-dark) 100%); position: relative; overflow: hidden;">
-                <img th:if="${user.bannerPath != null}" th:src="${user.bannerPath}"
-                     alt="Foto sampul profil" class="gk-profile-banner__image">
-                <!-- Decorative subtle radial glow -->
-                <div style="position: absolute; right: -30px; top: -30px; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%); pointer-events: none;"></div>
-                <div style="position: absolute; left: 25%; bottom: -50px; width: 160px; height: 160px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%); pointer-events: none;"></div>
-                <div style="position: absolute; right: 20px; bottom: 14px; color: rgba(255,255,255,0.7); font-size: 12px; font-weight: 600; letter-spacing: 0.04em;">
-                    <i class="bi bi-person me-1"></i>Profil GAKBISA
-                </div>
+            <div th:if="${success}" class="notice notice--success" role="status">
+                <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
+                <span th:text="${success}"></span>
+            </div>
+            <div th:if="${error}" class="notice notice--danger" role="alert">
+                <th:block th:replace="~{fragments/icons :: icon('alert')}"></th:block>
+                <span th:text="${error}"></span>
             </div>
 
-            <div class="p-4" style="position: relative;">
-                <div class="d-flex align-items-end gap-3 flex-wrap" style="margin-top: -65px;">
-                    <!-- Avatar with solid card background to guarantee no line cuts through -->
-                    <div style="position: relative; z-index: 3; flex-shrink: 0;">
-                        <img th:if="${user.avatarPath != null}" th:src="${user.avatarPath}" alt="Avatar"
-                             class="rounded-circle shadow"
-                             style="width: 104px; height: 104px; object-fit: cover; border: 4px solid var(--gk-card-bg); background: var(--gk-card-bg); display: block;">
-                        <div th:if="${user.avatarPath == null}"
-                             class="rounded-circle shadow d-flex align-items-center justify-content-center fw-bold"
-                             style="width: 104px; height: 104px; font-size: 40px; border: 4px solid var(--gk-card-bg); background: linear-gradient(135deg, var(--gk-primary-muted), var(--gk-primary-muted)); color: var(--gk-primary-dark); user-select: none;"
-                             th:text="${#strings.toUpperCase(#strings.substring(user.fullName,0,1))}">A</div>
-                    </div>
-
-                    <div class="flex-grow-1 min-w-0 pb-1">
-                        <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
-                            <h1 class="m-0 fw-bold" style="font-size: 22px; color: var(--gk-ink);" th:text="${user.fullName}">Nama Pengguna</h1>
-                            <span class="gk-badge gk-badge--sm"
-                                  th:classappend="${user.status.name() == 'ACTIVE'} ? 'gk-badge--success' : 'gk-badge--danger'"
-                                  th:text="${user.status}">ACTIVE</span>
-                            <span class="gk-badge gk-badge--neutral gk-badge--sm"
-                                  th:if="${user.role != null}"
-                                  th:text="${user.role}">STUDENT</span>
+            <section class="panel">
+                <div class="profile-cover">
+                    <img th:if="${user.bannerPath != null}" th:src="${user.bannerPath}" alt="Foto sampul profil">
+                    <span class="profile-cover__note">Profil GAKBISA</span>
+                </div>
+                <div class="panel-body">
+                    <div class="profile-ident">
+                        <div class="profile-ident__avatar">
+                            <img th:if="${user.avatarPath != null}" th:src="${user.avatarPath}" alt="Foto profil">
+                            <span th:if="${user.avatarPath == null}"
+                                  th:text="${#strings.toUpperCase(#strings.substring(user.fullName,0,1))}">A</span>
                         </div>
-                        <p class="m-0 text-muted small" th:text="${user.bio ?: 'Pengguna GAKBISA'}"></p>
+                        <div class="profile-ident__body">
+                            <h1>
+                                <span th:text="${user.fullName}">Nama pengguna</span>
+                                <span class="tag" th:attr="data-status=${user.status}" th:text="${@label.status(user.status)}">Aktif</span>
+                                <span class="tag tag--neutral" th:if="${user.role != null}" th:text="${@label.role(user.role)}">Mahasiswa</span>
+                            </h1>
+                            <p class="profile-ident__bio" th:text="${user.bio ?: 'Pengguna GAKBISA'}">Pengguna GAKBISA</p>
+                        </div>
+                        <div class="profile-actions">
+                            <th:block th:if="${isSelf}">
+                                <a th:href="@{/profile/edit}" class="btn btn--line btn--sm">
+                                    <th:block th:replace="~{fragments/icons :: icon('edit')}"></th:block>
+                                    Edit profil
+                                </a>
+                                <a th:href="@{/profile/skills}" class="btn btn--dark btn--sm">
+                                    <th:block th:replace="~{fragments/icons :: icon('plus')}"></th:block>
+                                    Kelola keahlian
+                                </a>
+                            </th:block>
+
+                            <th:block th:if="${!isSelf}">
+                                <a th:href="@{/barter/request/{id}(id=${user.id})}"
+                                   sec:authorize="isAuthenticated()"
+                                   class="btn btn--dark btn--sm">
+                                    <th:block th:replace="~{fragments/icons :: icon('swap')}"></th:block>
+                                    Ajak barter
+                                </a>
+                                <button type="button" sec:authorize="isAuthenticated()" data-dialog-open="report-user"
+                                        class="btn btn--ghost btn--sm">Laporkan pengguna</button>
+                                <dialog id="report-user" sec:authorize="isAuthenticated()" aria-labelledby="report-user-title"
+                                        class="dialog">
+                                    <div class="dialog__head">
+                                        <h2 id="report-user-title">Laporkan pengguna</h2>
+                                    </div>
+                                    <form th:action="@{/reports}" method="post">
+                                        <input type="hidden" name="targetType" value="USER">
+                                        <input type="hidden" name="targetId" th:value="${user.id}">
+                                        <div class="field">
+                                            <label for="report-user-reason">Alasan laporan</label>
+                                            <textarea id="report-user-reason" name="reason" rows="3"
+                                                      maxlength="2000" required></textarea>
+                                            <p class="field__hint">Jelaskan masalahnya secara singkat dan jelas.</p>
+                                        </div>
+                                        <div class="dialog__foot">
+                                            <button type="submit" class="btn btn--dark btn--sm">Kirim laporan</button>
+                                            <button type="button" data-dialog-close class="btn btn--line btn--sm">Batal</button>
+                                        </div>
+                                    </form>
+                                </dialog>
+                            </th:block>
+                        </div>
                     </div>
 
-                    <!-- Profile Actions: distinct for isSelf vs other user -->
-                    <div class="d-flex gap-2 pb-1 flex-wrap">
-                        <!-- If viewing OWN profile -->
-                        <th:block th:if="${isSelf}">
-                            <a th:href="@{/profile/edit}"
-                               class="gk-btn gk-btn--secondary gk-btn--sm">
-                                <i class="bi bi-pencil-fill me-1" aria-hidden="true"></i> Edit Profil
-                            </a>
-                            <a th:href="@{/profile/skills}"
-                               class="gk-btn gk-btn--primary gk-btn--sm">
-                                <i class="bi bi-plus-lg me-1" aria-hidden="true"></i> Kelola Keahlian
-                            </a>
-                        </th:block>
-
-                        <!-- If viewing OTHER user's profile -->
-                        <th:block th:if="${!isSelf}">
-                            <a th:href="@{/barter/request/{id}(id=${user.id})}"
-                               sec:authorize="isAuthenticated()"
-                               class="gk-btn gk-btn--primary gk-btn--sm">
-                                <i class="bi bi-arrow-left-right me-1" aria-hidden="true"></i> Ajak Barter
-                            </a>
-                            <button type="button" sec:authorize="isAuthenticated()" data-dialog-open="report-user"
-                                    class="gk-btn gk-btn--ghost gk-btn--sm">Laporkan pengguna</button>
-                            <dialog id="report-user" sec:authorize="isAuthenticated()" aria-labelledby="report-user-title"
-                                    class="rounded-3 p-4" style="max-width:440px; width:calc(100% - 32px); background:var(--gk-card-bg); color:var(--gk-ink); border:1px solid var(--gk-border);">
-                                <h2 id="report-user-title" class="h5">Laporkan pengguna</h2>
-                                <form th:action="@{/reports}" method="post">
-                                    <input type="hidden" name="targetType" value="USER">
-                                    <input type="hidden" name="targetId" th:value="${user.id}">
-                                    <label for="report-user-reason" class="form-label">Alasan laporan</label>
-                                    <textarea id="report-user-reason" name="reason" class="form-control mb-3" rows="3" maxlength="2000" required></textarea>
-                                    <button type="submit" class="gk-btn gk-btn--primary">Kirim laporan</button>
-                                    <button type="button" data-dialog-close class="gk-btn gk-btn--secondary">Batal</button>
-                                </form>
-                            </dialog>
-                        </th:block>
+                    <div class="profile-meta">
+                        <span th:if="${user.campus}">
+                            <th:block th:replace="~{fragments/icons :: icon('pin')}"></th:block>
+                            <span th:text="${user.campus}">Kampus</span>
+                        </span>
+                        <span th:if="${isSelf or #authorization.expression('hasRole(''ADMIN'')')}">
+                            <th:block th:replace="~{fragments/icons :: icon('mail')}"></th:block>
+                            <span th:text="${user.email}">email@example.com</span>
+                        </span>
+                        <span>
+                            <th:block th:replace="~{fragments/icons :: icon('calendar')}"></th:block>
+                            Bergabung <span th:text="${#temporals.format(user.createdAt, 'MMM yyyy')}">2026</span>
+                        </span>
                     </div>
                 </div>
+            </section>
 
-                <!-- Meta Badges (Campus, Email, Bergabung) -->
-                <div class="d-flex gap-4 flex-wrap mt-3 pt-3 border-top" style="font-size: 13px; color: var(--gk-ink-2); border-color: var(--gk-border) !important;">
-                    <div th:if="${user.campus}" class="d-flex align-items-center gap-2">
-                        <i class="bi bi-building text-primary"></i>
-                        <span th:text="${user.campus}">Kampus</span>
+            <section class="panel" style="margin-top:28px;">
+                <div class="panel-head">
+                    <div>
+                        <span class="kicker">Ditawarkan</span>
+                        <h2>Keahlian yang diajarkan</h2>
                     </div>
-                    <div th:if="${isSelf or #authorization.expression('hasRole(''ADMIN'')')}" class="d-flex align-items-center gap-2">
-                        <i class="bi bi-envelope text-primary"></i>
-                        <span th:text="${user.email}">email@example.com</span>
-                    </div>
-                    <div class="d-flex align-items-center gap-2">
-                        <i class="bi bi-calendar3 text-primary"></i>
-                        <span>Bergabung <span th:text="${#temporals.format(user.createdAt, 'MMM yyyy')}">2026</span></span>
+                    <a th:if="${isSelf}" th:href="@{/profile/skills}" class="btn btn--ghost btn--sm">
+                        <th:block th:replace="~{fragments/icons :: icon('edit')}"></th:block>
+                        Kelola
+                    </a>
+                </div>
+                <div class="panel-body">
+                    <p th:if="${#lists.isEmpty(offerSkills)}" class="muted small" style="margin:0;">
+                        <span th:if="${isSelf}">
+                            Belum ada keahlian yang ditawarkan.
+                            <a th:href="@{/profile/skills}" class="link">Tambahkan sekarang</a>.
+                        </span>
+                        <span th:if="${!isSelf}">Pengguna ini belum menambahkan keahlian yang ditawarkan.</span>
+                    </p>
+                    <div th:if="${!#lists.isEmpty(offerSkills)}" class="skill-tags">
+                        <span class="tag tag--offer" th:each="us : ${offerSkills}">
+                            <span th:text="${us.skill.name}">Keahlian</span>
+                            <span th:if="${us.level}" class="muted mini" th:text="'· ' + ${@label.level(us.level)}"></span>
+                        </span>
                     </div>
                 </div>
-            </div>
-        </div>
+            </section>
 
-        <!-- Keahlian Ditawarkan (Offer) -->
-        <div class="gk-card mb-4">
-            <div class="gk-card__header">
-                <h2 class="gk-card__title d-flex align-items-center gap-2">
-                    <i class="bi bi-hand-thumbs-up-fill text-primary" aria-hidden="true"></i>
-                    <span>Keahlian Ditawarkan</span>
-                </h2>
-                <a th:if="${isSelf}" th:href="@{/profile/skills}" class="gk-btn gk-btn--ghost gk-btn--sm">
-                    <i class="bi bi-pencil me-1" aria-hidden="true"></i> Kelola
-                </a>
-            </div>
+            <section class="panel" style="margin-top:28px;">
+                <div class="panel-head">
+                    <div>
+                        <span class="kicker">Dicari</span>
+                        <h2>Keahlian yang ingin dipelajari</h2>
+                    </div>
+                    <a th:if="${isSelf}" th:href="@{/profile/skills}" class="btn btn--ghost btn--sm">
+                        <th:block th:replace="~{fragments/icons :: icon('edit')}"></th:block>
+                        Kelola
+                    </a>
+                </div>
+                <div class="panel-body">
+                    <p th:if="${#lists.isEmpty(wantSkills)}" class="muted small" style="margin:0;">
+                        <span th:if="${isSelf}">
+                            Belum ada keahlian yang dicari.
+                            <a th:href="@{/profile/skills}" class="link">Tambahkan sekarang</a>.
+                        </span>
+                        <span th:if="${!isSelf}">Pengguna ini belum menambahkan keahlian yang dicari.</span>
+                    </p>
+                    <div th:if="${!#lists.isEmpty(wantSkills)}" class="skill-tags">
+                        <span class="tag tag--want" th:each="us : ${wantSkills}">
+                            <span th:text="${us.skill.name}">Keahlian</span>
+                            <span th:if="${us.level}" class="muted mini" th:text="'· ' + ${@label.level(us.level)}"></span>
+                        </span>
+                    </div>
+                </div>
+            </section>
 
-            <div th:if="${#lists.isEmpty(offerSkills)}" class="text-muted p-2" style="font-size:14px;">
-                <span th:if="${isSelf}">
-                    Belum ada keahlian yang ditawarkan.
-                    <a th:href="@{/profile/skills}" class="text-primary fw-semibold">Tambahkan sekarang</a>
-                </span>
-                <span th:if="${!isSelf}">
-                    Pengguna ini belum menambahkan keahlian yang ditawarkan.
-                </span>
-            </div>
+            <section class="panel" style="margin-top:28px;">
+                <div class="panel-head">
+                    <div>
+                        <span class="kicker">Reputasi</span>
+                        <h2>Ulasan dari partner</h2>
+                    </div>
+                    <span th:if="${ratingAvg != null}" class="tag tag--neutral"
+                          th:text="${ratingAvg} + ' / 5 · ' + ${ratingCount} + ' ulasan'">4.8 / 5 · 3 ulasan</span>
+                </div>
+                <div class="panel-body">
+                    <p th:if="${#lists.isEmpty(reviews)}" class="muted small" style="margin:0;">
+                        Belum ada ulasan. Reputasi mulai tercatat setelah sesi belajar pertama dinilai partner Anda.
+                    </p>
 
-            <div th:if="${!#lists.isEmpty(offerSkills)}" class="d-flex flex-wrap gap-2 p-1">
-                <span class="gk-badge gk-badge--OFFER" style="padding:6px 12px;font-size:13px;" th:each="us : ${offerSkills}">
-                    <i class="bi bi-award-fill text-primary me-1"></i>
-                    <span th:text="${us.skill.name}">Skill</span>
-                    <span th:if="${us.level}" style="opacity:0.8;font-weight:400;" th:text="'(' + ${us.level} + ')'"></span>
-                </span>
-            </div>
-        </div>
-
-        <!-- Keahlian Dicari (Want) -->
-        <div class="gk-card mb-4">
-            <div class="gk-card__header">
-                <h2 class="gk-card__title d-flex align-items-center gap-2">
-                    <i class="bi bi-book-fill text-danger" aria-hidden="true"></i>
-                    <span>Keahlian Dicari</span>
-                </h2>
-                <a th:if="${isSelf}" th:href="@{/profile/skills}" class="gk-btn gk-btn--ghost gk-btn--sm">
-                    <i class="bi bi-pencil me-1" aria-hidden="true"></i> Kelola
-                </a>
-            </div>
-
-            <div th:if="${#lists.isEmpty(wantSkills)}" class="text-muted p-2" style="font-size:14px;">
-                <span th:if="${isSelf}">
-                    Belum ada keahlian yang dicari.
-                    <a th:href="@{/profile/skills}" class="text-primary fw-semibold">Tambahkan sekarang</a>
-                </span>
-                <span th:if="${!isSelf}">
-                    Pengguna ini belum menambahkan keahlian yang dicari.
-                </span>
-            </div>
-
-            <div th:if="${!#lists.isEmpty(wantSkills)}" class="d-flex flex-wrap gap-2 p-1">
-                <span class="gk-badge gk-badge--WANT" style="padding:6px 12px;font-size:13px;" th:each="us : ${wantSkills}">
-                    <i class="bi bi-book me-1"></i>
-                    <span th:text="${us.skill.name}">Skill</span>
-                    <span th:if="${us.level}" style="opacity:0.8;font-weight:400;" th:text="'(' + ${us.level} + ')'"></span>
-                </span>
-            </div>
-        </div>
-
-        <!-- Ulasan yang Diterima -->
-        <div class="gk-card mb-4">
-            <div class="gk-card__header">
-                <h2 class="gk-card__title d-flex align-items-center gap-2">
-                    <i class="bi bi-star-fill text-warning" aria-hidden="true"></i>
-                    <span>Ulasan</span>
-                </h2>
-                <span th:if="${ratingAvg != null}" class="gk-badge gk-badge--warning"
-                      th:text="${ratingAvg} + ' / 5 · ' + ${ratingCount} + ' ulasan'">4.8 / 5 · 3 ulasan</span>
-            </div>
-
-            <p th:if="${#lists.isEmpty(reviews)}" class="text-muted p-2 m-0" style="font-size:14px;">
-                Belum ada ulasan. Reputasi mulai tercatat setelah sesi belajar pertama dinilai partnermu.
-            </p>
-
-            <ul th:unless="${#lists.isEmpty(reviews)}" class="list-unstyled m-0 p-2">
-                <li th:each="rv : ${reviews}" class="d-flex align-items-start gap-3 py-2"
-                    style="border-top: 1px solid var(--gk-border);">
-                    <div class="gk-avatar gk-avatar--sm flex-shrink-0"
-                         th:text="${#strings.toUpperCase(#strings.substring(rv.reviewerName,0,1))}">A</div>
-                    <div class="flex-grow-1 min-w-0">
-                        <div class="d-flex align-items-center gap-2 flex-wrap">
-                            <span class="fw-bold" style="font-size:14px;color:var(--gk-ink);"
-                                  th:text="${rv.reviewerName}">Nama Pengulas</span>
-                            <span class="text-muted" style="font-size:12px;"
-                                  th:text="${#temporals.format(rv.createdAt, 'dd MMM yyyy')}">01 Jan 2026</span>
-                            <span class="d-inline-flex align-items-center gap-1 ms-auto" role="img"
-                                  th:aria-label="${rv.rating} + ' dari 5 bintang'">
-                                <i th:each="i : ${#numbers.sequence(1,5)}" class="bi"
-                                   th:classappend="${i <= rv.rating} ? 'bi-star-fill' : 'bi-star'"
-                                   th:style="${i <= rv.rating} ? 'color:var(--gk-warning);' : 'color:var(--gk-grey-300);'"></i>
+                    <div th:unless="${#lists.isEmpty(reviews)}">
+                        <div th:each="rv : ${reviews}" class="review">
+                            <span class="avatar avatar--sm">
+                                <span th:text="${#strings.toUpperCase(#strings.substring(rv.reviewerName,0,1))}">A</span>
                             </span>
+                            <div style="flex:1;min-width:0;">
+                                <div class="review__head">
+                                    <strong style="font-size:13.5px;" th:text="${rv.reviewerName}">Nama pengulas</strong>
+                                    <span class="muted mini" th:text="${#temporals.format(rv.createdAt, 'dd MMM yyyy')}">01 Jan 2026</span>
+                                    <span class="rating-stars" role="img"
+                                          th:aria-label="${rv.rating} + ' dari 5 bintang'">
+                                        <span th:each="i : ${#numbers.sequence(1,5)}"
+                                              th:classappend="${i <= rv.rating} ? '' : 'off'">&#9733;</span>
+                                    </span>
+                                </div>
+                                <p th:unless="${#strings.isEmpty(rv.comment)}" class="review__body muted small"
+                                   th:text="${rv.comment}">Isi ulasan</p>
+                            </div>
                         </div>
-                        <p th:unless="${#strings.isEmpty(rv.comment)}" class="mb-0 text-muted" style="font-size:14px;"
-                           th:text="${rv.comment}">Isi ulasan</p>
                     </div>
-                </li>
-            </ul>
-        </div>
+                </div>
+            </section>
 
-    </main>
+        </main>
 
-    <!-- Right Sidebar Panel (~320px) -->
-    <aside class="gk-sidebar-right">
-        <div class="gk-card p-3 mb-3">
-            <h6 class="fw-bold mb-3 d-flex align-items-center gap-2" style="font-size: var(--gk-text-sm); color: var(--gk-ink);">
-                <i class="bi bi-pie-chart-fill text-primary"></i>
-                Statistik Keahlian
-            </h6>
-            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom" style="border-color: var(--gk-border) !important;">
-                <span class="text-muted small">Keahlian Ditawarkan</span>
-                <span class="gk-badge gk-badge--primary gk-badge--sm" th:text="${offerSkills.size()}">0</span>
-            </div>
-            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom" style="border-color: var(--gk-border) !important;">
-                <span class="text-muted small">Keahlian Dicari</span>
-                <span class="gk-badge gk-badge--danger gk-badge--sm" th:text="${wantSkills.size()}">0</span>
-            </div>
-            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom" style="border-color:var(--gk-border) !important;">
-                <span class="text-muted" style="font-size:13px;">Karya Portofolio</span>
-                <span class="badge bg-secondary rounded-pill px-2" th:text="${portfolios.size()}">0</span>
-            </div>
-            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom" style="border-color:var(--gk-border) !important;">
-                <span class="text-muted" style="font-size:13px;">Rating Rata-rata</span>
-                <span th:if="${ratingAvg != null}" class="gk-badge gk-badge--warning gk-badge--sm"
-                      th:text="${ratingAvg} + ' / 5 (' + ${ratingCount} + ')'">4.5 / 5 (3)</span>
-                <span th:if="${ratingAvg == null}" class="text-muted" style="font-size:13px;">Belum ada ulasan</span>
-            </div>
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <span class="text-muted small">Status Akun</span>
-                <span class="gk-badge gk-badge--sm"
-                      th:classappend="${user.status.name() == 'ACTIVE'} ? 'gk-badge--success' : 'gk-badge--danger'"
-                      th:text="${user.status}">ACTIVE</span>
-            </div>
+        <aside class="app-aside">
+            <section class="panel">
+                <div class="kicker">Statistik keahlian</div>
+                <div style="margin-top:12px;">
+                    <div class="rule-row"><span>Keahlian ditawarkan</span><strong th:text="${offerSkills.size()}">0</strong></div>
+                    <div class="rule-row"><span>Keahlian dicari</span><strong th:text="${wantSkills.size()}">0</strong></div>
+                    <div class="rule-row"><span>Karya portofolio</span><strong th:text="${portfolios.size()}">0</strong></div>
+                    <div class="rule-row">
+                        <span>Rating rata-rata</span>
+                        <strong th:if="${ratingAvg != null}" th:text="${ratingAvg} + ' / 5'">4.5 / 5</strong>
+                        <strong th:if="${ratingAvg == null}" class="muted" style="font-weight:500;">Belum ada</strong>
+                    </div>
+                    <div class="rule-row">
+                        <span>Status akun</span>
+                        <span class="tag" th:attr="data-status=${user.status}" th:text="${@label.status(user.status)}">Aktif</span>
+                    </div>
+                </div>
 
-            <div class="d-flex flex-column gap-2">
-                <!-- If viewing OWN profile -->
-                <th:block th:if="${isSelf}">
-                    <a th:href="@{/portfolio}" class="gk-btn gk-btn--secondary w-100 gk-btn--sm">
-                        <i class="bi bi-collection me-1"></i>Portofolio Saya
-                    </a>
-                    <a th:href="@{/profile/skills}" class="gk-btn gk-btn--primary w-100 gk-btn--sm">
-                        <i class="bi bi-plus-lg me-1"></i>Kelola Keahlian
-                    </a>
-                </th:block>
-
-                <!-- If viewing OTHER user's profile -->
-                <th:block th:if="${!isSelf}">
-                    <a th:href="@{/portfolio/user/{id}(id=${user.id})}" class="gk-btn gk-btn--secondary w-100 gk-btn--sm">
-                        <i class="bi bi-collection me-1"></i>Lihat Portofolio
-                    </a>
-                    <a th:href="@{/barter/request/{id}(id=${user.id})}" sec:authorize="isAuthenticated()" class="gk-btn gk-btn--primary w-100 gk-btn--sm">
-                        <i class="bi bi-arrow-left-right me-1"></i>Ajak Barter
-                    </a>
-                </th:block>
-            </div>
-        </div>
-    </aside>
+                <div class="stack" style="margin-top:18px;gap:8px;">
+                    <th:block th:if="${isSelf}">
+                        <a th:href="@{/portfolio}" class="btn btn--line btn--sm btn--block">
+                            <th:block th:replace="~{fragments/icons :: icon('folder')}"></th:block>
+                            Portofolio saya
+                        </a>
+                        <a th:href="@{/profile/skills}" class="btn btn--dark btn--sm btn--block">
+                            <th:block th:replace="~{fragments/icons :: icon('plus')}"></th:block>
+                            Kelola keahlian
+                        </a>
+                    </th:block>
+                    <th:block th:if="${!isSelf}">
+                        <a th:href="@{/portfolio/user/{id}(id=${user.id})}" class="btn btn--line btn--sm btn--block">
+                            <th:block th:replace="~{fragments/icons :: icon('folder')}"></th:block>
+                            Lihat portofolio
+                        </a>
+                        <a th:href="@{/barter/request/{id}(id=${user.id})}" sec:authorize="isAuthenticated()"
+                           class="btn btn--dark btn--sm btn--block">
+                            <th:block th:replace="~{fragments/icons :: icon('swap')}"></th:block>
+                            Ajak barter
+                        </a>
+                    </th:block>
+                </div>
+            </section>
+        </aside>
+    </div>
 </div>
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>

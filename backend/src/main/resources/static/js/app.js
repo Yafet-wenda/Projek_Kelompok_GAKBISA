@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
       var label = document.createElement('p');
-      label.className = 'small text-muted';
+      label.className = 'small muted';
       label.textContent = file.name + ' · ' + (file.size / 1024 / 1024).toFixed(2) + ' MiB';
       preview.appendChild(label);
       var image = /^image\/(jpeg|png|webp)$/.test(file.type);

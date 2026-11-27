@@ -1,10 +1,13 @@
-/* Sentuhan kecil untuk form auth: lihat/sembunyikan password dan pengaman
-   klik ganda. Dipakai hanya oleh templates/auth/login.html dan register.html. */
+/* Sentuhan kecil untuk formulir autentikasi: lihat/sembunyikan password dan
+   pengaman klik ganda. Dipakai oleh templates/auth/login.html dan register.html. */
 (function () {
   "use strict";
 
-  document.querySelectorAll(".gk-auth__toggle").forEach(function (btn) {
-    var input = btn.parentElement.querySelector("input");
+  document.querySelectorAll(".pwd-toggle").forEach(function (btn) {
+    var wrap = btn.closest(".pwd");
+    var input = wrap && wrap.querySelector("input");
+    if (!input) return;
+
     btn.setAttribute("aria-label", "Tampilkan password");
     btn.addEventListener("click", function () {
       var tampil = input.type === "password";
@@ -16,22 +19,10 @@
     });
   });
 
-  /* Password yang sudah dibuka saat halaman di-render ulang karena error
-     validasi harus tetap terbuka; kalau tidak, isinya terbaca samar-samar. */
-  document.querySelectorAll(".gk-auth__pw").forEach(function (wrap) {
-    var input = wrap.querySelector("input");
-    var btn = wrap.querySelector(".gk-auth__toggle");
-    if (input && btn && input.type === "text") {
-      btn.textContent = "Sembunyi";
-      btn.setAttribute("aria-pressed", "true");
-      btn.setAttribute("aria-label", "Sembunyikan password");
-    }
-  });
-
-  document.querySelectorAll("form.gk-auth__fields").forEach(function (form) {
+  document.querySelectorAll("form.auth-form").forEach(function (form) {
     form.addEventListener("submit", function () {
       if (!form.checkValidity()) return;
-      var btn = form.querySelector(".gk-auth__submit");
+      var btn = form.querySelector("button[type='submit']");
       if (!btn) return;
       btn.disabled = true;
       btn.setAttribute("aria-busy", "true");
