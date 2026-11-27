@@ -148,7 +148,7 @@ public class WebController {
 
     @GetMapping("/")
     public String home() {
-        return currentUserId() == null ? "redirect:/login" : "redirect:/dashboard";
+        return currentUserId() == null ? "home" : "redirect:/dashboard";
     }
 
     @GetMapping("/index.html")
@@ -197,9 +197,27 @@ public class WebController {
         model.addAttribute("activeSessions", sessionService.forUser(uid).stream()
             .filter(s -> s.getStatus() == SessionStatus.SCHEDULED || s.getStatus() == SessionStatus.ONGOING).count());
         model.addAttribute("unreadNotifications", notificationRepository.countByUserIdAndReadFalse(uid));
+
+        User me = requireUser(uid);
+        boolean hasBio = me.getBio() != null && !me.getBio().isBlank();
+        boolean hasCampus = me.getCampus() != null && !me.getCampus().isBlank();
+        boolean hasAvatar = me.getAvatarPath() != null && !me.getAvatarPath().isBlank();
+        boolean hasOffer = !userService.listSkills(uid, SkillType.OFFER).isEmpty();
+        boolean hasWant = !userService.listSkills(uid, SkillType.WANT).isEmpty();
+        boolean hasPortfolio = portfolioRepository.countByUserId(uid) > 0;
+        int completion = (hasBio ? 20 : 0) + (hasCampus ? 10 : 0) + (hasAvatar ? 10 : 0)
+            + (hasOffer ? 20 : 0) + (hasWant ? 20 : 0) + (hasPortfolio ? 20 : 0);
+        model.addAttribute("profileCompletion", completion);
+        model.addAttribute("hasBio", hasBio);
+        model.addAttribute("hasCampus", hasCampus);
+        model.addAttribute("hasAvatar", hasAvatar);
+        model.addAttribute("hasOffer", hasOffer);
+        model.addAttribute("hasWant", hasWant);
+        model.addAttribute("hasPortfolio", hasPortfolio);
+
         model.addAttribute("topMatches", matchingService.recommend(uid, 4).stream()
             .map(c -> new MatchResult(requireUser(c.userId()), c.score(), c.reasons())).toList());
-        model.addAttribute("recentNotifications", notificationService.inbox(uid).stream().limit(5).toList());
+        model.addAttribute("recentNotifications", notificationService.inbox(uid).stream().limit(3).toList());
         return "dashboard";
     }
 

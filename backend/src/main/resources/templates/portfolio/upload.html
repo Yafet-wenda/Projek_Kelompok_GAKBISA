@@ -11,9 +11,11 @@
         <main class="app-main">
 
             <header class="page-head">
-                <span class="eyebrow">Unggah karya <span>&#9679;</span></span>
-                <h1 class="display">Karya <em>baru.</em></h1>
-                <p class="lede">Tunjukkan bukti hasil karya atau proyek untuk mendukung profil keahlian Anda.</p>
+                <div>
+                    <span class="eyebrow">Unggah karya</span>
+                    <h1 class="display">Karya baru</h1>
+                    <p class="lede">Tunjukkan bukti hasil karya atau proyek untuk mendukung profil keahlian Anda.</p>
+                </div>
             </header>
 
             <div th:if="${error}" class="notice notice--danger" role="alert">
@@ -94,19 +96,19 @@
             <section class="panel">
                 <div class="kicker">Ketentuan berkas</div>
                 <div class="stack" style="margin-top:14px;gap:12px;">
-                    <div class="wrap" style="align-items:flex-start;">
+                    <div class="tip">
                         <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
                         <span class="muted small">Format: JPG, PNG, WEBP, PDF, MP4, atau WEBM.</span>
                     </div>
-                    <div class="wrap" style="align-items:flex-start;">
+                    <div class="tip">
                         <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
                         <span class="muted small">Ukuran maksimal <strong>50 MiB</strong> per berkas.</span>
                     </div>
-                    <div class="wrap" style="align-items:flex-start;">
+                    <div class="tip">
                         <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
                         <span class="muted small">Pastikan gambar memiliki rasio yang jelas dan teks yang terbaca.</span>
                     </div>
-                    <div class="wrap" style="align-items:flex-start;">
+                    <div class="tip">
                         <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
                         <span class="muted small">Dilarang mengunggah konten yang mengandung plagiarisme atau melanggar hak cipta.</span>
                     </div>

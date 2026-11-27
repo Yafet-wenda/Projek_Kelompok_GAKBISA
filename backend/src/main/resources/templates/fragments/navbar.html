@@ -25,11 +25,9 @@
         <span class="brand-name">GAKBISA</span>
       </a>
 
-      <nav class="nav-links" sec:authorize="isAuthenticated()" aria-label="Navigasi utama">
-        <a th:href="@{/catalog}" data-path="/catalog">Katalog</a>
-        <a th:href="@{/matching}" data-path="/matching">Cari partner</a>
-        <a th:href="@{/barter}" data-path="/barter">Barter</a>
-        <a th:href="@{/sessions}" data-path="/sessions">Sesi</a>
+      <nav class="nav-links" sec:authorize="!isAuthenticated()" aria-label="Navigasi utama">
+        <a th:href="@{/catalog}">Katalog keahlian</a>
+        <a th:href="@{/#cara-kerja}">Cara kerja</a>
       </nav>
     </div>
 

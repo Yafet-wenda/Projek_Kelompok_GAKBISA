@@ -11,9 +11,11 @@
         <main class="app-main">
 
             <header class="page-head">
-                <span class="eyebrow">Tawaran baru <span>&#9679;</span></span>
-                <h1 class="display">Ajak <em>barter.</em></h1>
-                <p class="lede">Pilih keahlian yang Anda tawarkan dan yang ingin Anda pelajari dari rekan ini.</p>
+                <div>
+                    <span class="eyebrow">Tawaran baru</span>
+                    <h1 class="display">Ajak barter</h1>
+                    <p class="lede">Pilih keahlian yang Anda tawarkan dan yang ingin Anda pelajari dari rekan ini.</p>
+                </div>
             </header>
 
             <div th:if="${error}" class="notice notice--danger" role="alert">
@@ -31,7 +33,7 @@
                             <span class="kicker">Partner tujuan</span>
                             <div class="person__name" style="font-size:19px;" th:text="${targetUser.fullName}">Nama partner</div>
                             <div class="person__meta"
-                                 th:text="${targetUser.campus ?: 'Pengguna GAKBISA'}">Kampus</div>
+                                 th:text="${targetUser.campus ?: 'Mahasiswa'}">Kampus</div>
                             <p class="muted small" style="margin-top:6px;" th:if="${targetUser.bio}"
                                th:text="${#strings.abbreviate(targetUser.bio, 120)}"></p>
                         </div>
@@ -122,15 +124,15 @@
             <section class="panel">
                 <div class="kicker">Tips mengirim tawaran</div>
                 <div class="stack" style="margin-top:14px;gap:12px;">
-                    <div class="wrap" style="align-items:flex-start;">
+                    <div class="tip">
                         <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
                         <span class="muted small">Tawarkan keahlian yang benar-benar siap Anda ajarkan kepada rekan.</span>
                     </div>
-                    <div class="wrap" style="align-items:flex-start;">
+                    <div class="tip">
                         <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
                         <span class="muted small">Tulis pesan pengantar yang sopan dan cantumkan ketersediaan waktu luang Anda.</span>
                     </div>
-                    <div class="wrap" style="align-items:flex-start;">
+                    <div class="tip">
                         <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
                         <span class="muted small">Setelah tawaran diterima, Anda bisa langsung menjadwalkan sesi belajar lewat Jitsi Meet.</span>
                     </div>

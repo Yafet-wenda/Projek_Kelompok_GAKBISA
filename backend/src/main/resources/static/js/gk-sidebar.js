@@ -11,11 +11,16 @@
     const path = window.location.pathname;
     const items = document.querySelectorAll('.rail-link[data-path]');
 
+    let best = null;
     items.forEach(function (item) {
       const target = item.getAttribute('data-path');
       if (!target) return;
+      const matches = path === target || path.startsWith(target + '/');
+      if (matches && (best === null || target.length > best.length)) best = target;
+    });
 
-      const isActive = path === target || path.startsWith(target + '/');
+    items.forEach(function (item) {
+      const isActive = item.getAttribute('data-path') === best;
       item.classList.toggle('active', isActive);
 
       if (isActive) {

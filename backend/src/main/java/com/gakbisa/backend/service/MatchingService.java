@@ -80,6 +80,7 @@ public class MatchingService {
             // 1) Kecocokan kebutuhan utama (50)
             boolean needMatched = false;
             UserSkill bestNeed = null;
+            List<String> matchedWants = new ArrayList<>();
             for (UserSkill w : myWant) {
                 UserSkill o = theirOffer.get(name(w));
                 if (o != null) {
@@ -87,9 +88,11 @@ public class MatchingService {
                     needMatched = true;
                     skillRelated = true;
                     bestNeed = bestNeed == null ? o : bestNeed;
-                    reasons.add("Kamu mencari " + w.getSkill().getName() + ", dan " + other.getFullName()
-                        + " menawarkan keahlian itu (level " + o.getLevel() + ")");
+                    matchedWants.add(w.getSkill().getName());
                 }
+            }
+            if (!matchedWants.isEmpty()) {
+                reasons.add("Menawarkan " + String.join(", ", matchedWants));
             }
 
             // 2) Barter dua arah (30)
@@ -97,8 +100,7 @@ public class MatchingService {
                 if (myOffer.containsKey(name(tw))) {
                     score += MUTUAL_MATCH;
                     skillRelated = true;
-                    reasons.add("Pertukaran dua arah: " + other.getFullName() + " mencari "
-                        + tw.getSkill().getName() + ", dan kamu mengajarkannya");
+                    reasons.add("Dua arah · " + tw.getSkill().getName());
                     break;
                 }
             }
@@ -108,7 +110,7 @@ public class MatchingService {
                 SkillLevel required = levelOfFirstMatch(myWant, theirOffer);
                 if (required != null && bestNeed.getLevel().ordinal() >= required.ordinal()) {
                     score += LEVEL_MATCH;
-                    reasons.add("Level " + bestNeed.getLevel() + " memenuhi kebutuhan belajarmu");
+                    reasons.add("Level sesuai");
                 }
             }
 
@@ -124,17 +126,17 @@ public class MatchingService {
             if (theirPortfolios > 0) profilePts += PROFILE_COMPLETE - PROFILE_BIO;
             if (profilePts > 0) {
                 score += profilePts;
-                reasons.add("Profil " + (theirPortfolios > 0 ? "lengkap dengan portofolio" : "berisi deskripsi"));
+                reasons.add(theirPortfolios > 0 ? "Ada portofolio" : "Bio terisi");
             }
 
             // 5) Reputasi (5), pengguna baru netral (3)
             Double avg = reviews.averageRatingFor(other.getId());
             if (avg == null) {
                 score += 3;
-                reasons.add("Pengguna baru — reputasi belum tersedia");
+                reasons.add("Pengguna baru");
             } else {
                 score += (int) Math.round(REPUTATION * (avg / 5.0));
-                reasons.add("Reputasi " + String.format("%.1f", avg) + "/5");
+                reasons.add("Rating " + String.format("%.1f", avg) + "/5");
             }
 
             result.add(new Candidate(other.getId(), other.getFullName(), other.getCampus(),

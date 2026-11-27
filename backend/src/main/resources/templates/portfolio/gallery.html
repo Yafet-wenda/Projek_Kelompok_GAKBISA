@@ -12,7 +12,7 @@
 
             <header class="page-head page-head--split">
                 <div>
-                    <span class="eyebrow">Galeri karya <span>&#9679;</span></span>
+                    <span class="eyebrow">Galeri karya</span>
                     <h1 class="display"
                         th:text="${portfolioOwner != null} ? 'Portofolio ' + ${portfolioOwner.fullName} : 'Portofolio saya'">Portofolio saya</h1>
                     <p class="lede">Kumpulan karya, proyek, dan bukti keahlian nyata.</p>
@@ -141,15 +141,15 @@
             <section class="panel" th:if="${portfolioOwner == null}">
                 <div class="kicker">Tips portofolio</div>
                 <div class="stack" style="margin-top:14px;gap:12px;">
-                    <div class="wrap" style="align-items:flex-start;">
+                    <div class="tip">
                         <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
                         <span class="muted small">Unggah karya nyata seperti desain UI/UX, potongan kode, atau dokumen tugas.</span>
                     </div>
-                    <div class="wrap" style="align-items:flex-start;">
+                    <div class="tip">
                         <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
                         <span class="muted small">Tulis penjelasan singkat mengenai peran dan alat atau teknologi yang Anda gunakan.</span>
                     </div>
-                    <div class="wrap" style="align-items:flex-start;">
+                    <div class="tip">
                         <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
                         <span class="muted small">Set visibilitas ke <strong>Publik</strong> agar dapat dilihat calon mitra barter.</span>
                     </div>

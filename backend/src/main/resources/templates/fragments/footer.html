@@ -3,14 +3,49 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
 <footer th:fragment="footer" class="site-foot">
-    <span>GAKBISA / 2026</span>
-    <nav aria-label="Tautan kaki halaman">
-        <a th:href="@{/}">Beranda</a>
-        <a th:href="@{/catalog}">Katalog</a>
-        <a sec:authorize="isAuthenticated()" th:href="@{/profile/skills}">Keahlian</a>
-        <a sec:authorize="!isAuthenticated()" th:href="@{/register}">Daftar</a>
-    </nav>
-    <span class="site-foot__note">Gantian ajari, kita bisa.</span>
+    <div class="site-foot__inner">
+        <div class="site-foot__brand">
+            <a th:href="@{/}" class="brand" aria-label="GAKBISA — beranda">
+                <span class="brand-mark">
+                    <th:block th:replace="~{fragments/icons :: icon('brand')}"></th:block>
+                </span>
+                <span class="brand-name">GAKBISA</span>
+            </a>
+            <p class="site-foot__desc">
+                Pertukaran keahlian antar mahasiswa. Satu pihak mengajar, pihak lain membalas
+                dengan keahlian yang berbeda — tanpa biaya kursus.
+            </p>
+        </div>
+
+        <nav class="site-foot__col" aria-label="Jelajahi">
+            <h4>Jelajahi</h4>
+            <a th:href="@{/}">Beranda</a>
+            <a th:href="@{/catalog}">Katalog keahlian</a>
+            <a th:href="@{/register}">Buat akun</a>
+        </nav>
+
+        <nav class="site-foot__col" aria-label="Akun">
+            <h4>Akun</h4>
+            <a sec:authorize="isAuthenticated()" th:href="@{/dashboard}">Dasbor</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/profile}">Profil</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/profile/skills}">Keahlian</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/portfolio}">Portofolio</a>
+            <a sec:authorize="!isAuthenticated()" th:href="@{/login}">Masuk</a>
+            <a sec:authorize="!isAuthenticated()" th:href="@{/register}">Daftar</a>
+        </nav>
+
+        <nav class="site-foot__col" aria-label="Tentang">
+            <h4>Tentang</h4>
+            <a th:href="@{/#cara-kerja}">Cara kerja</a>
+            <a th:href="@{/#penilaian}">Cara skor dihitung</a>
+            <a th:href="@{/catalog}">Keahlian tersedia</a>
+        </nav>
+    </div>
+
+    <div class="site-foot__base">
+        <span>© 2026 GAKBISA. Seluruh hak cipta.</span>
+        <span>Versi 1.0 · Bahasa Indonesia</span>
+    </div>
 </footer>
 </body>
 </html>

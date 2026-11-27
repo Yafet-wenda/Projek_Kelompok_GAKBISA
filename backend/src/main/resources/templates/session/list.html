@@ -11,12 +11,14 @@
         <main class="app-main">
 
             <header class="page-head">
-                <span class="eyebrow">Aktivitas belajar <span>&#9679;</span></span>
-                <h1 class="display">Sesi <em>belajar.</em></h1>
-                <p class="lede">
-                    Jadwal tatap muka daring dan ruang video call bersama partner barter
-                    keahlian Anda.
-                </p>
+                <div>
+                    <span class="eyebrow">Aktivitas belajar</span>
+                    <h1 class="display">Sesi belajar</h1>
+                    <p class="lede">
+                        Jadwal tatap muka daring dan ruang video call bersama partner barter
+                        keahlian Anda.
+                    </p>
+                </div>
             </header>
 
             <div th:if="${success}" class="notice notice--success" role="status">
@@ -105,19 +107,19 @@
                 <div class="stack" style="margin-top:14px;gap:12px;">
                     <div class="wrap">
                         <span class="tag" data-status="SCHEDULED">Terjadwal</span>
-                        <span class="muted mini">Terjadwal</span>
+                        <span class="muted mini">Waktu sudah disepakati</span>
                     </div>
                     <div class="wrap">
                         <span class="tag" data-status="ONGOING">Berlangsung</span>
-                        <span class="muted mini">Berlangsung</span>
+                        <span class="muted mini">Sedang berjalan</span>
                     </div>
                     <div class="wrap">
                         <span class="tag" data-status="COMPLETED">Selesai</span>
-                        <span class="muted mini">Selesai</span>
+                        <span class="muted mini">Sudah terlaksana</span>
                     </div>
                     <div class="wrap">
                         <span class="tag" data-status="CANCELLED">Dibatalkan</span>
-                        <span class="muted mini">Dibatalkan</span>
+                        <span class="muted mini">Tidak dilanjutkan</span>
                     </div>
                 </div>
             </section>

@@ -11,9 +11,11 @@
         <main class="app-main">
 
             <header class="page-head">
-                <span class="eyebrow">Administrasi <span>&#9679;</span></span>
-                <h1 class="display">Ringkasan <em>komunitas.</em></h1>
-                <p class="lede">Operasi komunitas dan antrean moderasi dalam satu tampilan.</p>
+                <div>
+                    <span class="eyebrow">Administrasi</span>
+                    <h1 class="display">Ringkasan komunitas</h1>
+                    <p class="lede">Operasi komunitas dan antrean moderasi dalam satu tampilan.</p>
+                </div>
             </header>
 
             <div th:if="${success}" class="notice notice--success" role="status">
@@ -27,35 +29,35 @@
 
             <section class="stat-row stat-row--5" aria-label="Ringkasan dashboard">
                 <div class="stat">
-                    <span class="stat__label">Total pengguna
+                    <span class="stat__label">Pengguna
                         <th:block th:replace="~{fragments/icons :: icon('users')}"></th:block>
                     </span>
                     <span class="stat__value" th:text="${totalUsers}">0</span>
-                    <span class="stat__sub">Pengguna terdaftar</span>
+                    <span class="stat__sub">Akun terdaftar</span>
                 </div>
                 <div class="stat">
-                    <span class="stat__label">Total portofolio
+                    <span class="stat__label">Portofolio
                         <th:block th:replace="~{fragments/icons :: icon('folder')}"></th:block>
                     </span>
                     <span class="stat__value" th:text="${totalPortfolios}">0</span>
                     <span class="stat__sub">Karya terunggah</span>
                 </div>
                 <div class="stat">
-                    <span class="stat__label">Total barter
+                    <span class="stat__label">Barter
                         <th:block th:replace="~{fragments/icons :: icon('swap')}"></th:block>
                     </span>
                     <span class="stat__value" th:text="${totalBarters}">0</span>
                     <span class="stat__sub">Semua permintaan</span>
                 </div>
                 <div class="stat">
-                    <span class="stat__label">Total sesi
+                    <span class="stat__label">Sesi
                         <th:block th:replace="~{fragments/icons :: icon('calendar')}"></th:block>
                     </span>
                     <span class="stat__value" th:text="${totalSessions}">0</span>
                     <span class="stat__sub">Pertemuan terjadwal</span>
                 </div>
                 <div class="stat">
-                    <span class="stat__label">Laporan terbuka
+                    <span class="stat__label">Laporan
                         <th:block th:replace="~{fragments/icons :: icon('flag')}"></th:block>
                     </span>
                     <span class="stat__value" th:text="${openReports}">0</span>

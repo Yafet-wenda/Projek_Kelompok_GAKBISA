@@ -12,8 +12,8 @@
 
             <header class="page-head page-head--split">
                 <div>
-                    <span class="eyebrow">Pusat notifikasi <span>&#9679;</span></span>
-                    <h1 class="display">Kabar <em>terbaru.</em></h1>
+                    <span class="eyebrow">Pusat notifikasi</span>
+                    <h1 class="display">Kabar terbaru</h1>
                     <p class="lede">Pemberitahuan aktivitas barter, sesi belajar, dan akun Anda.</p>
                 </div>
                 <div class="page-head__aside" th:if="${!#lists.isEmpty(notifications)}">
@@ -94,15 +94,15 @@
             <section class="panel">
                 <div class="kicker">Kategori notifikasi</div>
                 <div class="stack" style="margin-top:14px;gap:14px;">
-                    <div class="wrap" style="align-items:flex-start;">
+                    <div class="tip">
                         <th:block th:replace="~{fragments/icons :: icon('swap')}"></th:block>
                         <span class="muted small"><strong>Barter:</strong> tawaran baru, diterima, atau dibatalkan.</span>
                     </div>
-                    <div class="wrap" style="align-items:flex-start;">
+                    <div class="tip">
                         <th:block th:replace="~{fragments/icons :: icon('calendar')}"></th:block>
                         <span class="muted small"><strong>Sesi belajar:</strong> jadwal meeting dan pengingat.</span>
                     </div>
-                    <div class="wrap" style="align-items:flex-start;">
+                    <div class="tip">
                         <th:block th:replace="~{fragments/icons :: icon('star')}"></th:block>
                         <span class="muted small"><strong>Ulasan:</strong> rating dan masukan dari rekan belajar.</span>
                     </div>

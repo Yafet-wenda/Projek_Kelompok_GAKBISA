@@ -7,13 +7,13 @@
 <div class="app-shell">
     <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
 
-    <div class="app-body">
+    <div class="app-body app-body--single">
         <main class="app-main">
 
             <header class="page-head page-head--split">
                 <div>
-                    <span class="eyebrow">Administrasi <span>&#9679;</span></span>
-                    <h1 class="display">Kelola <em>pengguna.</em></h1>
+                    <span class="eyebrow">Administrasi</span>
+                    <h1 class="display">Kelola pengguna</h1>
                     <p class="lede">Daftar seluruh pengguna dan administrator terdaftar di GAKBISA.</p>
                 </div>
                 <div class="page-head__aside">
@@ -108,25 +108,25 @@
                 </div>
             </div>
 
-        </main>
+            <section class="panel policy-panel" style="margin-top:24px;">
+                            <div class="kicker">Kebijakan akun</div>
+                            <div class="policy-grid">
+                                <p class="muted small">
+                                    <strong>Suspend akun</strong> menonaktifkan pengguna sementara saat
+                                    terdapat laporan pelanggaran etika atau penipuan barter.
+                                </p>
+                                <p class="muted small">
+                                    <strong>Aktifkan</strong> membuka kembali akses akun yang sebelumnya
+                                    ditangguhkan.
+                                </p>
+                            </div>
+                            <a th:href="@{/admin/reports}" class="btn btn--line btn--sm" style="margin-top:16px;">
+                                <th:block th:replace="~{fragments/icons :: icon('flag')}"></th:block>
+                                Antrean laporan
+                            </a>
+                        </section>
 
-        <aside class="app-aside">
-            <section class="panel">
-                <div class="kicker">Kebijakan akun</div>
-                <p class="muted small" style="margin:12px 0 0;line-height:1.65;">
-                    <strong>Suspend akun</strong> menonaktifkan pengguna sementara saat
-                    terdapat laporan pelanggaran etika atau penipuan barter.
-                </p>
-                <p class="muted small" style="margin:10px 0 0;line-height:1.65;">
-                    <strong>Aktifkan</strong> membuka kembali akses akun yang sebelumnya
-                    ditangguhkan.
-                </p>
-                <a th:href="@{/admin/reports}" class="btn btn--line btn--sm btn--block" style="margin-top:16px;">
-                    <th:block th:replace="~{fragments/icons :: icon('flag')}"></th:block>
-                    Antrean laporan
-                </a>
-            </section>
-        </aside>
+        </main>
     </div>
 </div>
 

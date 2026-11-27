@@ -12,8 +12,8 @@
 
             <header class="page-head page-head--split">
                 <div>
-                    <span class="eyebrow">Detail barter <span>&#9679;</span></span>
-                    <h1 class="display">Pertukaran <em>keahlian.</em></h1>
+                    <span class="eyebrow">Detail barter</span>
+                    <h1 class="display">Pertukaran keahlian</h1>
                     <p class="lede">Ringkasan tawaran, pesan pengantar, dan langkah berikutnya.</p>
                 </div>
                 <div class="page-head__aside">
@@ -45,7 +45,7 @@
                                     <a th:href="@{'/profile/' + ${barter.requester.id}}" class="person__name"
                                        th:text="${barter.requester.fullName}">Pengirim</a>
                                     <div class="person__meta"
-                                         th:text="${barter.requester.campus ?: 'Pengguna GAKBISA'}">Kampus</div>
+                                         th:text="${barter.requester.campus ?: 'Mahasiswa'}">Kampus</div>
                                 </div>
                             </div>
                             <div style="margin-top:14px;">
@@ -67,7 +67,7 @@
                                     <a th:href="@{'/profile/' + ${barter.targetUser.id}}" class="person__name"
                                        th:text="${barter.targetUser.fullName}">Penerima</a>
                                     <div class="person__meta"
-                                         th:text="${barter.targetUser.campus ?: 'Pengguna GAKBISA'}">Kampus</div>
+                                         th:text="${barter.targetUser.campus ?: 'Mahasiswa'}">Kampus</div>
                                 </div>
                                 <span class="avatar avatar--lg">
                                     <span th:text="${#strings.toUpperCase(#strings.substring(barter.targetUser.fullName,0,1))}">B</span>

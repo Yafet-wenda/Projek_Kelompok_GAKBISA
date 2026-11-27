@@ -11,13 +11,15 @@
         <main class="app-main">
 
             <header class="page-head">
-                <span class="eyebrow">Siklus barter <span>&#9679;</span></span>
-                <h1 class="display">Permintaan <em>barter.</em></h1>
-                <p class="lede">
-                    Tawaran pertukaran keahlian yang masuk ke akun Anda, dan yang Anda
-                    kirimkan kepada orang lain. Setiap tawaran berjalan dari menunggu,
-                    diterima, lalu menjadi sesi belajar.
-                </p>
+                <div>
+                    <span class="eyebrow">Siklus barter</span>
+                    <h1 class="display">Permintaan barter</h1>
+                    <p class="lede">
+                        Tawaran pertukaran keahlian yang masuk ke akun Anda, dan yang Anda
+                        kirimkan kepada orang lain. Setiap tawaran berjalan dari menunggu,
+                        diterima, lalu menjadi sesi belajar.
+                    </p>
+                </div>
             </header>
 
             <div th:if="${success}" class="notice notice--success" role="status">
@@ -76,7 +78,7 @@
                                         <a th:href="@{'/profile/' + ${barter.requester.id}}" class="person__name"
                                            th:text="${barter.requester.fullName}">Nama</a>
                                         <div class="person__meta"
-                                             th:text="${barter.requester.campus ?: 'Pengguna GAKBISA'}">Kampus</div>
+                                             th:text="${barter.requester.campus ?: 'Mahasiswa'}">Kampus</div>
                                     </div>
                                 </div>
                                 <span class="tag" th:attr="data-status=${barter.status}" th:text="${@label.status(barter.status)}">Status</span>
@@ -169,7 +171,7 @@
                                         <a th:href="@{'/profile/' + ${barter.targetUser.id}}" class="person__name"
                                            th:text="${barter.targetUser.fullName}">Nama</a>
                                         <div class="person__meta"
-                                             th:text="${barter.targetUser.campus ?: 'Pengguna GAKBISA'}">Kampus</div>
+                                             th:text="${barter.targetUser.campus ?: 'Mahasiswa'}">Kampus</div>
                                     </div>
                                 </div>
                                 <span class="tag" th:attr="data-status=${barter.status}" th:text="${@label.status(barter.status)}">Status</span>

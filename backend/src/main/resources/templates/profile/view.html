@@ -23,7 +23,6 @@
             <section class="panel">
                 <div class="profile-cover">
                     <img th:if="${user.bannerPath != null}" th:src="${user.bannerPath}" alt="Foto sampul profil">
-                    <span class="profile-cover__note">Profil GAKBISA</span>
                 </div>
                 <div class="panel-body">
                     <div class="profile-ident">
@@ -38,7 +37,7 @@
                                 <span class="tag" th:attr="data-status=${user.status}" th:text="${@label.status(user.status)}">Aktif</span>
                                 <span class="tag tag--neutral" th:if="${user.role != null}" th:text="${@label.role(user.role)}">Mahasiswa</span>
                             </h1>
-                            <p class="profile-ident__bio" th:text="${user.bio ?: 'Pengguna GAKBISA'}">Pengguna GAKBISA</p>
+                            <p class="profile-ident__bio" th:text="${user.bio ?: 'Belum ada bio.'}">Belum ada bio.</p>
                         </div>
                         <div class="profile-actions">
                             <th:block th:if="${isSelf}">

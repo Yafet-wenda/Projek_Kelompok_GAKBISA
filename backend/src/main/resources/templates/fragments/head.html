@@ -7,12 +7,13 @@
     <!-- Token untuk request fetch() dari js/app.js; tanpa ini aksi dari halaman dinamis gagal. -->
     <meta name="_csrf" th:content="${_csrf?.token}">
     <meta name="_csrf_header" th:content="${_csrf?.headerName}">
-    <link rel="icon" type="image/png" th:href="@{/images/gakbisa-logo-64.png}">
+    <link rel="icon" type="image/svg+xml" th:href="@{/images/favicon.svg}">
     <title th:text="${title} + ' | GAKBISA'">GAKBISA</title>
+    <meta name="theme-color" content="#0a4436">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap">
+          href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Serif:wght@500;600&amp;display=swap">
     <link th:href="@{/css/gakbisa.css}" rel="stylesheet">
     <script th:src="@{/js/gk-navbar.js}" defer></script>
     <script th:src="@{/js/gk-sidebar.js}" defer></script>

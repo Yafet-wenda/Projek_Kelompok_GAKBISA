@@ -11,18 +11,19 @@
         <main class="app-main">
 
             <header class="page-head">
-                <span class="eyebrow">Sistem rekomendasi 100 poin <span>&#9679;</span></span>
-                <h1 class="display">Cari <em>rekan belajar.</em></h1>
-                <p class="lede">
-                    Setiap rekomendasi dihitung dari kecocokan dua arah antara keahlian
-                    yang Anda tawarkan dengan kebutuhan orang lain, ditambah kategori,
-                    tingkat kemampuan, dan reputasi ulasan.
-                </p>
+                <div>
+                    <span class="eyebrow">Rekomendasi</span>
+                    <h1 class="display">Cari rekan belajar</h1>
+                    <p class="lede">
+                        Rekomendasi dihitung dari irisan keahlian dua arah, level,
+                        kelengkapan profil, dan reputasi ulasan.
+                    </p>
+                </div>
             </header>
 
             <form class="searchbar" th:action="@{/matching}" method="get" role="search">
                 <input type="search" name="keyword" th:value="${keyword}"
-                       placeholder="Cari berdasarkan nama rekan atau keahlian"
+                       placeholder="Cari nama rekan atau keahlian"
                        aria-label="Kata kunci pencarian partner">
                 <button type="submit" class="btn btn--dark btn--sm">
                     <th:block th:replace="~{fragments/icons :: icon('search')}"></th:block>
@@ -31,8 +32,10 @@
             </form>
 
             <div class="section-head">
-                <h2>Rekomendasi terbaik <span th:if="${keyword}" class="muted small"
-                       th:text="'· &quot;' + ${keyword} + '&quot;'"></span></h2>
+                <h2>
+                    <span th:if="${#strings.isEmpty(keyword)}">Rekomendasi terbaik</span>
+                    <span th:unless="${#strings.isEmpty(keyword)}" th:text="|Hasil untuk “${keyword}”|">Hasil</span>
+                </h2>
                 <span class="muted small" th:text="${matches.size()} + ' partner ditemukan'">0 partner</span>
             </div>
 
@@ -43,7 +46,7 @@
                     </span>
                     <h3>Tidak ada partner yang cocok</h3>
                     <p>
-                        Lengkapi keahlian yang ditawarkan dan yang dicari di profil Anda,
+                        Lengkapi keahlian yang kamu tawarkan dan yang kamu cari di profil,
                         atau coba kata kunci lain.
                     </p>
                     <a th:href="@{/profile/skills}" class="btn btn--dark btn--sm">
@@ -67,10 +70,12 @@
                                     <a th:href="@{'/profile/' + ${match.candidate.id}}" class="person__name"
                                        th:text="${match.candidate.fullName}">Nama</a>
                                     <div class="person__meta"
-                                         th:text="${match.candidate.campus ?: 'Pengguna GAKBISA'}">Kampus</div>
+                                         th:text="${match.candidate.campus ?: 'Mahasiswa'}">Kampus</div>
                                 </div>
                             </div>
-                            <span class="tag" th:text="${match.score} + ' poin'">0 poin</span>
+                            <span class="score-badge">
+                                <span th:text="${match.score}">0</span><small>/100</small>
+                            </span>
                         </div>
 
                         <div class="score-row" aria-hidden="true">
@@ -81,15 +86,15 @@
 
                         <p th:if="${match.candidate.bio}" class="item-body" th:text="${match.candidate.bio}"></p>
 
-                        <div class="wrap" style="margin-top:10px;" th:if="${!#lists.isEmpty(match.reasons)}">
-                            <span class="tag tag--neutral" th:each="reason : ${match.reasons}"
+                        <div class="reason-chips" th:if="${!#lists.isEmpty(match.reasons)}">
+                            <span class="reason-chip" th:each="reason : ${match.reasons}"
                                   th:text="${reason}"></span>
                         </div>
 
                         <div class="item-actions">
                             <a th:href="@{'/barter/request/' + ${match.candidate.id}}" class="btn btn--dark btn--sm">
                                 <th:block th:replace="~{fragments/icons :: icon('swap')}"></th:block>
-                                Ajak barter
+                                Ajukan barter
                             </a>
                             <a th:href="@{'/profile/' + ${match.candidate.id}}" class="btn btn--line btn--sm">
                                 Lihat profil
@@ -103,23 +108,37 @@
 
         <aside class="app-aside">
             <section class="panel">
-                <div class="kicker">Cara skor dihitung</div>
-                <div style="margin-top:12px;">
-                    <div class="rule-row"><span>Kecocokan dua arah</span><strong>60</strong></div>
-                    <div class="rule-row"><span>Kategori serupa</span><strong>20</strong></div>
-                    <div class="rule-row"><span>Kesesuaian tingkat</span><strong>15</strong></div>
-                    <div class="rule-row"><span>Reputasi ulasan</span><strong>5</strong></div>
+                <div class="aside-title">Cara skor dihitung</div>
+                <div style="margin-top:10px;">
+                    <div class="rule-row">
+                        <span>Keahlian yang kamu cari</span><strong>50</strong>
+                    </div>
+                    <div class="rule-row">
+                        <span>Pertukaran dua arah</span><strong>30</strong>
+                    </div>
+                    <div class="rule-row">
+                        <span>Kesesuaian level</span><strong>10</strong>
+                    </div>
+                    <div class="rule-row">
+                        <span>Kelengkapan profil</span><strong>5</strong>
+                    </div>
+                    <div class="rule-row">
+                        <span>Reputasi ulasan</span><strong>5</strong>
+                    </div>
+                    <div class="score-panel__total">
+                        <span>Total</span><strong>100</strong>
+                    </div>
                 </div>
-                <p class="muted small" style="margin-top:12px;">
-                    Total 100 poin. Alasan perhitungan ikut ditampilkan pada setiap kartu
-                    agar Anda bisa menilai sendiri.
+                <p class="muted small" style="margin-top:8px;">
+                    Alasan setiap perhitungan ikut tampil di kartu, agar kamu bisa
+                    menilai sendiri sebelum menghubungi.
                 </p>
             </section>
 
             <section class="panel">
-                <div class="kicker">Perkuat profil</div>
-                <p class="muted small" style="margin:12px 0 16px;">
-                    Rekomendasi makin akurat ketika daftar keahlian dan level Anda lengkap.
+                <div class="aside-title">Perkuat profil</div>
+                <p class="muted small" style="margin:8px 0 14px;">
+                    Rekomendasi makin akurat ketika daftar keahlian dan level kamu lengkap.
                 </p>
                 <div class="stack" style="gap:8px;">
                     <a th:href="@{/profile/skills}" class="btn btn--dark btn--sm btn--block">

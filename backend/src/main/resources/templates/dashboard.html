@@ -11,15 +11,19 @@
         <main class="app-main">
 
             <header class="page-head">
-                <span class="eyebrow">Ringkasan akun <span>&#9679;</span></span>
-                <h1 class="display">
-                    Selamat datang, <em th:text="${#authentication.principal.user.fullName}">Pengguna</em>.
-                </h1>
-                <p class="lede">
-                    Ini keadaan ruang belajar Anda hari ini: permintaan barter yang
-                    menunggu jawaban, sesi yang sudah dijadwalkan, dan partner yang
-                    layak didekati lebih dulu.
-                </p>
+                <div>
+                    <span class="eyebrow">Ringkasan</span>
+                    <h1 class="display">
+                        Halo, <em th:text="${#strings.substringBefore(#authentication.principal.user.fullName, ' ')}">Pengguna</em>.
+                    </h1>
+                    <p class="lede">Berikut keadaan ruang belajarmu hari ini.</p>
+                </div>
+                <div class="page-head__aside">
+                    <a th:href="@{/matching}" class="btn btn--dark">
+                        <th:block th:replace="~{fragments/icons :: icon('search')}"></th:block>
+                        Cari partner
+                    </a>
+                </div>
             </header>
 
             <div th:if="${success}" class="notice notice--success" role="status">
@@ -30,20 +34,10 @@
                 <th:block th:replace="~{fragments/icons :: icon('alert')}"></th:block>
                 <span th:text="${error}"></span>
             </div>
-
-            <div class="wrap">
-                <a th:href="@{/matching}" class="btn btn--line btn--sm">
-                    <th:block th:replace="~{fragments/icons :: icon('search')}"></th:block>
-                    Cari partner
-                </a>
-                <a th:href="@{/portfolio/upload}" class="btn btn--line btn--sm">
-                    <th:block th:replace="~{fragments/icons :: icon('upload')}"></th:block>
-                    Unggah portofolio
-                </a>
-                <a th:href="@{/profile/skills}" class="btn btn--line btn--sm">
-                    <th:block th:replace="~{fragments/icons :: icon('plus')}"></th:block>
-                    Kelola keahlian
-                </a>
+            <div th:if="${pendingBarters > 0}" class="notice notice--warning" role="status">
+                <th:block th:replace="~{fragments/icons :: icon('inbox')}"></th:block>
+                <span th:text="${pendingBarters} + ' permintaan barter menunggu jawabanmu.'"></span>
+                <a th:href="@{/barter}">Buka permintaan</a>
             </div>
 
             <div class="stat-row">
@@ -53,7 +47,7 @@
                         <th:block th:replace="~{fragments/icons :: icon('swap')}"></th:block>
                     </span>
                     <span class="stat__value" th:text="${pendingBarters ?: 0}">0</span>
-                    <span class="stat__sub">Perlu Anda tanggapi</span>
+                    <span class="stat__sub">Perlu kamu tanggapi</span>
                 </a>
                 <a th:href="@{/sessions}" class="stat">
                     <span class="stat__label">
@@ -73,33 +67,35 @@
                 </a>
             </div>
 
-            <section class="section">
+            <section class="dash-section">
                 <div class="section-head">
                     <div>
                         <span class="kicker">Rekomendasi</span>
-                        <h2>Partner yang cocok belajar bersama Anda</h2>
+                        <h2>Partner yang cocok belajar bersamamu</h2>
                     </div>
                     <a th:href="@{/matching}" class="link">Lihat semua</a>
                 </div>
 
-                <div th:if="${#lists.isEmpty(topMatches)}" class="empty">
-                    <span class="empty__icon">
-                        <th:block th:replace="~{fragments/icons :: icon('users')}"></th:block>
-                    </span>
-                    <h3>Belum ada rekomendasi partner</h3>
-                    <p>
-                        Tuliskan keahlian yang Anda tawarkan dan yang Anda cari.
-                        Setelah itu sistem bisa menghitung skor kecocokan.
-                    </p>
-                    <a th:href="@{/profile/skills}" class="btn btn--dark btn--sm">
-                        <th:block th:replace="~{fragments/icons :: icon('plus')}"></th:block>
-                        Tambah keahlian
-                    </a>
+                <div th:if="${#lists.isEmpty(topMatches)}" class="panel">
+                    <div class="empty">
+                        <span class="empty__icon">
+                            <th:block th:replace="~{fragments/icons :: icon('users')}"></th:block>
+                        </span>
+                        <h3>Belum ada rekomendasi partner</h3>
+                        <p>
+                            Tuliskan keahlian yang kamu tawarkan dan yang kamu cari.
+                            Setelah itu sistem bisa menghitung skor kecocokan.
+                        </p>
+                        <a th:href="@{/profile/skills}" class="btn btn--dark btn--sm">
+                            <th:block th:replace="~{fragments/icons :: icon('plus')}"></th:block>
+                            Tambah keahlian
+                        </a>
+                    </div>
                 </div>
 
                 <div th:if="${!#lists.isEmpty(topMatches)}" class="panel">
                     <div class="list">
-                        <article class="list-item" th:each="match : ${topMatches}">
+                        <article class="list-item match-card" th:each="match : ${topMatches}">
                             <div class="item-head">
                                 <div class="person">
                                     <span class="avatar" th:if="${match.candidate.avatarPath == null}"
@@ -111,27 +107,23 @@
                                         <a th:href="@{'/profile/' + ${match.candidate.id}}" class="person__name"
                                            th:text="${match.candidate.fullName}">Nama</a>
                                         <div class="person__meta"
-                                             th:text="${match.candidate.campus ?: 'Pengguna GAKBISA'}">Kampus</div>
+                                             th:text="${match.candidate.campus ?: 'Mahasiswa'}">Kampus</div>
                                     </div>
                                 </div>
-                                <span class="tag" th:text="${match.score} + ' / 100'">80 / 100</span>
+                                <span class="score-badge">
+                                    <span th:text="${match.score}">80</span><small>/100</small>
+                                </span>
                             </div>
 
-                            <div class="score-row">
-                                <div class="score">
-                                    <div class="score__fill" th:style="'--pct:' + ${match.score} + '%;'"></div>
-                                </div>
-                            </div>
-
-                            <div class="wrap" style="margin-top:10px;" th:unless="${#lists.isEmpty(match.reasons)}">
-                                <span class="tag tag--neutral" th:each="reason : ${match.reasons}"
+                            <div class="reason-chips" th:unless="${#lists.isEmpty(match.reasons)}">
+                                <span class="reason-chip" th:each="reason : ${match.reasons}"
                                       th:text="${reason}"></span>
                             </div>
 
                             <div class="item-actions">
                                 <a th:href="@{'/barter/request/' + ${match.candidate.id}}" class="btn btn--dark btn--sm">
                                     <th:block th:replace="~{fragments/icons :: icon('swap')}"></th:block>
-                                    Ajak barter
+                                    Ajukan barter
                                 </a>
                                 <a th:href="@{'/profile/' + ${match.candidate.id}}" class="btn btn--line btn--sm">
                                     Lihat profil
@@ -142,83 +134,85 @@
                 </div>
             </section>
 
-            <section class="section" th:if="${!#lists.isEmpty(recentNotifications)}">
-                <div class="section-head">
-                    <div>
-                        <span class="kicker">Pemberitahuan</span>
-                        <h2>Kabar terbaru</h2>
-                    </div>
-                    <a th:href="@{/notifications}" class="link">Buka notifikasi</a>
-                </div>
-
-                <div class="panel">
-                    <div class="list">
-                        <article class="list-item" th:each="notif : ${recentNotifications}">
-                            <div class="item-head">
-                                <div class="person">
-                                    <span class="unread-dot" th:if="${!notif.isRead}"></span>
-                                    <div class="person__body">
-                                        <span class="item-title" th:text="${notif.title}">Judul</span>
-                                        <div class="item-body" th:text="${notif.body}">Isi pemberitahuan</div>
-                                    </div>
-                                </div>
-                                <span class="tag tag--neutral" th:if="${!notif.isRead}">Baru</span>
-                            </div>
-                            <div class="item-meta">
-                                <span>
-                                    <th:block th:replace="~{fragments/icons :: icon('clock')}"></th:block>
-                                    <span th:text="${#temporals.format(notif.createdAt, 'dd MMM yyyy HH:mm')}">Waktu</span>
-                                </span>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-            </section>
-
         </main>
 
         <aside class="app-aside">
             <section class="panel">
-                <div class="kicker">Pintasan</div>
-                <div class="stack" style="margin-top:14px;gap:2px;">
-                    <a th:href="@{/matching}" class="rail-link">
-                        <th:block th:replace="~{fragments/icons :: icon('search')}"></th:block>
-                        <span>Cari partner baru</span>
-                    </a>
-                    <a th:href="@{/barter}" class="rail-link">
+                <div class="completion__head">
+                    <span class="aside-title">Kelengkapan profil</span>
+                    <span class="completion__value" th:text="${profileCompletion} + '%'">0%</span>
+                </div>
+                <div class="progress" role="progressbar" aria-label="Kelengkapan profil"
+                     th:attr="aria-valuenow=${profileCompletion}" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress__bar" th:style="'--pct:' + ${profileCompletion} + '%'"></div>
+                </div>
+
+                <ul class="checklist">
+                    <li th:classappend="${hasBio} ? 'is-done'">
+                        <th:block th:replace="~{fragments/icons :: icon(${hasBio ? 'check' : 'plus'})}"></th:block>
+                        <a th:href="@{/profile/edit}">Bio profil</a>
+                    </li>
+                    <li th:classappend="${hasCampus} ? 'is-done'">
+                        <th:block th:replace="~{fragments/icons :: icon(${hasCampus ? 'check' : 'plus'})}"></th:block>
+                        <a th:href="@{/profile/edit}">Nama kampus</a>
+                    </li>
+                    <li th:classappend="${hasAvatar} ? 'is-done'">
+                        <th:block th:replace="~{fragments/icons :: icon(${hasAvatar ? 'check' : 'plus'})}"></th:block>
+                        <a th:href="@{/profile/edit}">Foto profil</a>
+                    </li>
+                    <li th:classappend="${hasOffer} ? 'is-done'">
+                        <th:block th:replace="~{fragments/icons :: icon(${hasOffer ? 'check' : 'plus'})}"></th:block>
+                        <a th:href="@{/profile/skills}">Keahlian yang diajarkan</a>
+                    </li>
+                    <li th:classappend="${hasWant} ? 'is-done'">
+                        <th:block th:replace="~{fragments/icons :: icon(${hasWant ? 'check' : 'plus'})}"></th:block>
+                        <a th:href="@{/profile/skills}">Keahlian yang dipelajari</a>
+                    </li>
+                    <li th:classappend="${hasPortfolio} ? 'is-done'">
+                        <th:block th:replace="~{fragments/icons :: icon(${hasPortfolio ? 'check' : 'plus'})}"></th:block>
+                        <a th:href="@{/portfolio/upload}">Portofolio</a>
+                    </li>
+                </ul>
+
+                <a th:href="@{/profile/edit}" class="btn btn--line btn--sm btn--block" style="margin-top:14px;">
+                    <th:block th:replace="~{fragments/icons :: icon('edit')}"></th:block>
+                    Edit profil
+                </a>
+            </section>
+
+            <section class="panel">
+                <div class="aside-title">Pintasan</div>
+                <div class="quick-list">
+                    <a th:href="@{/barter}" class="quick-link">
                         <th:block th:replace="~{fragments/icons :: icon('inbox')}"></th:block>
-                        <span>Permintaan barter masuk</span>
+                        <span>Permintaan barter</span>
                     </a>
-                    <a th:href="@{/sessions}" class="rail-link">
+                    <a th:href="@{/sessions}" class="quick-link">
                         <th:block th:replace="~{fragments/icons :: icon('calendar')}"></th:block>
-                        <span>Jadwal sesi belajar</span>
+                        <span>Jadwal sesi</span>
                     </a>
-                    <a th:href="@{/portfolio/upload}" class="rail-link">
+                    <a th:href="@{/portfolio/upload}" class="quick-link">
                         <th:block th:replace="~{fragments/icons :: icon('upload')}"></th:block>
                         <span>Unggah karya</span>
                     </a>
                 </div>
             </section>
 
-            <section class="panel">
-                <div class="kicker">Akun Anda</div>
-                <div class="person" style="margin-top:14px;">
-                    <span class="avatar">
-                        <img th:if="${#authentication.principal.user.avatarPath != null}"
-                             th:src="${#authentication.principal.user.avatarPath}" alt="">
-                        <span th:if="${#authentication.principal.user.avatarPath == null}"
-                              th:text="${#strings.toUpperCase(#strings.substring(#authentication.principal.user.fullName, 0, 1))}">M</span>
-                    </span>
-                    <div class="person__body">
-                        <div class="person__name" th:text="${#authentication.principal.user.fullName}">Nama</div>
-                        <div class="person__meta"
-                             th:text="${!#strings.isEmpty(#authentication.principal.user.campus)} ? ${#authentication.principal.user.campus} : 'Kampus belum diisi'">Kampus</div>
-                    </div>
+            <section class="panel" th:if="${!#lists.isEmpty(recentNotifications)}">
+                <div class="completion__head">
+                    <span class="aside-title">Kabar terbaru</span>
+                    <a th:href="@{/notifications}" class="link" style="font-size:12px;">Semua</a>
                 </div>
-                <a th:href="@{/profile/edit}" class="btn btn--line btn--sm btn--block" style="margin-top:16px;">
-                    <th:block th:replace="~{fragments/icons :: icon('edit')}"></th:block>
-                    Edit profil
-                </a>
+                <div class="quick-list">
+                    <a th:href="@{/notifications}" class="quick-link" th:each="notif : ${recentNotifications}">
+                        <span class="unread-dot" th:if="${!notif.isRead}"></span>
+                        <span style="min-width:0;">
+                            <span style="display:block;font-weight:500;" th:text="${notif.title}">Judul</span>
+                            <span style="display:block;font-size:11.5px;color:var(--ink-3);"
+                                  th:text="${#temporals.format(notif.createdAt, 'dd MMM HH:mm')}">Waktu</span>
+                        </span>
+                    </a>
+                </div>
             </section>
         </aside>
     </div>

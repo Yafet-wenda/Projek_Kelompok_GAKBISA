@@ -1,78 +1,178 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/head :: head('Beranda')}"></head>
+<head th:replace="~{fragments/head :: head('Pertukaran keahlian mahasiswa')}"></head>
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
 <main>
     <section class="landing-hero">
         <div>
-            <span class="eyebrow">Pertukaran keahlian antarpengguna <span>&#9679;</span></span>
-            <h1 class="display">Gantian ajari,<br><em>kita bisa.</em></h1>
+            <span class="hero-pill">Barter keahlian untuk mahasiswa</span>
+            <h1 class="display">Di sini, ilmu <em>bertukar</em>, bukan dibeli.</h1>
             <p class="hero-lede">
-                GAKBISA mempertemukan orang yang ingin mengajar dengan orang yang ingin
-                belajar. Tidak ada biaya kursus di sini: yang ditukar adalah waktu,
-                keahlian, dan kesediaan saling membantu.
+                Kamu mengajari satu hal yang kamu kuasai, lalu belajar hal lain dari
+                teman yang menguasainya. Tidak ada biaya kursus — yang ditukar adalah
+                waktu dan keahlian.
             </p>
 
-            <div th:if="${param.error}" class="notice notice--danger" role="alert">
-                <th:block th:replace="~{fragments/icons :: icon('alert')}"></th:block>
-                <span>Email atau password tidak cocok. Coba lagi atau buat akun baru.</span>
-            </div>
             <div th:if="${param.logout}" class="notice notice--success" role="status">
                 <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
-                <span>Sesi berakhir. Anda sudah keluar dari akun.</span>
+                <span>Sesi berakhir. Kamu sudah keluar dari akun.</span>
             </div>
-            <div th:if="${success}" class="notice notice--success" role="status" th:text="${success}"></div>
 
             <div class="hero-actions">
-                <th:block sec:authorize="!isAuthenticated()">
-                    <a th:href="@{/register}" class="btn btn--dark">
-                        Buat akun gratis
-                        <th:block th:replace="~{fragments/icons :: icon('arrow-up-right')}"></th:block>
-                    </a>
-                    <a th:href="@{/login}" class="link">Sudah punya akun? Masuk</a>
-                </th:block>
-                <th:block sec:authorize="isAuthenticated()">
-                    <a th:href="@{/dashboard}" class="btn btn--dark">
-                        Lanjut ke ringkasan
-                        <th:block th:replace="~{fragments/icons :: icon('arrow-right')}"></th:block>
-                    </a>
-                    <a th:href="@{/matching}" class="link">Cari partner hari ini</a>
-                </th:block>
+                <a th:href="@{/register}" class="btn btn--dark">
+                    Buat akun
+                    <th:block th:replace="~{fragments/icons :: icon('arrow-right')}"></th:block>
+                </a>
+                <a th:href="@{/login}" class="btn btn--line">Masuk</a>
+                <a href="#cara-kerja" class="link">Lihat cara kerja</a>
             </div>
 
             <div class="hero-note">
                 <span>
-                    <th:block th:replace="~{fragments/icons :: icon('users')}"></th:block>
-                    Pencocokan keahlian dua arah
+                    <th:block th:replace="~{fragments/icons :: icon('chart')}"></th:block>
+                    Skor kecocokan 100 poin
                 </span>
                 <span>
                     <th:block th:replace="~{fragments/icons :: icon('video')}"></th:block>
-                    Ruang belajar daring terpadu
+                    Ruang belajar Jitsi
                 </span>
                 <span>
                     <th:block th:replace="~{fragments/icons :: icon('shield')}"></th:block>
-                    Tanpa biaya, tanpa langganan
+                    Gratis, tanpa langganan
                 </span>
             </div>
         </div>
 
-        <div class="hero-art" aria-hidden="true">
-            <span class="hero-art__orbit hero-art__orbit--a"></span>
-            <span class="hero-art__orbit hero-art__orbit--b"></span>
-            <span class="hero-art__orbit hero-art__orbit--c"></span>
-            <div class="hero-art__core">
-                <span class="brand-mark">
-                    <th:block th:replace="~{fragments/icons :: icon('brand')}"></th:block>
-                </span>
-                <strong>GAKBISA</strong>
-                <span>Satu keahlian, dua arah</span>
+        <div class="landing-visual">
+            <img class="landing-visual__photo" th:src="@{/images/hero-belajar.jpg}"
+                 alt="Mahasiswa belajar bersama dengan laptop di perpustakaan kampus" width="920" height="920">
+            <span class="preview-flag">Pratinjau tampilan</span>
+
+            <div class="match-preview" aria-label="Contoh kartu kecocokan partner">
+                <div class="match-preview__head">
+                    <div class="person">
+                        <span class="avatar" aria-hidden="true">RA</span>
+                        <div class="person__body">
+                            <div class="person__name">Rani A.</div>
+                            <div class="person__meta">D4 Teknik Informatika</div>
+                        </div>
+                    </div>
+                    <span class="match-preview__score">93/100</span>
+                </div>
+
+                <div class="skill-pair">
+                    <div class="skill-pair__side">
+                        <small>Kamu pelajari</small>
+                        <strong>UI/UX</strong>
+                    </div>
+                    <span class="skill-pair__arrow">
+                        <th:block th:replace="~{fragments/icons :: icon('swap')}"></th:block>
+                    </span>
+                    <div class="skill-pair__side skill-pair__side--right">
+                        <small>Kamu ajarkan</small>
+                        <strong>Java</strong>
+                    </div>
+                </div>
+
+                <div class="reason-chips">
+                    <span class="reason-chip">Menawarkan UI/UX</span>
+                    <span class="reason-chip">Dua arah</span>
+                    <span class="reason-chip">Level sesuai</span>
+                </div>
+
+                <div class="match-preview__actions">
+                    <a th:href="@{/register}" class="btn btn--dark btn--sm">Ajukan barter</a>
+                    <a th:href="@{/register}" class="btn btn--line btn--sm">Lihat profil</a>
+                </div>
             </div>
-            <span class="orbit-tag orbit-tag--offer">Keahlian ditawarkan</span>
-            <span class="orbit-tag orbit-tag--want">Keahlian dicari</span>
-            <span class="orbit-tag orbit-tag--review">Ulasan sesi</span>
+        </div>
+    </section>
+
+    <section class="landing-section landing-section--tint" id="cara-kerja">
+        <div class="landing-inner">
+            <div class="landing-section__head">
+                <div>
+                    <span class="eyebrow">Cara kerja</span>
+                    <h2>Dari keahlian yang kamu punya, ke sesi belajar pertama.</h2>
+                </div>
+                <p>
+                    Seluruh proses berjalan dalam satu akun: menulis keahlian,
+                    menerima rekomendasi, lalu mengatur pertemuan. Tanpa perantara
+                    dan tanpa pembayaran.
+                </p>
+            </div>
+
+            <div class="steps">
+                <article class="step">
+                    <span class="step-no">Langkah 01</span>
+                    <h3>Tulis keahlianmu</h3>
+                    <p>
+                        Tandai apa yang siap kamu ajarkan dan apa yang ingin kamu
+                        pelajari, lengkap dengan tingkat kemampuan.
+                    </p>
+                </article>
+                <article class="step">
+                    <span class="step-no">Langkah 02</span>
+                    <h3>Terima rekomendasi</h3>
+                    <p>
+                        Skor 0–100 disertai alasan perhitungan, sehingga kamu bisa
+                        memeriksa mengapa seseorang masuk daftar.
+                    </p>
+                </article>
+                <article class="step">
+                    <span class="step-no">Langkah 03</span>
+                    <h3>Sepakati barter</h3>
+                    <p>
+                        Kirim permintaan, atur jadwal, dan bertemu di ruang Jitsi.
+                        Setelah sesi selesai, berikan ulasan.
+                    </p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="landing-section" id="penilaian">
+        <div class="landing-inner">
+            <div class="landing-section__head">
+                <div>
+                    <span class="eyebrow">Sistem penilaian</span>
+                    <h2>Skor yang bisa kamu periksa sendiri.</h2>
+                </div>
+                <p>
+                    Tidak ada kotak hitam. Setiap angka berasal dari data yang kamu
+                    isi dan ulasan yang tercatat setelah sesi.
+                </p>
+            </div>
+
+            <div class="score-panel panel">
+                <div class="rule-row">
+                    <span>Keahlian yang kamu cari tersedia di profilnya</span>
+                    <strong>50</strong>
+                </div>
+                <div class="rule-row">
+                    <span>Keahlian yang dia cari kamu tawarkan (dua arah)</span>
+                    <strong>30</strong>
+                </div>
+                <div class="rule-row">
+                    <span>Level keahliannya memenuhi kebutuhanmu</span>
+                    <strong>10</strong>
+                </div>
+                <div class="rule-row">
+                    <span>Kelengkapan profil dan portofolio</span>
+                    <strong>5</strong>
+                </div>
+                <div class="rule-row">
+                    <span>Reputasi dari ulasan sesi sebelumnya</span>
+                    <strong>5</strong>
+                </div>
+                <div class="score-panel__total">
+                    <span>Total maksimum</span>
+                    <strong>100</strong>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -80,54 +180,12 @@
         <div class="landing-inner">
             <div class="landing-section__head">
                 <div>
-                    <span class="eyebrow">Alur kerja <span>&#9679;</span></span>
-                    <h2>Tiga langkah, lalu sesi belajar pertama Anda.</h2>
+                    <span class="eyebrow">Kepercayaan</span>
+                    <h2>Identitas jelas, catatan sesi terbuka.</h2>
                 </div>
                 <p>
-                    Semua proses berjalan di dalam satu akun: menulis keahlian,
-                    menemukan pasangan yang tepat, dan mengatur jadwal pertemuan.
-                </p>
-            </div>
-
-            <div class="steps">
-                <article class="step">
-                    <span class="step-no">LANGKAH 01</span>
-                    <h3>Tulis keahlian Anda</h3>
-                    <p>
-                        Tandai keahlian yang siap Anda ajarkan dan yang ingin Anda
-                        pelajari. Lengkapi dengan tingkat kemampuan dan catatan singkat.
-                    </p>
-                </article>
-                <article class="step">
-                    <span class="step-no">LANGKAH 02</span>
-                    <h3>Temukan pasangan belajar</h3>
-                    <p>
-                        Sistem memberi skor kecocokan 100 poin berdasarkan irisan
-                        keahlian, kampus, dan rekam jejak ulasan sebelumnya.
-                    </p>
-                </article>
-                <article class="step">
-                    <span class="step-no">LANGKAH 03</span>
-                    <h3>Atur sesi dan mulai</h3>
-                    <p>
-                        Kirim permintaan barter, sepakati waktu, lalu bertemu di ruang
-                        video. Setelah sesi tuntas, berikan ulasan untuk menjaga mutu.
-                    </p>
-                </article>
-            </div>
-        </div>
-    </section>
-
-    <section class="landing-section">
-        <div class="landing-inner">
-            <div class="landing-section__head">
-                <div>
-                    <span class="eyebrow">Yang menjaga pertukaran tetap sehat <span>&#9679;</span></span>
-                    <h2>Identitas jelas, penilaian terbuka.</h2>
-                </div>
-                <p>
-                    Kepercayaan dibangun dari informasi yang jujur dan catatan sesi
-                    yang dapat ditinjau kembali.
+                    Kamu bisa melihat siapa yang akan kamu ajak belajar sebelum
+                    memulai percakapan, dan meninjau kembali riwayatnya.
                 </p>
             </div>
 
@@ -139,27 +197,27 @@
                     <h3>Profil dan portofolio</h3>
                     <p>
                         Bio, kampus, dan karya yang diunggah memberi gambaran nyata
-                        sebelum Anda memulai percakapan.
+                        sebelum kamu memulai percakapan.
                     </p>
                 </article>
                 <article class="feature">
                     <span class="feature__icon">
                         <th:block th:replace="~{fragments/icons :: icon('chart')}"></th:block>
                     </span>
-                    <h3>Skor kecocokan terbuka</h3>
+                    <h3>Alasan di setiap skor</h3>
                     <p>
-                        Setiap rekomendasi menyertakan alasan perhitungan, sehingga
-                        Anda tahu mengapa seseorang muncul di daftar.
+                        Rekomendasi selalu menyertakan alasan, bukan hanya angka.
+                        Kamu tetap yang memutuskan siapa yang didekati.
                     </p>
                 </article>
                 <article class="feature">
                     <span class="feature__icon">
                         <th:block th:replace="~{fragments/icons :: icon('video')}"></th:block>
                     </span>
-                    <h3>Ruang belajar daring</h3>
+                    <h3>Jadwal dan ruang belajar</h3>
                     <p>
-                        Jadwal, ruang Jitsi, dan catatan selesai tersimpan bersama
-                        riwayat barter, tanpa aplikasi tambahan.
+                        Sesi terjadwal, tautan Jitsi, dan status selesai tersimpan
+                        bersama riwayat barter — tanpa aplikasi tambahan.
                     </p>
                 </article>
             </div>
@@ -169,21 +227,16 @@
     <section class="landing-cta">
         <div class="landing-cta__inner">
             <div>
-                <h2>Mulai dari <em>satu keahlian</em> yang Anda kuasai.</h2>
-                <p>Daftar gratis, lengkapi profil, lalu lihat siapa yang cocok belajar bersama Anda.</p>
+                <h2>Mulai dari <em>satu keahlian</em> yang kamu kuasai.</h2>
+                <p>Daftar gratis, isi keahlian, lalu lihat siapa yang cocok belajar bersamamu.</p>
             </div>
-            <th:block sec:authorize="!isAuthenticated()">
+            <div class="hero-actions" style="margin-top:0;">
                 <a th:href="@{/register}" class="btn btn--green">
                     Daftar sekarang
                     <th:block th:replace="~{fragments/icons :: icon('arrow-right')}"></th:block>
                 </a>
-            </th:block>
-            <th:block sec:authorize="isAuthenticated()">
-                <a th:href="@{/profile/skills}" class="btn btn--green">
-                    Kelola keahlian
-                    <th:block th:replace="~{fragments/icons :: icon('arrow-right')}"></th:block>
-                </a>
-            </th:block>
+                <a th:href="@{/login}" class="btn btn--line">Sudah punya akun</a>
+            </div>
         </div>
     </section>
 </main>

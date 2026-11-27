@@ -12,8 +12,8 @@
 
             <header class="page-head page-head--split">
                 <div>
-                    <span class="eyebrow">Detail sesi <span>&#9679;</span></span>
-                    <h1 class="display">Jadwal <em>bertemu.</em></h1>
+                    <span class="eyebrow">Detail sesi</span>
+                    <h1 class="display">Jadwal bertemu</h1>
                     <p class="lede">Jadwal tatap muka daring dan ruang interaksi barter keahlian.</p>
                 </div>
                 <div class="page-head__aside">
@@ -54,7 +54,7 @@
                                     <a th:href="@{'/profile/' + ${sesi.barterRequest.requester.id}}" class="person__name"
                                        th:text="${sesi.barterRequest.requester.fullName}">Nama</a>
                                     <div class="person__meta"
-                                         th:text="${sesi.barterRequest.requester.campus ?: 'Pengguna GAKBISA'}">Kampus</div>
+                                         th:text="${sesi.barterRequest.requester.campus ?: 'Mahasiswa'}">Kampus</div>
                                 </div>
                             </div>
                         </div>
@@ -68,7 +68,7 @@
                                     <a th:href="@{'/profile/' + ${sesi.barterRequest.targetUser.id}}" class="person__name"
                                        th:text="${sesi.barterRequest.targetUser.fullName}">Nama</a>
                                     <div class="person__meta"
-                                         th:text="${sesi.barterRequest.targetUser.campus ?: 'Pengguna GAKBISA'}">Kampus</div>
+                                         th:text="${sesi.barterRequest.targetUser.campus ?: 'Mahasiswa'}">Kampus</div>
                                 </div>
                             </div>
                         </div>
@@ -212,15 +212,15 @@
             <section class="panel">
                 <div class="kicker">Etika sesi belajar</div>
                 <div class="stack" style="margin-top:14px;gap:12px;">
-                    <div class="wrap" style="align-items:flex-start;">
+                    <div class="tip">
                         <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
                         <span class="muted small">Hadir tepat waktu sesuai jadwal yang telah disepakati bersama.</span>
                     </div>
-                    <div class="wrap" style="align-items:flex-start;">
+                    <div class="tip">
                         <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
                         <span class="muted small">Siapkan materi atau pertanyaan spesifik sebelum sesi dimulai.</span>
                     </div>
-                    <div class="wrap" style="align-items:flex-start;">
+                    <div class="tip">
                         <th:block th:replace="~{fragments/icons :: icon('check')}"></th:block>
                         <span class="muted small">Setelah sesi tuntas, tandai selesai dan berikan ulasan yang jujur.</span>
                     </div>
