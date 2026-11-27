@@ -50,6 +50,9 @@ public class ReviewService {
         } else {
             throw new ForbiddenException("Anda bukan peserta sesi ini");
         }
+        if (req.rating() < 1 || req.rating() > 5) {
+            throw new ValidationException("Rating ulasan harus antara 1 sampai 5");
+        }
         if (reviews.existsBySession_IdAndReviewerId(s.getId(), reviewerId)) {
             throw new ValidationException("Anda sudah memberikan ulasan untuk sesi ini");
         }

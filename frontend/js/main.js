@@ -5,13 +5,18 @@ import { esc, alertBox } from "./ui.js";
 
 import login from "./pages/login.js";
 import register from "./pages/register.js";
-import dashboard from "./pages/dashboard.js";
+import dashboard from "./pages/Dashboard.js";
 import barter from "./pages/barter.js";
 import sessions from "./pages/sessions.js";
 import sessionDetail from "./pages/session-detail.js";
 import notifications from "./pages/notifications.js";
 import profile from "./pages/profile.js";
+import profilePublic from "./pages/profile-public.js";
 import matching from "./pages/matching.js";
+import catalog from "./pages/catalog.js";
+import admin from "./pages/admin.js";
+import groups from "./pages/groups.js";
+import learningNeeds from "./pages/learning-needs.js";
 import { skeletonFor } from "./skeleton.js";
 import { initGlassSidebar, setActive, sidebarCollapsed } from "./glass-sidebar.js";
 
@@ -19,12 +24,17 @@ import { initGlassSidebar, setActive, sidebarCollapsed } from "./glass-sidebar.j
 route("/login", login, { auth: false, shell: false });
 route("/register", register, { auth: false, shell: false });
 route("/dashboard", dashboard);
+route("/catalog", catalog);
 route("/barter", barter);
 route("/sessions", sessions);
 route("/sessions/:id", sessionDetail);
 route("/notifications", notifications);
 route("/profile", profile);
+route("/profile/:id", profilePublic);
 route("/matching", matching);
+route("/groups", groups);
+route("/learning-needs", learningNeeds);
+route("/admin", admin, { admin: true });
 
 // ---- Tema terang/gelap (disimpan di localStorage, dasar pilihan diset di <head> index.html) ----
 function currentTheme() {
@@ -44,25 +54,37 @@ let badgeTimer = null;
 
 const NAV = [
   ["/dashboard", "bi-house", "Beranda"],
+  ["/catalog", "bi-grid", "Katalog skill"],
   ["/matching", "bi-search", "Cari partner"],
   ["/barter", "bi-arrow-left-right", "Barter keahlian"],
   ["/sessions", "bi-calendar-event", "Sesi belajar"],
   ["/notifications", "bi-bell", "Notifikasi"],
+  ["/groups", "bi-people", "Kelompok belajar"],
+  ["/learning-needs", "bi-lightbulb", "Kebutuhan belajar"],
   ["/profile", "bi-person", "Profil saya"],
 ];
 
 const initials = (n = "") => n.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("") || "?";
 const today = () => new Date().toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 
+function allNavItems() {
+  const items = [...NAV];
+  if (isAdmin()) {
+    items.push(["/admin", "bi-shield-check", "Admin Panel"]);
+  }
+  return items;
+}
+
 // Shell dirender SEKALI; pindah halaman hanya mengganti isi #view (animasi sidebar tidak reset).
 function shellHtml() {
   const collapsed = sidebarCollapsed();
-  const items = NAV.map(([href, icon, label]) => `
+  const navItems = allNavItems();
+  const items = navItems.map(([href, icon, label]) => `
     <a href="#${href}" class="gs-item" data-href="${href}" data-tip="${label}">
       <i class="bi ${icon}" aria-hidden="true"></i><span class="gs-fade">${label}</span>
       ${href === "/notifications" ? '<em id="gk-notif-badge" class="gs-badge" hidden>0</em>' : ""}
     </a>`).join("");
-  const bottom = NAV.map(([href, icon, label]) =>
+  const bottom = navItems.map(([href, icon, label]) =>
     `<a href="#${href}" data-href="${href}"><i class="bi ${icon}" aria-hidden="true"></i>${label.split(" ")[0]}</a>`).join("");
   const u = currentUser();
   return `
@@ -113,7 +135,7 @@ function mountShell(path) {
     badgeTimer = setInterval(refreshBadge, 45000);
   }
   setActive(shell, path);
-  const cur = NAV.find(([h]) => path === h || path.startsWith(h + "/"));
+  const cur = allNavItems().find(([h]) => path === h || path.startsWith(h + "/"));
   document.getElementById("gs-crumb").textContent = "Ruang belajar" + (cur ? " / " + cur[2] : "");
   document.querySelector("#gk-nav-search input").value = path === "/matching" ? (currentQuery().get("keyword") || "") : "";
   return document.getElementById("view");

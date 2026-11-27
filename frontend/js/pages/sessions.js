@@ -11,7 +11,11 @@ async function nameOf(id) {
 }
 
 export default async function page(view) {
-  const list = await api("/api/sessions");
+  const [list, inbox, outbox] = await Promise.all([
+    api("/api/sessions"),
+    api("/api/barter/inbox"),
+    api("/api/barter/outbox"),
+  ]);
   const me = currentUser().id;
   list.sort((a, b) => new Date(a.scheduledAt) - new Date(b.scheduledAt));
   const partners = await Promise.all(list.map((s) => nameOf(s.requesterId === me ? s.targetUserId : s.requesterId)));
@@ -25,5 +29,9 @@ export default async function page(view) {
 
   view.innerHTML = `
     <h1 class="h4 fw-bold mb-3">Sesi belajar</h1>
+    ${[...inbox, ...outbox].some((b) => b.status === "ACCEPTED") ? `
+      <div class="gk-card p-3 mb-3"><h2 class="h6 fw-bold">Barter siap dijadwalkan</h2>
+        <p class="small text-muted">Buka menu Barter Keahlian untuk memilih waktu sesi bersama partner.</p>
+        <a href="#/barter" class="gk-btn gk-btn--sm text-white" style="background:var(--gk-primary)">Buka barter diterima</a></div>` : ""}
     ${rows || '<p class="text-muted">Belum ada sesi. Sesi dijadwalkan dari barter yang sudah diterima.</p>'}`;
 }

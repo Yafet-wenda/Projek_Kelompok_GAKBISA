@@ -9,6 +9,9 @@ import com.gakbisa.backend.repository.PortfolioRepository;
 import com.gakbisa.backend.repository.ReviewRepository;
 import com.gakbisa.backend.repository.UserRepository;
 import com.gakbisa.backend.repository.UserSkillRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,17 +55,40 @@ public class MatchingService {
         this.reviews = reviews;
     }
 
-    public record Candidate(UUID userId, String fullName, String campus, int score, List<String> reasons) {}
+    public record Candidate(UUID userId, String fullName, String campus, String studyProgram,
+                            int score, List<String> reasons) {}
+
+    public record SearchFilters(String keyword, UUID categoryId, SkillLevel level,
+                                String campus, String studyProgram) {
+        boolean active() {
+            return notBlank(keyword) || categoryId != null || level != null
+                || notBlank(campus) || notBlank(studyProgram);
+        }
+    }
 
     @Transactional(readOnly = true)
     public List<Candidate> recommend(UUID userId, int limit) {
+        return calculate(userId, null, limit);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Candidate> search(UUID userId, SearchFilters filters, int page, int size) {
+        int safePage = Math.max(0, page);
+        int safeSize = Math.max(1, Math.min(size, 50));
+        List<Candidate> matches = calculate(userId, filters, Integer.MAX_VALUE);
+        int from = Math.min(safePage * safeSize, matches.size());
+        int to = Math.min(from + safeSize, matches.size());
+        return new PageImpl<>(matches.subList(from, to), PageRequest.of(safePage, safeSize), matches.size());
+    }
+
+    private List<Candidate> calculate(UUID userId, SearchFilters filters, int limit) {
         users.findById(userId).orElseThrow(() -> new NotFoundException("Pengguna tidak ditemukan"));
 
         List<UserSkill> mySkills = userSkills.findByUserId(userId);
         Map<String, UserSkill> myOffer = indexBySkillName(filter(mySkills, SkillType.OFFER));
         List<UserSkill> myWant = filter(mySkills, SkillType.WANT);
 
-        int capped = Math.max(1, Math.min(limit, 50));
+        int capped = Math.max(1, Math.min(limit, 10_000));
         List<Candidate> result = new ArrayList<>();
 
         for (User other : users.findAll()) {
@@ -72,6 +98,8 @@ public class MatchingService {
             List<UserSkill> theirSkills = userSkills.findByUserId(other.getId());
             Map<String, UserSkill> theirOffer = indexBySkillName(filter(theirSkills, SkillType.OFFER));
             List<UserSkill> theirWantList = filter(theirSkills, SkillType.WANT);
+
+            if (filters != null && filters.active() && !matches(filters, other, filter(theirSkills, SkillType.OFFER))) continue;
 
             int score = 0;
             List<String> reasons = new ArrayList<>();
@@ -115,7 +143,8 @@ public class MatchingService {
             // Kandidat tanpa satu pun irisan keahlian tidak direkomendasikan
             // (pencarian manual per kategori tetap tersedia). Berhenti di sini agar query
             // portofolio dan ulasan di bawah tidak dijalankan sia-sia untuk kandidat itu.
-            if (!skillRelated) continue;
+            if (!skillRelated && (filters == null || !filters.active())) continue;
+            if (!skillRelated) reasons.add("Hasil pencarian manual; belum ada kecocokan skill otomatis");
 
             // 4) Kelengkapan profil/portofolio (5)
             long theirPortfolios = portfolios.countByUserId(other.getId());
@@ -137,12 +166,40 @@ public class MatchingService {
                 reasons.add("Reputasi " + String.format("%.1f", avg) + "/5");
             }
 
-            result.add(new Candidate(other.getId(), other.getFullName(), other.getCampus(),
+            result.add(new Candidate(other.getId(), other.getFullName(), other.getCampus(), other.getStudyProgram(),
                 Math.min(score, 100), reasons));
         }
 
         result.sort((left, right) -> Integer.compare(right.score(), left.score()));
         return result.size() > capped ? result.subList(0, capped) : result;
+    }
+
+    private static boolean matches(SearchFilters filters, User user, List<UserSkill> offers) {
+        if (notBlank(filters.campus()) && !containsIgnoreCase(user.getCampus(), filters.campus())) return false;
+        if (notBlank(filters.studyProgram()) && !containsIgnoreCase(user.getStudyProgram(), filters.studyProgram())) return false;
+
+        String keyword = filters.keyword();
+        boolean keywordMatches = !notBlank(keyword)
+            || containsIgnoreCase(user.getFullName(), keyword)
+            || containsIgnoreCase(user.getCampus(), keyword)
+            || containsIgnoreCase(user.getStudyProgram(), keyword)
+            || offers.stream().anyMatch(skill -> containsIgnoreCase(skill.getSkill().getName(), keyword)
+                || containsIgnoreCase(skill.getSkill().getCategory().getName(), keyword));
+        if (!keywordMatches) return false;
+
+        if (filters.categoryId() == null && filters.level() == null) return true;
+        return offers.stream().anyMatch(skill -> (filters.categoryId() == null
+                || filters.categoryId().equals(skill.getSkill().getCategory().getId()))
+            && (filters.level() == null || filters.level() == skill.getLevel()));
+    }
+
+    private static boolean containsIgnoreCase(String value, String query) {
+        return value != null && query != null
+            && value.toLowerCase().contains(query.trim().toLowerCase());
+    }
+
+    private static boolean notBlank(String value) {
+        return value != null && !value.isBlank();
     }
 
     private static SkillLevel levelOfFirstMatch(List<UserSkill> wants, Map<String, UserSkill> offers) {

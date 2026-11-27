@@ -47,7 +47,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void pendaftarPertamaNaikJadiAdmin() {
+    void pendaftarPertamaTetapMahasiswa() {
         when(users.existsByEmail(anyString())).thenReturn(false);
         when(users.count()).thenReturn(0L);
         when(users.save(any(User.class))).thenAnswer(inv -> {
@@ -58,7 +58,7 @@ class AuthServiceTest {
 
         var dto = service.register(new RegisterRequest("Yafet", "yafet@example.com", "rahasia123", null));
 
-        assertEquals(UserRole.ADMIN.name(), dto.role());
+        assertEquals(UserRole.STUDENT.name(), dto.role());
     }
 
     @Test

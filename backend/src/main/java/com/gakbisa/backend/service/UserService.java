@@ -15,6 +15,8 @@ import com.gakbisa.backend.repository.SkillCategoryRepository;
 import com.gakbisa.backend.repository.SkillRepository;
 import com.gakbisa.backend.repository.UserRepository;
 import com.gakbisa.backend.repository.UserSkillRepository;
+import com.gakbisa.backend.repository.LearningSessionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +32,7 @@ public class UserService {
     private final SkillCategoryRepository categories;
     private final PortfolioRepository portfolios;
     private final ReviewRepository reviews;
+    private LearningSessionRepository sessions;
 
     public UserService(UserRepository users, UserSkillRepository userSkills, SkillRepository skills,
                        SkillCategoryRepository categories, PortfolioRepository portfolios, ReviewRepository reviews) {
@@ -41,6 +44,11 @@ public class UserService {
         this.reviews = reviews;
     }
 
+    @Autowired
+    public void setLearningSessionRepository(LearningSessionRepository sessions) {
+        this.sessions = sessions;
+    }
+
     @Transactional(readOnly = true)
     public User require(UUID id) {
         return users.findById(id).orElseThrow(() -> new NotFoundException("Pengguna tidak ditemukan"));
@@ -48,7 +56,7 @@ public class UserService {
 
     /** Perbarui profil; hanya pemilik yang boleh mengubah (kecuali admin). */
     @Transactional
-    public User updateProfile(UUID actorId, UUID targetId, String fullName, String bio, String campus) {
+    public User updateProfile(UUID actorId, UUID targetId, String fullName, String bio, String campus, String studyProgram, String interests, String avatarPath) {
         User actor = require(actorId);
         if (!actor.getId().equals(targetId) && actor.getRole() != com.gakbisa.backend.domain.UserRole.ADMIN) {
             throw new ForbiddenException("Hanya pemilik atau admin yang dapat mengubah profil");
@@ -57,6 +65,13 @@ public class UserService {
         if (fullName != null && !fullName.isBlank()) u.setFullName(fullName.trim());
         if (bio != null) u.setBio(bio);
         if (campus != null) u.setCampus(campus.trim());
+        if (studyProgram != null) u.setStudyProgram(studyProgram.trim());
+        if (interests != null) u.setInterests(interests.trim());
+        if (avatarPath != null) {
+            String clean = avatarPath.trim();
+            if (!clean.isBlank() && !clean.matches("(?i)^https://[^\\s]+$")) throw new ValidationException("Avatar harus menggunakan URL HTTPS");
+            u.setAvatarPath(clean.isBlank() ? null : clean);
+        }
         return users.save(u);
     }
 
@@ -125,6 +140,16 @@ public class UserService {
         userSkills.delete(us);
     }
 
+    @Transactional
+    public UserSkill updateSkill(UUID userId, UUID userSkillId, SkillLevel level, String notes) {
+        UserSkill us = userSkills.findById(userSkillId)
+            .orElseThrow(() -> new NotFoundException("Keahlian pengguna tidak ditemukan"));
+        if (!us.getUser().getId().equals(userId)) throw new ForbiddenException("Keahlian itu bukan milikmu");
+        if (level != null) us.setLevel(level);
+        us.setNotes(notes == null ? null : notes.trim());
+        return userSkills.save(us);
+    }
+
     /** Ringkasan reputasi untuk profil: rating rata-rata, jumlah ulasan yang diterima, jumlah portofolio. */
     @Transactional(readOnly = true)
     public ReputationDto reputation(UUID userId) {
@@ -140,8 +165,8 @@ public class UserService {
     public record ReputationDto(Double averageRating, long reviewCount, long portfolioCount) {}
 
     /** Kartu profil untuk katalog publik: identitas + reputasi + apa yang dia ajarkan. */
-    public record PublicProfile(UUID id, String fullName, String campus, Double averageRating,
-                                long reviewCount, long portfolioCount, List<String> offers) {}
+    public record PublicProfile(UUID id, String fullName, String campus, String studyProgram, String interests, String avatarPath, boolean verified, Double averageRating,
+                                long reviewCount, long portfolioCount, long completedSessionCount, List<String> offers) {}
 
     @Transactional(readOnly = true)
     public PublicProfile publicProfile(UUID userId) {
@@ -155,6 +180,10 @@ public class UserService {
             .toList();
         return new PublicProfile(u.getId(), u.getFullName(),
             u.getCampus() == null ? "" : u.getCampus(),
-            r.averageRating(), r.reviewCount(), r.portfolioCount(), diajarkan);
+            u.getStudyProgram() == null ? "" : u.getStudyProgram(),
+            u.getInterests() == null ? "" : u.getInterests(),
+            u.getAvatarPath(),
+            u.isVerified(), r.averageRating(), r.reviewCount(), r.portfolioCount(),
+            sessions == null ? 0 : sessions.countCompletedForUser(userId), diajarkan);
     }
 }

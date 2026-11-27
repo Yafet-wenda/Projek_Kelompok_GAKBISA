@@ -1,0 +1,13 @@
+import { api } from "../api.js";
+import { currentUser } from "../auth.js";
+import { esc, toast, alertBox } from "../ui.js";
+
+export default async function page(view) {
+  const load = async () => api("/api/learning-needs");
+  let needs;
+  try { needs = await load(); } catch (e) { view.innerHTML = alertBox(e.message); return; }
+  const me=currentUser()?.id;
+  view.innerHTML = `<h1 class="h4 fw-bold mb-1">Kebutuhan belajar</h1><p class="text-muted small">Bagikan topik yang ingin kamu pelajari agar calon partner dapat menemukanmu.</p><div id="need-msg"></div><form id="need-form" class="gk-card p-3 mb-3 row g-2"><div class="col-md-4"><label class="form-label small">Topik<input class="form-control" name="topic" maxlength="150" required></label></div><div class="col-md-2"><label class="form-label small">Level<select class="form-select" name="level"><option value="BEGINNER">Pemula</option><option value="INTERMEDIATE">Menengah</option><option value="ADVANCED">Mahir</option></select></label></div><div class="col-md-3"><label class="form-label small">Target waktu<input class="form-control" type="date" name="targetDate"></label></div><div class="col-md-3 d-flex align-items-end"><button class="gk-btn text-white" style="background:var(--gk-primary)">Pasang kebutuhan</button></div><div class="col-12"><label class="form-label small">Detail (opsional)<textarea class="form-control" name="details" maxlength="2000" rows="2"></textarea></label></div></form><div class="row g-3">${needs.map(n=>`<article class="col-md-6"><div class="gk-card p-3 h-100"><div class="d-flex justify-content-between"><h2 class="h6 fw-bold">${esc(n.topic)}</h2><span class="gk-badge">${esc(n.level)}</span></div><div class="small text-muted">${esc(n.fullName)} · ${esc(n.campus||"Mahasiswa")}${n.targetDate?` · Target ${esc(n.targetDate)}`:""}</div><p class="mt-2 mb-2">${esc(n.details||"")}</p>${n.userId===me?`<button class="btn btn-sm btn-outline-secondary" data-close="${esc(n.id)}">Tutup kebutuhan</button>`:""}</div></article>`).join("")||'<div class="gk-card p-4 text-muted">Belum ada kebutuhan belajar terbuka.</div>'}</div>`;
+  view.querySelector("#need-form").onsubmit=async ev=>{ev.preventDefault();const d=Object.fromEntries(new FormData(ev.currentTarget));try{await api("/api/learning-needs",{method:"POST",body:d});toast("Kebutuhan belajar dipasang");await page(view);}catch(e){view.querySelector("#need-msg").innerHTML=alertBox(e.message);}};
+  view.querySelectorAll("[data-close]").forEach(b=>b.onclick=async()=>{try{await api(`/api/learning-needs/${b.dataset.close}/close`,{method:"POST"});toast("Kebutuhan ditutup");await page(view);}catch(e){view.querySelector("#need-msg").innerHTML=alertBox(e.message);}});
+}

@@ -1,0 +1,1 @@
+-- Covered by V9__complete_core_followup.sql and V15__barter_agreement.sql; legacy Flyway checksum token: QgtgaX.

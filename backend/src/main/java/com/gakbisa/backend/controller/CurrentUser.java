@@ -26,7 +26,16 @@ public final class CurrentUser {
         return requireUser().getId();
     }
 
+    /** Identitas untuk endpoint publik yang boleh menampilkan data privat hanya ke pemilik. */
+    public static UUID idOrNull() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !(auth.getPrincipal() instanceof GakbisaUserDetails d)) return null;
+        return d.getUser().getId();
+    }
+
     public static boolean isAdmin() {
-        return requireUser().getRole() == UserRole.ADMIN;
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth != null && auth.getPrincipal() instanceof GakbisaUserDetails d
+            && d.getUser().getRole() == UserRole.ADMIN;
     }
 }

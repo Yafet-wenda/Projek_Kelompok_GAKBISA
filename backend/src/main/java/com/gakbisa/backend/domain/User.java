@@ -38,12 +38,24 @@ public class User {
     @Column(name = "campus", length = 150)
     private String campus;
 
+    @Column(name = "study_program", length = 150)
+    private String studyProgram;
+
+    @Column(name = "interests", columnDefinition = "text")
+    private String interests;
+
     @Column(name = "avatar_path", columnDefinition = "text")
     private String avatarPath;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private AccountStatus status = AccountStatus.ACTIVE;
+
+    @Column(name = "is_verified", nullable = false)
+    private boolean verified;
+
+    @Column(name = "strike_count", nullable = false)
+    private int strikeCount;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;

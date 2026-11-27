@@ -26,6 +26,14 @@ class PortfolioValidationTest {
     }
 
     @Test
+    void ekstensiHarusSesuaiDenganJenisYangDiizinkan() {
+        assertEquals("image/jpeg", PortfolioService.mimeFromExtension("foto.JPEG"));
+        assertEquals("application/pdf", PortfolioService.mimeFromExtension("karya.pdf"));
+        assertThrows(RuntimeException.class, () -> PortfolioService.mimeFromExtension("foto.exe"));
+        assertThrows(RuntimeException.class, () -> PortfolioService.mimeFromExtension("tanpa-ekstensi"));
+    }
+
+    @Test
     void propertiesMenjadiTahuBelumTerkonfigurasi() {
         StorageProperties p = new StorageProperties("", "", "bucket", 10L, java.util.List.of("image/png"));
         assertFalse(p.configured());

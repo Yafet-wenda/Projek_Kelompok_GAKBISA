@@ -27,6 +27,7 @@ public class SkillsController {
     }
 
     public record AddSkillRequest(UUID skillId, String skillName, SkillType type, SkillLevel level, String notes) {}
+    public record UpdateSkillRequest(SkillLevel level, String notes) {}
 
     private final UserService userService;
     private final SkillRepository skills;
@@ -45,10 +46,15 @@ public class SkillsController {
                                              @RequestParam(defaultValue = "0") int page,
                                              @RequestParam(defaultValue = "20") int size) {
         PageRequest pr = PageRequest.of(page, Math.min(size, 50));
+        String keyword = q == null ? "" : q.trim();
         Page<com.gakbisa.backend.domain.Skill> result;
-        if (q != null && !q.isBlank()) result = skills.search(q, pr);
-        else if (categoryId != null) result = skills.findByCategory_Id(categoryId, pr);
-        else result = skills.findAllBy(pr);
+        if (categoryId == null) {
+            result = keyword.isEmpty() ? skills.findAllBy(pr) : skills.search(keyword, pr);
+        } else {
+            result = keyword.isEmpty()
+                ? skills.findByCategory_Id(categoryId, pr)
+                : skills.searchByCategory(categoryId, keyword, pr);
+        }
         return result.map(s -> Map.of(
             "id", s.getId(),
             "name", s.getName(),
@@ -79,5 +85,10 @@ public class SkillsController {
     @DeleteMapping("/me/skills/{id}")
     public void removeSkill(@PathVariable UUID id) {
         userService.removeSkill(CurrentUser.id(), id);
+    }
+
+    @PutMapping("/me/skills/{id}")
+    public UserSkillDto updateSkill(@PathVariable UUID id, @RequestBody UpdateSkillRequest req) {
+        return UserSkillDto.from(userService.updateSkill(CurrentUser.id(), id, req.level(), req.notes()));
     }
 }

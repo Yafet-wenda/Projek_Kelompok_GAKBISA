@@ -1,0 +1,110 @@
+/* ============================================================
+   gk-chat.css — Styles untuk fitur Chat Obrolan Sesi GAKBISA
+   ============================================================ */
+
+/* Kontainer pesan scrollable */
+.gk-chat-msgs {
+  height: 360px;
+  overflow-y: auto;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: rgba(var(--gk-bg-rgb, 255 255 255) / 0.5);
+  border: 1px solid rgba(127, 140, 170, 0.18);
+  border-radius: 12px;
+  scroll-behavior: smooth;
+}
+
+/* Dark mode tweak */
+[data-bs-theme="dark"] .gk-chat-msgs,
+.dark .gk-chat-msgs {
+  background: rgba(30, 35, 55, 0.5);
+  border-color: rgba(127, 140, 170, 0.22);
+}
+
+/* Baris pembungkus setiap pesan */
+.gk-chat-row {
+  display: flex;
+  margin-bottom: 6px;
+}
+.gk-chat-row--me      { justify-content: flex-end; }
+.gk-chat-row--partner { justify-content: flex-start; }
+
+/* Gelembung pesan */
+.gk-chat-bubble {
+  max-width: 70%;
+  padding: 10px 14px;
+  word-break: break-word;
+  font-size: 0.925rem;
+  line-height: 1.45;
+}
+
+.gk-chat-bubble--me {
+  background: var(--gk-primary, #6c63ff);
+  color: #fff;
+  border-radius: 18px 18px 4px 18px;
+}
+
+.gk-chat-bubble--partner {
+  background: rgba(127, 140, 170, 0.15);
+  color: var(--gk-ink, #1e2337);
+  border-radius: 18px 18px 18px 4px;
+  border: 1px solid rgba(127, 140, 170, 0.18);
+}
+
+[data-bs-theme="dark"] .gk-chat-bubble--partner,
+.dark .gk-chat-bubble--partner {
+  background: rgba(127, 140, 170, 0.2);
+  color: #e8eaf6;
+  border-color: rgba(127, 140, 170, 0.28);
+}
+
+/* Nama pengirim (hanya untuk pesan partner) */
+.gk-chat-sender {
+  font-size: 0.775rem;
+  font-weight: 700;
+  opacity: 0.75;
+  margin-bottom: 3px;
+}
+
+/* Teks pesan */
+.gk-chat-text {
+  white-space: pre-wrap;
+}
+
+/* Waktu pesan */
+.gk-chat-time {
+  font-size: 0.7rem;
+  opacity: 0.6;
+  margin-top: 5px;
+  text-align: right;
+}
+.gk-chat-bubble--partner .gk-chat-time {
+  text-align: left;
+}
+
+/* Teks kosong */
+.gk-chat-empty {
+  margin: auto;
+  text-align: center;
+  color: rgba(127, 140, 170, 0.7);
+  font-size: 0.9rem;
+  padding: 20px 0;
+}
+
+/* Tombol kirim */
+.gk-btn--chat-send {
+  background: var(--gk-primary, #6c63ff);
+  white-space: nowrap;
+  flex-shrink: 0;
+  border-radius: 10px;
+  padding: 8px 18px;
+  transition: opacity 0.2s;
+}
+.gk-btn--chat-send:hover  { opacity: 0.88; }
+.gk-btn--chat-send:active { opacity: 0.75; }
+.gk-btn--chat-send:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}

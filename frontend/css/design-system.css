@@ -554,6 +554,7 @@ body:not(.fb-dashboard) {
 .gk-badge--REJECTED   { background: var(--gk-danger-muted);  color: var(--gk-danger);  border-color: #f2b6b2; }
 .gk-badge--CANCELLED  { background: var(--gk-grey-100);      color: var(--gk-ink-3);   border-color: var(--gk-border); }
 .gk-badge--SCHEDULED  { background: var(--gk-info-muted);    color: var(--gk-info);    border-color: #a3c4e8; }
+.gk-badge--PENDING_RESCHEDULE { background: #fff3cd; color: #856404; border-color: #ffeeba; }
 .gk-badge--ONGOING    { background: var(--gk-success-muted); color: var(--gk-success); border-color: #99d4b6; }
 .gk-badge--OFFER      { background: var(--gk-primary-muted); color: var(--gk-primary); border-color: #b5ccfb; }
 .gk-badge--WANT       { background: #fce4ec;                 color: #880e4f;            border-color: #f8bbd9; }
@@ -1451,5 +1452,21 @@ body.gk-auth {
     background-image: linear-gradient(rgba(11, 15, 25, .82), rgba(11, 15, 25, .82)),
                       url('../images/auth-bg.jpg');
   }
+}
+
+/* ============================================================
+   Two-Way Reschedule Confirmation Banner
+   ============================================================ */
+.gk-reschedule-banner {
+  background: var(--gk-card-bg, #ffffff);
+  border-color: var(--gk-border, rgba(127, 140, 170, 0.25)) !important;
+}
+.gk-reschedule-banner--mine {
+  background: rgba(255, 193, 7, 0.08);
+  border-left: 4px solid var(--gk-warning) !important;
+}
+.gk-reschedule-banner--partner {
+  background: rgba(108, 99, 255, 0.08);
+  border-left: 4px solid var(--gk-primary) !important;
 }
 

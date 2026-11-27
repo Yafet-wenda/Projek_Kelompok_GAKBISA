@@ -78,7 +78,8 @@ public class ReportAdminController {
     public List<Map<String, Object>> users() {
         return admin.listUsers().stream()
             .map(u -> Map.<String, Object>of("id", u.getId(), "email", u.getEmail(),
-                "fullName", u.getFullName(), "role", u.getRole().name(), "status", u.getStatus().name()))
+                "fullName", u.getFullName(), "role", u.getRole().name(), "status", u.getStatus().name(),
+                "strikeCount", u.getStrikeCount(), "verified", u.isVerified()))
             .toList();
     }
 

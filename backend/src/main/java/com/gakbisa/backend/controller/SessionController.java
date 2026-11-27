@@ -47,10 +47,40 @@ public class SessionController {
         return SessionDto.from(sessions.reschedule(CurrentUser.id(), id, at, durationMinutes));
     }
 
+    /** Pihak yang bukan pengusul menerima proposal reschedule. */
+    @PostMapping("/{id}/reschedule/confirm")
+    public SessionDto confirmReschedule(@PathVariable UUID id) {
+        return SessionDto.from(sessions.confirmReschedule(CurrentUser.id(), id));
+    }
+
+    /** Siapapun peserta dapat menolak/membatalkan proposal reschedule. */
+    @PostMapping("/{id}/reschedule/reject")
+    public SessionDto rejectReschedule(@PathVariable UUID id) {
+        return SessionDto.from(sessions.rejectReschedule(CurrentUser.id(), id));
+    }
+
     /** Body: {"status": "ONGOING" | "COMPLETED" | "CANCELLED"} */
     @PostMapping("/{id}/status")
     public SessionDto setStatus(@PathVariable UUID id, @RequestBody Map<String, String> body) {
         SessionStatus next = SessionStatus.valueOf(body.get("status"));
         return SessionDto.from(sessions.setStatus(CurrentUser.id(), id, next));
     }
+
+    @PostMapping("/{id}/schedule/confirm")
+    public SessionDto confirmSchedule(@PathVariable UUID id) {
+        return SessionDto.from(sessions.confirmInitialSchedule(CurrentUser.id(), id, true));
+    }
+
+    @PostMapping("/{id}/schedule/reject")
+    public SessionDto rejectSchedule(@PathVariable UUID id) {
+        return SessionDto.from(sessions.confirmInitialSchedule(CurrentUser.id(), id, false));
+    }
+
+    @PostMapping("/{id}/follow-up")
+    @ResponseStatus(HttpStatus.CREATED)
+    public SessionDto followup(@PathVariable UUID id, @Valid @RequestBody FollowupBody body) {
+        return SessionDto.from(sessions.scheduleFollowup(CurrentUser.id(), id, body.scheduledAt(), body.durationMinutes()));
+    }
+
+    public record FollowupBody(Instant scheduledAt, int durationMinutes) {}
 }

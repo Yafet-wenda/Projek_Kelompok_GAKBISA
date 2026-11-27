@@ -19,9 +19,16 @@ public class LearningSession {
     @Column(name = "id", columnDefinition = "uuid")
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "barter_request_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "barter_request_id")
     private BarterRequest barterRequest;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "followup_of_id")
+    private LearningSession followupOf;
+
+    @Column(name = "group_id", columnDefinition = "uuid")
+    private UUID groupId;
 
     @Column(name = "scheduled_at", nullable = false)
     private Instant scheduledAt;
@@ -46,4 +53,32 @@ public class LearningSession {
 
     @Column(name = "completed_at")
     private Instant completedAt;
+
+    // ── Reschedule proposal ────────────────────────────────────────────────────
+    /** ID user yang mengajukan penjadwalan ulang; null jika tidak ada proposal aktif. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reschedule_proposed_by")
+    private com.gakbisa.backend.domain.User rescheduleProposedBy;
+
+    /** Kapan proposal diajukan. */
+    @Column(name = "reschedule_proposed_at")
+    private Instant rescheduleProposedAt;
+
+    /** Waktu baru yang diusulkan. */
+    @Column(name = "reschedule_proposed_time")
+    private Instant rescheduleProposedTime;
+
+    /** Durasi baru yang diusulkan (menit); 0 = pakai durasi lama. */
+    @Column(name = "reschedule_proposed_duration")
+    private Integer rescheduleProposedDuration;
+
+    @Column(name = "no_show_processed", nullable = false)
+    private boolean noShowProcessed;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "schedule_proposed_by")
+    private User scheduleProposedBy;
+
+    @Column(name = "schedule_confirmed", nullable = false)
+    private boolean scheduleConfirmed = true;
 }

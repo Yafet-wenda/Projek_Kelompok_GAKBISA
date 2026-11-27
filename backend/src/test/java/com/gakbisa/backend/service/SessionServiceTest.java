@@ -24,7 +24,6 @@ class SessionServiceTest {
 
     private LearningSessionRepository sessions;
     private BarterRequestRepository barter;
-    private BarterService barterService;
     private NotificationService notifications;
     private SessionService service;
 
@@ -37,9 +36,8 @@ class SessionServiceTest {
     void setup() {
         sessions = mock(LearningSessionRepository.class);
         barter = mock(BarterRequestRepository.class);
-        barterService = mock(BarterService.class);
         notifications = mock(NotificationService.class);
-        service = new SessionService(sessions, barter, barterService, notifications);
+        service = new SessionService(sessions, barter, notifications);
 
         requester = user("Rina");
         target = user("Tono");
@@ -84,6 +82,32 @@ class SessionServiceTest {
     }
 
     @Test
+    void jadwalAwalHarusDisetujuiPartnerSebelumSesiDapatDimulai() {
+        LearningSession s = sessionOf(accepted, SessionStatus.SCHEDULED);
+        s.setScheduleConfirmed(false);
+        s.setScheduleProposedBy(requester);
+        when(sessions.findById(s.getId())).thenReturn(Optional.of(s));
+
+        LearningSession updated = service.confirmInitialSchedule(target.getId(), s.getId(), true);
+
+        assertTrue(updated.isScheduleConfirmed());
+        assertEquals(SessionStatus.SCHEDULED, updated.getStatus());
+        verify(notifications).push(eq(requester), anyString(), eq("Jadwal sesi diterima"), anyString());
+    }
+
+    @Test
+    void sesiBelumDapatDiselesaikanSebelumJadwalDisetujui() {
+        LearningSession s = sessionOf(accepted, SessionStatus.SCHEDULED);
+        s.setScheduleConfirmed(false);
+        when(sessions.findById(s.getId())).thenReturn(Optional.of(s));
+
+        assertThrows(ValidationException.class,
+            () -> service.setStatus(requester.getId(), s.getId(), SessionStatus.COMPLETED));
+
+        verify(sessions, never()).save(any(LearningSession.class));
+    }
+
+    @Test
     void ruangJitsiAcakDanUnik() {
         when(barter.findById(accepted.getId())).thenReturn(Optional.of(accepted));
 
@@ -97,14 +121,15 @@ class SessionServiceTest {
     }
 
     @Test
-    void sesiTerakhirSelesaiIkutMenyelesaikanBarter() {
+    void semuaSesiSelesaiBelumOtomatisMenyelesaikanBarter() {
         LearningSession s = sessionOf(accepted, SessionStatus.ONGOING);
         when(sessions.findById(s.getId())).thenReturn(Optional.of(s));
         when(sessions.findByBarterRequestId(accepted.getId())).thenReturn(List.of(s));
 
         service.setStatus(requester.getId(), s.getId(), SessionStatus.COMPLETED);
 
-        verify(barterService).complete(accepted.getId());
+        assertEquals(BarterStatus.ACCEPTED, accepted.getStatus());
+        verify(barter, never()).save(any());
     }
 
     @Test
@@ -117,7 +142,54 @@ class SessionServiceTest {
         service.setStatus(requester.getId(), s.getId(), SessionStatus.COMPLETED);
 
         assertEquals(BarterStatus.ACCEPTED, accepted.getStatus());
-        verify(barterService, never()).complete(any());
+        verify(barter, never()).save(any());
+    }
+
+    @Test
+    void confirmRescheduleMenerapkanJadwalBaruDanMembersihkanProposal() {
+        LearningSession s = sessionOf(accepted, SessionStatus.PENDING_RESCHEDULE);
+        Instant proposedTime = Instant.now().plus(3, ChronoUnit.DAYS);
+        s.setRescheduleProposedBy(requester);
+        s.setRescheduleProposedAt(Instant.now());
+        s.setRescheduleProposedTime(proposedTime);
+        s.setRescheduleProposedDuration(90);
+        when(sessions.findById(s.getId())).thenReturn(Optional.of(s));
+
+        LearningSession updated = service.confirmReschedule(target.getId(), s.getId());
+
+        assertEquals(SessionStatus.SCHEDULED, updated.getStatus());
+        assertEquals(proposedTime, updated.getScheduledAt());
+        assertEquals(90, updated.getDurationMinutes());
+        assertNull(updated.getRescheduleProposedBy());
+        assertNull(updated.getRescheduleProposedAt());
+        assertNull(updated.getRescheduleProposedTime());
+        assertNull(updated.getRescheduleProposedDuration());
+        verify(sessions).save(s);
+        verify(notifications).push(eq(requester), anyString(), eq("Jadwal baru diterima"), anyString());
+    }
+
+    @Test
+    void rejectRescheduleMempertahankanJadwalLamaDanMembersihkanProposal() {
+        LearningSession s = sessionOf(accepted, SessionStatus.PENDING_RESCHEDULE);
+        Instant originalTime = s.getScheduledAt();
+        Instant proposedTime = Instant.now().plus(4, ChronoUnit.DAYS);
+        s.setRescheduleProposedBy(requester);
+        s.setRescheduleProposedAt(Instant.now());
+        s.setRescheduleProposedTime(proposedTime);
+        s.setRescheduleProposedDuration(120);
+        when(sessions.findById(s.getId())).thenReturn(Optional.of(s));
+
+        LearningSession updated = service.rejectReschedule(target.getId(), s.getId());
+
+        assertEquals(SessionStatus.SCHEDULED, updated.getStatus());
+        assertEquals(originalTime, updated.getScheduledAt());
+        assertEquals(60, updated.getDurationMinutes());
+        assertNull(updated.getRescheduleProposedBy());
+        assertNull(updated.getRescheduleProposedAt());
+        assertNull(updated.getRescheduleProposedTime());
+        assertNull(updated.getRescheduleProposedDuration());
+        verify(sessions).save(s);
+        verify(notifications).push(eq(requester), anyString(), eq("Usulan jadwal ditolak"), anyString());
     }
 
     private LearningSession sessionOf(BarterRequest b, SessionStatus status) {
@@ -127,6 +199,7 @@ class SessionServiceTest {
         s.setStatus(status);
         s.setScheduledAt(Instant.now());
         s.setDurationMinutes(60);
+        s.setScheduleConfirmed(true);
         s.setMeetingProvider(MeetingProvider.JITSI);
         s.setMeetingRoom("gakbisa-x");
         return s;

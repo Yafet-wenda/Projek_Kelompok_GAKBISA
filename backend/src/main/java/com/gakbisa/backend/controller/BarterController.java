@@ -2,6 +2,8 @@ package com.gakbisa.backend.controller;
 
 import com.gakbisa.backend.dto.BarterCreateRequest;
 import com.gakbisa.backend.dto.BarterDto;
+import com.gakbisa.backend.dto.BarterAgreementStatusDto;
+import com.gakbisa.backend.service.BarterAgreementService;
 import com.gakbisa.backend.service.BarterService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -16,9 +18,28 @@ import java.util.UUID;
 public class BarterController {
 
     private final BarterService barter;
+    private final BarterAgreementService agreements;
 
-    public BarterController(BarterService barter) {
+    public BarterController(BarterService barter, BarterAgreementService agreements) {
         this.barter = barter;
+        this.agreements = agreements;
+    }
+
+    public record AgreementRequest(int durationMinutes, int sessionCount) {}
+
+    @GetMapping("/{id}/agreement")
+    public BarterAgreementStatusDto agreement(@PathVariable UUID id) {
+        return agreements.view(CurrentUser.id(), id);
+    }
+
+    @PostMapping("/{id}/agreement")
+    public BarterAgreementStatusDto proposeAgreement(@PathVariable UUID id, @RequestBody AgreementRequest request) {
+        return agreements.propose(CurrentUser.id(), id, request.durationMinutes(), request.sessionCount());
+    }
+
+    @PostMapping("/{id}/agreement/accept")
+    public BarterAgreementStatusDto acceptAgreement(@PathVariable UUID id) {
+        return agreements.accept(CurrentUser.id(), id);
     }
 
     @PostMapping

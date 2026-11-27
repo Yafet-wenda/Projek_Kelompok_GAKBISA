@@ -7,6 +7,7 @@ import com.gakbisa.backend.domain.LearningSession;
 import com.gakbisa.backend.domain.MeetingProvider;
 import com.gakbisa.backend.domain.SessionStatus;
 import com.gakbisa.backend.domain.User;
+import com.gakbisa.backend.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -52,16 +53,19 @@ public class JitsiMeetingService {
 
     private final SessionService sessions;
     private final JaasProperties jaas;
+    private final UserRepository users;
     private volatile PrivateKey cachedKey;
 
-    public JitsiMeetingService(SessionService sessions, JaasProperties jaas) {
+    public JitsiMeetingService(SessionService sessions, JaasProperties jaas, UserRepository users) {
         this.sessions = sessions;
         this.jaas = jaas;
+        this.users = users;
     }
 
     @Transactional(readOnly = true)
     public MeetingAccess accessFor(UUID actorId, UUID sessionId) {
         LearningSession s = sessions.viewFor(actorId, sessionId); // 403 kalau bukan peserta
+        if (!s.isScheduleConfirmed()) throw new ValidationException("Jadwal sesi belum disetujui kedua pihak");
         if (s.getStatus() != SessionStatus.SCHEDULED && s.getStatus() != SessionStatus.ONGOING) {
             throw new ValidationException("Sesi ini sudah tidak aktif, ruang meeting ditutup");
         }
@@ -75,7 +79,9 @@ public class JitsiMeetingService {
         }
 
         BarterRequest b = s.getBarterRequest();
-        User me = b.getRequester().getId().equals(actorId) ? b.getRequester() : b.getTargetUser();
+        User me = b == null
+            ? users.findById(actorId).orElseThrow()
+            : b.getRequester().getId().equals(actorId) ? b.getRequester() : b.getTargetUser();
         try {
             String jwt = signJwt(me);
             return new MeetingAccess(

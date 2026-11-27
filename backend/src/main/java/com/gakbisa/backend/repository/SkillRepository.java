@@ -37,5 +37,16 @@ public interface SkillRepository extends JpaRepository<Skill, UUID> {
         """)
     Page<Skill> search(@Param("keyword") String keyword, Pageable pageable);
 
+    @EntityGraph(attributePaths = "category")
+    @Query("""
+        select s from Skill s
+        where s.category.id = :categoryId
+          and (lower(s.name) like lower(concat('%', :keyword, '%'))
+            or lower(s.category.name) like lower(concat('%', :keyword, '%')))
+        """)
+    Page<Skill> searchByCategory(@Param("categoryId") UUID categoryId,
+                                 @Param("keyword") String keyword,
+                                 Pageable pageable);
+
     List<Skill> findByCategory_Id(UUID categoryId);
 }

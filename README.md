@@ -23,34 +23,40 @@ cp .env.example .env      # isi DB_*, dan JWT_SECRET (min. 32 karakter: openssl 
 cd frontend
 python -m http.server 5500   # atau ekstensi "Live Server" di VS Code → http://localhost:5500
 ```
-Alamat backend diatur di `frontend/js/config.js` (`API_BASE`). Origin frontend harus terdaftar di
-`CORS_ALLOWED_ORIGINS` pada `backend/.env` (default sudah mencakup port 5173, 3000, 5500).
+Untuk deploy, isi `meta[name="gakbisa-api-base"]` di `frontend/index.html` dengan alamat backend
+HTTPS (tanpa garis miring akhir), atau set `window.GAKBISA_API_BASE` sebelum `js/main.js` dimuat.
+Origin frontend harus terdaftar di `CORS_ALLOWED_ORIGINS` pada `backend/.env`.
 
-## Status porting halaman (Thymeleaf → frontend baru)
+## Status frontend aktif
 
 | Halaman lama | Status | Endpoint |
 |---|---|---|
-| login, register | ✅ `pages/login.js`, `register.js` | `/api/auth/login`, `/api/register` |
-| dashboard | ✅ `pages/dashboard.js` | `/api/dashboard` |
-| barter (daftar, terima/tolak/batal) | ✅ `pages/barter.js` | `/api/barter/*` |
-| sessions list + detail (ubah jadwal, selesai, batal, ulasan) | ✅ `pages/sessions.js`, `session-detail.js` | `/api/sessions/*`, `/api/reviews` |
-| notifications | ✅ `pages/notifications.js` | `/api/notifications/*` |
-| profile (lihat/ubah) | ✅ `pages/profile.js` | `/api/me`, `/api/users/{id}` |
-| catalog | ⬜ | `/api/skills`, `/api/categories`, `/api/portfolios` |
-| matching | ⬜ | `/api/matching/candidates` |
-| barter/request (form kirim barter) | ⬜ | `POST /api/barter` |
-| sessions/create (jadwalkan dari barter ACCEPTED) | ⬜ | `POST /api/sessions` |
-| profile/skills | ⬜ | `/api/me/skills` |
-| profil publik `/profile/{id}` | ⬜ | `/api/users/{id}`, `/api/reviews/user/{id}` |
-| portfolio (galeri, upload, edit, hapus) | ⬜ | `/api/portfolios/*` |
-| admin (dashboard, users, reports, categories) | ⬜ | `/api/admin/*` |
-| embed Jitsi di halaman (`jitsi-room.js`) | ⬜ | `/api/sessions/{id}/meeting` |
+| login, register, dashboard | ✅ | `/api/auth/*`, `/api/dashboard` |
+| barter: kirim, terima/tolak/batal, target belajar, jadwalkan sesi | ✅ | `/api/barter/*`, `/api/sessions` |
+| sesi: detail, ubah jadwal, status, chat, ulasan, feedback | ✅ | `/api/sessions/*`, `/api/reviews` |
+| notifikasi | ✅ | `/api/notifications/*` |
+| profil, skill OFFER/WANT, portofolio | ✅ | `/api/me`, `/api/me/skills`, `/api/portfolios/*` |
+| katalog, matching, profil publik | ✅ | `/api/skills`, `/api/matching/*`, `/api/users/*` |
+| kelompok: buat, cari, gabung/keluar, persetujuan anggota, chat, sesi Jitsi, alihkan/tutup | ✅ dasar | `/api/groups/*` |
+| admin: laporan, pengguna, kategori, ringkasan, sengketa | ✅ | `/api/admin/*`, `/api/disputes/admin/*` |
+| Upload portofolio | ✅ gambar/PDF, maks. 10 MB | `/api/portfolios/*` |
 
-Cara menambah halaman: buat `frontend/js/pages/<nama>.js` yang mengekspor `async function(view, params)`
-lalu daftarkan satu baris `route("/<path>", handler)` di `frontend/js/main.js`. Salin pola dari `barter.js`.
-Tampilan lama ada di `legacy-thymeleaf/src/main/templates/` (class CSS `gk-*` sama dan sudah dimuat).
+Pengingat sesi dan riwayat jadwal sudah diproses backend. Strike otomatis berlaku bagi peserta barter yang tidak check-in setelah masa toleransi berakhir; jika keduanya absen, strike dicatat untuk keduanya dan keduanya dapat mengajukan sengketa. Verifikasi email kampus mengirim kode enam digit yang berlaku 15 menit; fitur ini memerlukan kunci layanan email dan pengirim terverifikasi. Kesepakatan durasi/jumlah sesi harus disetujui kedua pihak sebelum sesi dijadwalkan. Fitur kelompok memberi penanda rekomendasi berdasarkan skill yang dicari pengguna.
+
+Pendaftaran publik selalu membuat akun mahasiswa. Untuk menetapkan admin produksi, buat akun pengelola lebih dulu, lalu operator tepercaya mengubah perannya di database dengan email akun yang sudah dipastikan:
+
+```sql
+UPDATE users SET role = 'ADMIN' WHERE email = 'email-pengelola@kampus.ac.id';
+```
+
+Jangan aktifkan data seed demo di produksi. Saat mengaktifkan profil `prod`, isi `JWT_SECRET` dengan rahasia acak minimal 32 karakter.
+
+Frontend aktif adalah aplikasi statis berbasis JavaScript modules; `legacy-thymeleaf/` hanya arsip tampilan lama.
 
 ## Catatan
 - Merge conflict di ±43 file telah diselesaikan dengan mengambil sisi `origin/main`.
 - `legacy-thymeleaf/gakbisa-controller-stale/` adalah folder lama berpackage `com.gakbisa` (bukan `com.gakbisa.backend`)
   yang tidak ikut dikompilasi; disimpan hanya sebagai arsip.
+# Campus email verification
+
+Set `CAMPUS_EMAIL_DOMAINS` to the allowed campus domains. Configure `CAMPUS_MAIL_API_KEY` and a verified `CAMPUS_MAIL_FROM` sender to send six-digit ownership codes; they expire after 15 minutes. `CAMPUS_MAIL_API_URL` defaults to the Resend-compatible email API. Without a mail key, email verification requests are rejected and admins cannot approve an unconfirmed address.

@@ -46,9 +46,11 @@ public class PortfolioController {
 
     @GetMapping("/user/{userId}")
     public List<PortfolioDto> forUser(@PathVariable UUID userId) {
+        UUID viewerId = CurrentUser.idOrNull();
+        boolean admin = CurrentUser.isAdmin();
         return portfolios.forUser(userId).stream()
             .filter(p -> p.getVisibility() == PortfolioVisibility.PUBLIC
-                || p.getUser().getId().equals(CurrentUser.id()) || CurrentUser.isAdmin())
+                || p.getUser().getId().equals(viewerId) || admin)
             .map(PortfolioDto::from)
             .toList();
     }
@@ -72,13 +74,13 @@ public class PortfolioController {
 
     @GetMapping("/{id}")
     public PortfolioDto view(@PathVariable UUID id) {
-        return PortfolioDto.from(portfolios.requireVisible(CurrentUser.id(), id));
+        return PortfolioDto.from(portfolios.requireVisible(CurrentUser.idOrNull(), id));
     }
 
     /** Aliran isi file dengan pemeriksaan hak akses di backend (untuk file privat). */
     @GetMapping("/{id}/content")
     public ResponseEntity<Resource> content(@PathVariable UUID id) {
-        var file = portfolios.content(CurrentUser.id(), id);
+        var file = portfolios.content(CurrentUser.idOrNull(), id);
         return ResponseEntity.ok()
             .contentType(MediaType.parseMediaType(file.contentType()))
             .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
@@ -88,7 +90,7 @@ public class PortfolioController {
     /** Signed URL sementara untuk pratinjau cepat (10 menit). */
     @GetMapping("/{id}/access-url")
     public Map<String, String> accessUrl(@PathVariable UUID id) {
-        return Map.of("url", portfolios.accessUrl(CurrentUser.id(), id));
+        return Map.of("url", portfolios.accessUrl(CurrentUser.idOrNull(), id));
     }
 
     @DeleteMapping("/{id}")

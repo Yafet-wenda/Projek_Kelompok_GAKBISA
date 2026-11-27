@@ -1,8 +1,8 @@
 /* GAKBISA — halaman Masuk & Daftar (gk-glass-auth.css). Kelas .ga-* ; muat setelah design-system.css */
-.ga{min-height:100vh;display:grid;grid-template-columns:1.05fr 1fr;background:var(--gk-card-bg);color:var(--gk-ink)}
+.ga{min-height:100vh;min-height:100dvh;display:grid;grid-template-columns:1.05fr 1fr;background:var(--gk-card-bg);color:var(--gk-ink)}
 
 /* Panel kiri */
-.ga-hero{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;gap:32px;padding:56px;background:#0e1a38;color:#fff}
+.ga-hero{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;gap:clamp(18px,3vh,32px);padding:clamp(32px,4.5vh,56px) clamp(36px,4vw,56px);background:#0e1a38;color:#fff}
 .ga-hero::before,.ga-hero::after{content:"";position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none}
 .ga-hero::before{width:420px;height:420px;top:-120px;right:-80px;background:rgba(29,95,232,.45)}
 .ga-hero::after{width:380px;height:380px;bottom:-120px;left:-60px;background:rgba(249,115,22,.28)}

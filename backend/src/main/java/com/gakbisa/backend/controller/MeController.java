@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/me")
 public class MeController {
 
-    public record ProfileUpdateRequest(String fullName, String bio, String campus) {}
+    public record ProfileUpdateRequest(String fullName, String bio, String campus, String studyProgram, String interests, String avatarPath) {}
 
     private final UserService users;
 
@@ -20,6 +20,6 @@ public class MeController {
     @PutMapping
     public UserDto update(@RequestBody ProfileUpdateRequest req) {
         var id = CurrentUser.id();
-        return UserDto.from(users.updateProfile(id, id, req.fullName(), req.bio(), req.campus()));
+        return UserDto.from(users.updateProfile(id, id, req.fullName(), req.bio(), req.campus(), req.studyProgram(), req.interests(), req.avatarPath()));
     }
 }

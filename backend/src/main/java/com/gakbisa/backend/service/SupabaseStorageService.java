@@ -45,6 +45,16 @@ public class SupabaseStorageService {
         }
     }
 
+    private HttpRequest.Builder withStorageKey(URI uri) {
+        HttpRequest.Builder builder = HttpRequest.newBuilder(uri)
+            .header("apikey", props.serviceKey());
+        // New Supabase sb_secret keys are API keys, not JWT bearer tokens.
+        if (!props.serviceKey().startsWith("sb_secret_")) {
+            builder.header("Authorization", "Bearer " + props.serviceKey());
+        }
+        return builder;
+    }
+
     /** Unggah file ke path {userId}/{portfolioId}/{namaAman}. */
     public void upload(UUID userId, UUID portfolioId, String safeFileName, byte[] content, String contentType) {
         requireConfig();
@@ -52,10 +62,8 @@ public class SupabaseStorageService {
         String boundary = "----gakbisa" + UUID.randomUUID();
         byte[] body = multipartBody(boundary, safeFileName, contentType, content);
 
-        HttpRequest req = HttpRequest.newBuilder(URI.create(apiUrl("/object/" + props.bucket() + "/" + path)))
+        HttpRequest req = withStorageKey(URI.create(apiUrl("/object/" + props.bucket() + "/" + path)))
             .timeout(Duration.ofSeconds(60))
-            .header("Authorization", "Bearer " + props.serviceKey())
-            .header("apikey", props.serviceKey())
             .header("Content-Type", "multipart/form-data; boundary=" + boundary)
             .POST(HttpRequest.BodyPublishers.ofByteArray(body))
             .build();
@@ -65,10 +73,8 @@ public class SupabaseStorageService {
     public FileContent download(UUID userId, UUID portfolioId, String safeFileName) {
         requireConfig();
         String path = userId + "/" + portfolioId + "/" + safeFileName;
-        HttpRequest req = HttpRequest.newBuilder(URI.create(apiUrl("/object/" + props.bucket() + "/" + path)))
+        HttpRequest req = withStorageKey(URI.create(apiUrl("/object/" + props.bucket() + "/" + path)))
             .timeout(Duration.ofSeconds(60))
-            .header("Authorization", "Bearer " + props.serviceKey())
-            .header("apikey", props.serviceKey())
             .GET()
             .build();
         try {
@@ -88,18 +94,23 @@ public class SupabaseStorageService {
     }
 
     public void delete(String path) {
-        if (!props.configured()) return; // tidak ada yang bisa dibersihkan
-        HttpRequest req = HttpRequest.newBuilder(URI.create(apiUrl("/object/" + props.bucket() + "/" + path)))
+        requireConfig();
+        HttpRequest req = withStorageKey(URI.create(apiUrl("/object/" + props.bucket() + "/" + path)))
             .timeout(Duration.ofSeconds(30))
-            .header("Authorization", "Bearer " + props.serviceKey())
-            .header("apikey", props.serviceKey())
             .DELETE()
             .build();
         try {
-            http.send(req, HttpResponse.BodyHandlers.discarding());
-        } catch (Exception e) {
-            // File yatim dicatat agar bisa dibersihkan manual; jangan gagalkan alur utama.
-            log.warn("Gagal menghapus objek yatim {}: {}", path, e.toString());
+            HttpResponse<Void> response = http.send(req, HttpResponse.BodyHandlers.discarding());
+            if (!((response.statusCode() >= 200 && response.statusCode() < 300) || response.statusCode() == 404)) {
+                log.warn("Supabase Storage DELETE {} -> {}", req.uri(), response.statusCode());
+                throw new ValidationException("File gagal dihapus dari penyimpanan; metadata tetap dipertahankan");
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new ValidationException("Penghapusan file terganggu; metadata tetap dipertahankan");
+        } catch (IOException e) {
+            log.warn("Gagal menghapus objek {}: {}", path, e.toString());
+            throw new ValidationException("Layanan penyimpanan tidak tersedia; metadata tetap dipertahankan");
         }
     }
 
@@ -107,11 +118,9 @@ public class SupabaseStorageService {
     public String createSignedUrl(String path, int expiresInSec) {
         requireConfig();
         String json = "{\"expiresIn\":" + expiresInSec + "}";
-        HttpRequest req = HttpRequest.newBuilder(
+        HttpRequest req = withStorageKey(
                 URI.create(apiUrl("/object/sign/" + props.bucket() + "/" + URLEncoder.encode(path, StandardCharsets.UTF_8).replace("+", "%20"))))
             .timeout(Duration.ofSeconds(30))
-            .header("Authorization", "Bearer " + props.serviceKey())
-            .header("apikey", props.serviceKey())
             .header("Content-Type", "application/json")
             .POST(HttpRequest.BodyPublishers.ofString(json))
             .build();

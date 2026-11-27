@@ -34,9 +34,9 @@ public class AuthService {
         u.setFullName(req.fullName().trim());
         u.setEmail(email);
         u.setPasswordHash(encoder.encode(req.password()));
-        // Akun pertama sekaligus pegang ADMIN; tanpa itu basis data kosong tidak punya
-        // jalan masuk ke /admin selain lewat SQL.
-        u.setRole(users.count() == 0 ? UserRole.ADMIN : UserRole.STUDENT);
+        // Pendaftaran publik tidak pernah memberikan hak admin. Admin ditetapkan
+        // secara eksplisit oleh operator agar pengunjung pertama tidak mengambil alih.
+        u.setRole(UserRole.STUDENT);
         u.setStatus(AccountStatus.ACTIVE);
         u.setCampus(req.campus() == null ? null : req.campus().trim());
         try {

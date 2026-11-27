@@ -1,3 +1,3 @@
 package com.gakbisa.backend.domain;
 
-public enum SessionStatus { SCHEDULED, ONGOING, COMPLETED, CANCELLED }
+public enum SessionStatus { SCHEDULED, PENDING_RESCHEDULE, ONGOING, COMPLETED, CANCELLED }

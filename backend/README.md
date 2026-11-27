@@ -1,8 +1,9 @@
 # GAKBISA Backend (Spring Boot)
 
-Backend aplikasi pertukaran keahlian mahasiswa **GAKBISA** — Java 25 LTS + Spring Boot 4.1.x,
-PostgreSQL (Supabase), Thymeleaf (dipakai tim frontend), Spring Security + BCrypt,
-Supabase Storage untuk portofolio, Jitsi Meet untuk sesi belajar.
+Backend REST aplikasi pertukaran keahlian mahasiswa **GAKBISA** — Java 25 LTS + Spring Boot 4.1.x,
+PostgreSQL, Spring Security + BCrypt, Supabase Storage untuk portofolio, dan Jitsi Meet untuk sesi belajar.
+Frontend aktif berada di direktori `frontend/` dan memanggil backend dengan JSON + JWT. Thymeleaf hanya
+tersisa sebagai arsip di `legacy-thymeleaf/`.
 
 Cakupan repo ini: bagian **Yafet Wenda** (Analisis, Backend & Security) sesuai proposal kelompok.
 
@@ -66,7 +67,7 @@ Upload portofolio baru berfungsi kalau `SUPABASE_URL` + `SUPABASE_SERVICE_KEY` t
 kalau kosong, aplikasi tetap jalan dan hanya fitur itu yang menampilkan pesan
 "ruang penyimpanan berkas belum aktif".
 
-Status verifikasi (26-10-2026, PostgreSQL lokal port 5433): `mvnw test` → **16/16 lulus**,
+Catatan verifikasi sebelumnya (26-10-2026, PostgreSQL lokal port 5433): `mvnw test` → **16/16 lulus**,
 `mvnw package` → jar terbentuk, aplikasi start (Tomcat 8080, halaman `/`, `/login`, `/register`,
 `/catalog` respons 200, `/dashboard` redirect ke `/login`), dan alur lengkap lewat HTTP
 (registrasi → matching → barter → sesi Jitsi → ulasan → notifikasi → admin) **48/48 pemeriksaan lulus**.
@@ -81,9 +82,11 @@ jadi `ddl-auto: validate` aman.
 
 Aplikasi jalan di **http://localhost:8080** (sengaja bukan port 8000 agar tidak bentrok).
 
-Database start dalam keadaan kosong. Aturan pengisiannya: pendaftar **pertama** otomatis
-menjadi ADMIN (akun berikutnya STUDENT), dan keahlian yang diketik pengguna di dasbor langsung
-masuk katalog di kategori `Lainnya` — admin yang memindahkannya ke kategori yang tepat.
+Database dapat dimulai dalam keadaan kosong. Pendaftaran publik selalu menjadi STUDENT. Untuk
+menetapkan admin pertama di produksi, daftarkan akun pengelola lalu ubah perannya melalui koneksi
+database tepercaya, misalnya `UPDATE users SET role='ADMIN' WHERE email='email-pengelola@kampus.ac.id';`.
+Jangan aktifkan seed demo di produksi. Keahlian yang diketik pengguna di dasbor masuk katalog di
+kategori `Lainnya` — admin dapat memindahkannya ke kategori yang tepat.
 
 ## Konfigurasi environment (`.env`)
 

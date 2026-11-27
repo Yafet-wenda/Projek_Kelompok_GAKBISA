@@ -17,14 +17,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.UUID;
 
 /**
  * Metadata portofolio di PostgreSQL; isi file di Supabase Storage (proposal §6.1).
- * Validasi: ekstensi + MIME (dibaca dari isi file, bukan hanya ekstensi) + ukuran maksimum.
+ * Validasi: ekstensi, MIME dari isi file, deklarasi MIME, dan ukuran maksimum.
  */
 @Service
 public class PortfolioService {
+
+    private static final long PRD_MAX_FILE_SIZE = 10L * 1024 * 1024;
+    private static final Set<String> PRD_ALLOWED_TYPES = Set.of("image/jpeg", "image/png", "image/webp", "application/pdf");
 
     private final PortfolioRepository portfolios;
     private final UserRepository users;
@@ -50,19 +54,26 @@ public class PortfolioService {
         if (content == null || content.length == 0) {
             throw new ValidationException("File kosong");
         }
-        if (content.length > props.maxFileSizeBytes()) {
-            throw new ValidationException("Ukuran file melebihi batas " + (props.maxFileSizeBytes() / 1024 / 1024) + " MB");
+        String safeName = safeFileName(originalName);
+        long maxFileSize = Math.min(props.maxFileSizeBytes(), PRD_MAX_FILE_SIZE);
+        if (content.length > maxFileSize) {
+            throw new ValidationException("Ukuran file melebihi batas 10 MB");
         }
 
         // Tipe file disimpulkan dari magic bytes isi file (bukan hanya ekstensi/deklarasi, §6.5).
         String byContent = MagicType.detect(content);
         String declared = declaredType == null ? "" : declaredType.toLowerCase(Locale.ROOT);
         if (byContent.isEmpty()) {
-            throw new ValidationException("Isi file tidak dikenali sebagai JPG/PNG/WEBP/MP4/WEBM/PDF yang sah");
+            throw new ValidationException("Isi file tidak dikenali sebagai JPG/PNG/WEBP/PDF yang sah");
         }
-        if (props.allowedMimeTypes().stream().noneMatch(t -> t.equalsIgnoreCase(byContent))) {
+        String extensionType = mimeFromExtension(safeName);
+        if (!byContent.equalsIgnoreCase(extensionType)) {
+            throw new ValidationException("Ekstensi file tidak sesuai dengan isi file");
+        }
+        if (!PRD_ALLOWED_TYPES.contains(byContent.toLowerCase(Locale.ROOT))
+            || props.allowedMimeTypes().stream().noneMatch(t -> t.equalsIgnoreCase(byContent))) {
             throw new ValidationException("Tipe file tidak diizinkan: " + byContent
-                + ". Yang diizinkan: " + String.join(", ", props.allowedMimeTypes()));
+                + ". Yang diizinkan: JPG, PNG, WEBP, PDF");
         }
         if (!declared.isEmpty() && !compatible(byContent, declared)) {
             throw new ValidationException("Deklarasi tipe file tidak sesuai dengan isinya");
@@ -73,7 +84,7 @@ public class PortfolioService {
         p.setUser(owner);
         p.setTitle(meta.title().trim());
         p.setDescription(meta.description());
-        p.setFileName(safeFileName(originalName));
+        p.setFileName(safeName);
         p.setMimeType(detected);
         p.setFileSize(content.length);
         p.setVisibility(meta.visibility() == null ? PortfolioVisibility.PUBLIC : meta.visibility());
@@ -102,13 +113,10 @@ public class PortfolioService {
         return p;
     }
 
-    /** Tautan akses untuk penampil: publik langsung, privat lewat signed URL 10 menit. */
+    /** Bucket bersifat privat; semua pratinjau memakai signed URL berumur 10 menit. */
     @Transactional(readOnly = true)
     public String accessUrl(UUID viewerId, UUID portfolioId) {
         Portfolio p = requireVisible(viewerId, portfolioId);
-        if (p.getVisibility() == PortfolioVisibility.PUBLIC) {
-            return p.getFilePath(); // frontend dapat membentuk URL publik bucket bila bucket dibuat publik
-        }
         return storage.createSignedUrl(p.getFilePath(), 600);
     }
 
@@ -167,7 +175,7 @@ public class PortfolioService {
         if (!p.getUser().getId().equals(actorId) && !isAdmin(actorId)) {
             throw new ForbiddenException("Hanya pemilik atau admin yang dapat menghapus karya");
         }
-        // Hapus metadata lebih dulu; kegagalan hapus objek hanya dicatat (file yatim dibersihkan nanti).
+        // Jika Storage gagal, exception membatalkan transaksi agar metadata tetap tersedia untuk dicoba lagi.
         portfolios.delete(p);
         if (p.getFilePath() != null && !p.getFilePath().endsWith("/pending")) {
             storage.delete(p.getFilePath());
@@ -193,5 +201,22 @@ public class PortfolioService {
         String e = expected.split("/")[0];
         String d = declared.split("/")[0];
         return e.equalsIgnoreCase(d);
+    }
+
+    static String mimeFromExtension(String fileName) {
+        if (fileName == null || fileName.isBlank()) {
+            throw new ValidationException("Nama file wajib memiliki ekstensi yang diizinkan");
+        }
+        int dot = fileName.lastIndexOf('.');
+        if (dot < 0 || dot == fileName.length() - 1) {
+            throw new ValidationException("File harus berekstensi JPG, JPEG, PNG, WEBP, atau PDF");
+        }
+        return switch (fileName.substring(dot + 1).toLowerCase(Locale.ROOT)) {
+            case "jpg", "jpeg" -> "image/jpeg";
+            case "png" -> "image/png";
+            case "webp" -> "image/webp";
+            case "pdf" -> "application/pdf";
+            default -> throw new ValidationException("Ekstensi file tidak diizinkan");
+        };
     }
 }

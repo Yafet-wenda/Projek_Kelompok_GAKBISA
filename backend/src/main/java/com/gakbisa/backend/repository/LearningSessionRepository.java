@@ -16,14 +16,16 @@ public interface LearningSessionRepository extends JpaRepository<LearningSession
     // rantai itu LAZY dan open-in-view dimatikan, jadi harus ikut termuat di sini.
     @EntityGraph(attributePaths = {"barterRequest", "barterRequest.requester", "barterRequest.targetUser",
         "barterRequest.offeredUserSkill", "barterRequest.offeredUserSkill.skill",
-        "barterRequest.wantedUserSkill", "barterRequest.wantedUserSkill.skill"})
+        "barterRequest.wantedUserSkill", "barterRequest.wantedUserSkill.skill",
+        "rescheduleProposedBy"})
     Optional<LearningSession> findById(UUID id);
 
     List<LearningSession> findByBarterRequestId(UUID barterRequestId);
 
     @EntityGraph(attributePaths = {"barterRequest", "barterRequest.requester", "barterRequest.targetUser",
         "barterRequest.offeredUserSkill", "barterRequest.offeredUserSkill.skill",
-        "barterRequest.wantedUserSkill", "barterRequest.wantedUserSkill.skill"})
+        "barterRequest.wantedUserSkill", "barterRequest.wantedUserSkill.skill",
+        "rescheduleProposedBy"})
     @Query("""
         select s from LearningSession s
         join s.barterRequest b
@@ -33,4 +35,14 @@ public interface LearningSessionRepository extends JpaRepository<LearningSession
     List<LearningSession> findForParticipant(@Param("userId") UUID userId);
 
     long countByStatus(com.gakbisa.backend.domain.SessionStatus status);
+
+    @Query(value = """
+        SELECT count(DISTINCT s.id)
+        FROM learning_sessions s
+        LEFT JOIN barter_requests b ON b.id = s.barter_request_id
+        LEFT JOIN group_members gm ON gm.group_id = s.group_id AND gm.user_id = :userId AND gm.status = 'ACTIVE'
+        WHERE s.status = 'COMPLETED'
+          AND (b.requester_id = :userId OR b.target_user_id = :userId OR gm.user_id = :userId)
+        """, nativeQuery = true)
+    long countCompletedForUser(@Param("userId") UUID userId);
 }

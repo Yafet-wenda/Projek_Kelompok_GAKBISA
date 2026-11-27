@@ -28,13 +28,16 @@
   --gk-bottom-nav-height: 60px;
 }
 
-/* Offset badan halaman agar tidak tertutup navbar fixed */
+/* Offset badan halaman hanya ketika navbar fixed atau bottom nav hadir */
 body {
+  padding-top: 0;
+}
+body:has(.gk-navbar, .fb-navbar) {
   padding-top: var(--gk-navbar-height) !important;
 }
 /* Di mobile juga perlu ruang bawah untuk bottom nav */
 @media (max-width: 768px) {
-  body { padding-bottom: var(--gk-bottom-nav-height); }
+  body:has(.gk-bottom-nav) { padding-bottom: var(--gk-bottom-nav-height); }
 }
 
 .gk-navbar {

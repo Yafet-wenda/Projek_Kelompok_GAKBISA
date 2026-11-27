@@ -32,7 +32,7 @@ public class StartupInfo implements ApplicationListener<ApplicationReadyEvent> {
         long akun = users.count();
         double detik = (System.currentTimeMillis() - event.getApplicationContext().getStartupDate()) / 1000.0;
         String kosong = akun == 0
-            ? ", belum ada akun. Daftar di /register dan pendaftar pertama jadi admin."
+            ? ", belum ada akun. Daftarkan akun, lalu operator tepercaya perlu menetapkan admin pertama."
             : ".";
         log.info("""
 

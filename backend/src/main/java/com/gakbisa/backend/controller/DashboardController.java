@@ -42,7 +42,7 @@ public class DashboardController {
         long pendingBarters = barter.inbox(uid).stream()
             .filter(b -> b.getStatus() == BarterStatus.PENDING).count();
         long activeSessions = sessions.forUser(uid).stream()
-            .filter(s -> s.getStatus() == SessionStatus.SCHEDULED || s.getStatus() == SessionStatus.ONGOING)
+            .filter(s -> s.getStatus() == SessionStatus.SCHEDULED || s.getStatus() == SessionStatus.ONGOING || s.getStatus() == SessionStatus.PENDING_RESCHEDULE)
             .count();
 
         Map<String, Object> out = new LinkedHashMap<>();

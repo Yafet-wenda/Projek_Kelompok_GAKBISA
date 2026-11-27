@@ -29,8 +29,10 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   color: var(--fb-text);
   font-size: 15px;
-  padding-top: var(--navbar-height);
   min-height: 100vh;
+}
+body:has(.fb-navbar, .gk-navbar) {
+  padding-top: var(--navbar-height);
 }
 
 a { text-decoration: none; color: var(--fb-blue); }

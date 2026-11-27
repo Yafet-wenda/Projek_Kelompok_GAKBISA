@@ -30,11 +30,11 @@ public class SupabaseConfig {
 
     @Bean
     public String supabaseAnonKey() {
-        return env.getProperty("SUPABASE_ANON_KEY", "");
+        return env.getProperty("SUPABASE_PUBLISHABLE_KEY", env.getProperty("SUPABASE_ANON_KEY", ""));
     }
 
     @Bean
     public String supabaseServiceKey() {
-        return env.getProperty("SUPABASE_SERVICE_KEY", "");
+        return env.getProperty("SUPABASE_SECRET_KEY", env.getProperty("SUPABASE_SERVICE_KEY", ""));
     }
 }

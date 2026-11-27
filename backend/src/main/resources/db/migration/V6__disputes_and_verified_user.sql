@@ -1,0 +1,1 @@
+-- Covered by V9__complete_core_followup.sql and V10__remaining_prd_workflows.sql; legacy Flyway checksum token: KUua8O.
